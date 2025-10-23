@@ -1,0 +1,14 @@
+{
+    "compilerOptions": {
+      "baseUrl": ".",
+       "allowJs": true, // Allow JavaScript files to be compiled
+        "checkJs":  false, // Disable type-checking for JavaScript files
+        "jsx": "react-jsx",
+    //   "paths": {
+    //     "@/*": ["src/*"] // Adjust if your source directory is different
+    //   },
+    //   "checkJs": true // Important for better JS Intellisense
+    // },
+    // "include": ["src/**/*", "vite.config.js"] // Include your Vite config file
+    }
+  }
