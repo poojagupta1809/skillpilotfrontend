@@ -33,13 +33,17 @@ export default function SignIn() {
     
     console.log("User-" + user.username + " " + user.password);
 
-    axios.post("http://localhost:8087/api/users/login",user)
+    axios.post("http://localhost:8088/api/users/login",user)
             .then(
                 (response)=>
                 {
-                  //console.log(response.data.token)
                   sessionStorage.setItem("token",response.data.token)
+                  sessionStorage.setItem("username",response.data.user.username)
+                  sessionStorage.setItem("role",response.data.user.role)
+                  
                   console.log(sessionStorage.getItem("token"))
+                  console.log(sessionStorage.getItem("username"))
+                  console.log(sessionStorage.getItem("role"))
                
                   }
             )

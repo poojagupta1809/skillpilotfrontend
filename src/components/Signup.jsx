@@ -1,25 +1,59 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Container, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio } from '@mui/material';
+import axios from 'axios';
 
 function Signup() {
-  const [username, setUsername] = useState('');
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+
+ 
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = React.useState('learner');
+  const [error,setError]=useState("")
+
+  const[user,setUser]=useState( {"username":"" , "password":"","email":"", "role":"learner"})
+
+    const handleInput=(event)=>{
+        const{name,value} =event.target
+        setUser(
+            {
+                ...user  ,  // keet the other form data as it is
+                [name] : value // change value of only the current text box with this name 
+            }
+        );
+    }
 
   const handleSubmit = (event) => {
     event.preventDefault();
+
+   
     // Implement validation logic here
-    if (password !== confirmPassword) {
+    if (user.password !== confirmPassword) {
       alert('Passwords do not match!');
       return;
     }
+   
+    console.log("User-" + user.username + " " + user.password + " " +user.email + " " + user.role);
 
+    axios.post("http://localhost:8088/api/users/register-user",user)
+            .then(
+                (response)=>
+                {
+                  //console.log(response.data.token)
+                  console.log(response.data.username);
+               
+                  }
+            )
+            .catch(
+                (err)=>
+                    {
+                       console.log(err)
+                            if(err.status=== 403 )
+                                setError("Invalid username /password")
+                    }
+                
+            )
+        
     
-    console.log('Sign Up Data:', { username, email, password });
-    // Send data to backend or handle registration
   };
+  
 
 
 
@@ -46,8 +80,7 @@ function Signup() {
             name="username"
             autoComplete="username"
             autoFocus
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
+            onChange={handleInput}
           />
           <TextField
             margin="normal"
@@ -57,8 +90,7 @@ function Signup() {
             label="Email Address"
             name="email"
             autoComplete="email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
+            onChange={handleInput}
           />
           <TextField
             margin="normal"
@@ -69,8 +101,7 @@ function Signup() {
             type="password"
             id="password"
             autoComplete="new-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
+            onChange={handleInput}
           />
           <TextField
             margin="normal"
