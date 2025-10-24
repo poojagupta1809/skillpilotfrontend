@@ -1,19 +1,14 @@
 import { useState } from "react";
 import React from "react";
 import Layout from "./Layout";
+import DefaultContent from "./components/DefaultContent";
 
 function App() {
    
   return (
     <>
      
-     
-      <div className="card">
-      
-        <p>
-         Skill Pilot App
-        </p>
-      </div>
+      <DefaultContent/>
     
     </>
   )
