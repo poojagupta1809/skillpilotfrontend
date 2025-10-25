@@ -1,16 +1,10 @@
 import { useState } from "react";
 import React from "react";
-import Layout from "./Layout";
-import DefaultContent from "./components/DefaultContent";
-import Signup from "./components/Signup";
 import './App.css'
 import { Route, Routes } from "react-router-dom";
-import SignIn from "./components/SignIn";
 import HomePage from "./HomePage";
 import Navbar from "./Navbar";
 import { Box, Container } from "@mui/material";
-
-
 
 function App() {
    
