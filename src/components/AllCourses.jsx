@@ -41,7 +41,6 @@ export default function AllCourses({ userId }) {
 
   return (
     <div>
-      <h3>All Courses</h3>
       <ul>
         {courses.map((course) => {
           const isEnrolled = enrolledCourses.includes(course.courseId);

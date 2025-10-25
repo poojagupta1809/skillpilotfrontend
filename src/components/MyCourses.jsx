@@ -31,7 +31,7 @@ export default function MyCourses({ userId }) {
 
   return (
     <div>
-      <h3>My Courses</h3>
+
       <ul>
         {enrolledCourses.length === 0 ? (
           <p>No enrolled courses.</p>
