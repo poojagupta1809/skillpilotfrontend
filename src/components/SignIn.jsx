@@ -18,19 +18,22 @@ export default function SignIn() {
    const[user,setUser]=useState( {"username":"" , "password":""})
     const navigate = useNavigate()
 
+    const handleInput=(event)=>{
+        const{name,value} =event.target
+        setUser(
+            {
+                ...user  ,  // keet the other form data as it is
+                [name] : value // change value of only the current text box with this name 
+            }
+        );
+    }
+
+
   const handleSubmit = (event) => {
     event.preventDefault();
    
     const data = new FormData(event.currentTarget);
  
-      setUser(
-            {
-                ...user  , 
-             username: data.get("userName"),
-             password: data.get("password")
-            }
-        );
-
     
     console.log("User-" + user.username + " " + user.password);
 
@@ -96,11 +99,12 @@ export default function SignIn() {
             margin="normal"
             required
             fullWidth
-            id="userName"
+            id="username"
             label="User Name"
-            name="userName"
-            autoComplete="userName"
+            name="username"
+            autoComplete="username"
             autoFocus
+             onChange={handleInput}
           />
        
           <TextField
@@ -112,6 +116,7 @@ export default function SignIn() {
             type="password"
             id="password"
             autoComplete="current-password"
+             onChange={handleInput}
           />
           <FormControlLabel
             control={<Checkbox value="remember" color="primary" />}
