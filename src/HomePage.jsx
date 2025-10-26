@@ -10,6 +10,8 @@ import AboutContent from './AboutContent';
 import Protected from "./Protected";
 import AdminDefaultPage from './components/AdminDefaultPage';
 import CourseForm from './components/CourseForm';
+import ExploreCourses from './components/ExploreCourses';
+import CourseDetails from './components/CourseDetails';
 
 
 function HomePage() {
@@ -24,7 +26,9 @@ function HomePage() {
           <Route path="/About" element={<AboutContent />} />
           <Route path="/course/add" element={<Protected Role={'ADMIN'} to="/course/add" Component={CourseForm} ></Protected>} ></Route>
           <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>}/>
-    
+          <Route path="/courses" element={<ExploreCourses />} />
+          <Route path="/course/:id" element={<CourseDetails />} />
+
         </Routes>
       </Container>
 
