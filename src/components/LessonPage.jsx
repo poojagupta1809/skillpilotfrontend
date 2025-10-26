@@ -2,6 +2,7 @@ import React from "react";
 import { Box, Typography, Button } from "@mui/material";
 
 export default function LessonPage({ lesson, onBack }) {
+  
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     const match = url.match(/^.*(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);

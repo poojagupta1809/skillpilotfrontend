@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Box, TextField, Button, Typography, MenuItem } from "@mui/material";
 import axios from "axios";
 
-export default function AddLesson({ courseId, onLessonAdded, onClose }) {
+export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
+  
   const [lessonData, setLessonData] = useState({
     title: "",
     description: "",
@@ -11,7 +12,20 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
     videoUrl: "",
   });
   const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
+
   
+  useEffect(() => {
+    if (lesson) {
+      setLessonData({
+        title: lesson.title || "",
+        description: lesson.description || "",
+        contentType: lesson.contentType || "",
+        content: lesson.content || "",
+        videoUrl: lesson.videoUrl || "",
+      });
+    }
+  }, [lesson]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -20,29 +34,39 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setLoading(true);
 
-    axios.post(`http://localhost:8088/api/courses/${courseId}/lessons`, lessonData)
+    axios
+      .put(
+        `http://localhost:8088/api/courses/lessons/${lesson.lessonId}`,
+        lessonData
+      )
       .then((res) => {
-        setMessage("✅ Lesson added successfully!");
-        setLessonData({
-          title: "",
-          description: "",
-          contentType: "",
-          content: "",
-          videoUrl: "",
-        });
-        if (onLessonAdded) onLessonAdded(res.data); 
-        if (onClose) onClose(); 
+        setMessage("✅ Lesson updated successfully!");
+        if (onLessonUpdated) onLessonUpdated(res.data);
+        if (onClose) onClose();
       })
       .catch((err) => {
         console.error(err);
-        setMessage("❌ Failed to add lesson.");
-      });
+        setMessage("❌ Failed to update lesson.");
+      })
+      .finally(() => setLoading(false));
   };
 
+  if (!lesson) return null; 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
-      <Typography variant="h5" gutterBottom>➕ Add New Lesson</Typography>
+    <Box
+      sx={{
+        maxWidth: 600,
+        mx: "auto",
+        p: 3,
+        bgcolor: "#fff",
+        borderRadius: 2,
+      }}
+    >
+      <Typography variant="h5" gutterBottom>
+        ✏️ Update Lesson
+      </Typography>
 
       <form onSubmit={handleSubmit}>
         <TextField
@@ -121,12 +145,18 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
         )}
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-          <Button variant="contained" color="primary" type="submit">Add Lesson</Button>
-          <Button variant="outlined" color="secondary" onClick={onClose}>Close</Button>
+          <Button variant="contained" color="primary" type="submit" disabled={loading}>
+            {loading ? "Updating..." : "Update Lesson"}
+          </Button>
+          <Button variant="outlined" color="secondary" onClick={onClose} disabled={loading}>
+            Close
+          </Button>
         </Box>
       </form>
 
-      {message && <Typography sx={{ mt: 2, textAlign: "center" }}>{message}</Typography>}
+      {message && (
+        <Typography sx={{ mt: 2, textAlign: "center" }}>{message}</Typography>
+      )}
     </Box>
   );
 }

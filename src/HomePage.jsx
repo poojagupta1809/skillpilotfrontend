@@ -12,7 +12,11 @@ import AdminDefaultPage from './components/AdminDefaultPage';
 import CourseForm from './components/CourseForm';
 import ExploreCourses from './components/ExploreCourses';
 import CourseDetails from './components/CourseDetails';
-
+import LessonList from "./components/LessonList";
+import LessonPage from './components/LessonPage';
+import AddLesson from './components/AddLesson';
+import UpdateLesson from './components/UpdateLesson';
+import CourseLessonsSection from './components/CourseLessonsSection';
 
 function HomePage() {
   return (
@@ -28,10 +32,11 @@ function HomePage() {
           <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>}/>
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
-           <Route path="/course" element={<CourseDetail/>}/>
-            <Route path="/lessonlist" element={<LessonList/>}/>
-            <Route path="/courses/lesson" element={<LessonPage/>}/>
-            <Route path="/courses/lesson/addlesson" element={<AddLesson/>}/>
+          <Route path="/lessonlist" element={<LessonList />}/>
+          <Route path="/lessonsection" element={<CourseLessonsSection/>}/>
+          <Route path="/courses/lesson" element={<LessonPage />}/>
+          <Route path="/courses/lesson/addlesson" element={<AddLesson />}/>
+          <Route path="/courses/lesson/updatelesson" element={<UpdateLesson/>}/>
 
         </Routes>
       </Container>
