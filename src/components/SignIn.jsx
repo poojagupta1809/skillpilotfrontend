@@ -11,11 +11,12 @@ import { Link as RouterLink} from 'react-router-dom';
 import { Link } from "@mui/material";
 import axios from "axios";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 export default function SignIn() {
 
    const[user,setUser]=useState( {"username":"" , "password":""})
-
+    const navigate = useNavigate()
 
   const handleSubmit = (event) => {
     event.preventDefault();
@@ -41,9 +42,15 @@ export default function SignIn() {
                   sessionStorage.setItem("username",response.data.user.username)
                   sessionStorage.setItem("role",response.data.user.role)
                   
-                  console.log(sessionStorage.getItem("token"))
+                  console.log("Session token - " + sessionStorage.getItem("token"))
                   console.log(sessionStorage.getItem("username"))
                   console.log(sessionStorage.getItem("role"))
+
+              
+                  if(response.data.user.role === 'ADMIN')
+                  {
+                     navigate("/admin");
+                  }
                
                   }
             )
