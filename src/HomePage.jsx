@@ -28,6 +28,10 @@ function HomePage() {
           <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>}/>
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
+           <Route path="/course" element={<CourseDetail/>}/>
+            <Route path="/lessonlist" element={<LessonList/>}/>
+            <Route path="/courses/lesson" element={<LessonPage/>}/>
+            <Route path="/courses/lesson/addlesson" element={<AddLesson/>}/>
 
         </Routes>
       </Container>
