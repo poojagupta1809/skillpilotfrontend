@@ -1,47 +1,33 @@
-import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import axios from "axios";
+import React from "react";
+import { Box, Typography, Button } from "@mui/material";
 
-const LessonPage = () => {
-  
-  const [lesson, setLesson] = useState(null);
-let lessonId=4;
-  useEffect(() => {
-
-   axios.get(`http://localhost:9090/api/courses/lessons/${lessonId}`,)
-   .then((res)=>{
-    setLesson(res.data)
-    console.log(res.data)
-   }
-  )
-  .catch(
-    (err)=>console.log(err)
-  )
-    },[])
-
-
-
+export default function LessonPage({ lesson, onBack }) {
+  const getYouTubeEmbedUrl = (url) => {
+    if (!url) return null;
+    const match = url.match(/^.*(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/);
+    return match && match[1] ? `https://www.youtube.com/embed/${match[1]}` : null;
+  };
 
   return (
-    <div>
+    <Box sx={{ maxWidth: 700, mx: "auto", mt: 4, p: 3, border: "1px solid #ddd", borderRadius: 2 }}>
+      <Button variant="outlined" onClick={onBack} sx={{ mb: 2 }}>Back to Course</Button>
 
-     {lesson && (
-  <>
-    <h1>Title: {lesson.title}</h1>
-    <p>Description: {lesson.description}</p>
-    <p>Content Type: {lesson.contentType}</p>
-    <p>Content: {lesson.content}</p>
-    <p>Video Url: {lesson.videoUrl}</p>
-    <p>CreatedAt: {lesson.createdAt}</p>
-    </>
+      <Typography variant="h4" gutterBottom>{lesson.title}</Typography>
+      <Typography variant="body1" gutterBottom>{lesson.description}</Typography>
+      <Typography variant="body2" gutterBottom>Type: {lesson.contentType}</Typography>
 
-)}
+      {lesson.contentType === "TEXT" && <Typography>{lesson.content}</Typography>}
 
+      {lesson.contentType === "VIDEO" && lesson.videoUrl && (
+        <iframe width="100%" height="400" src={getYouTubeEmbedUrl(lesson.videoUrl)} title={lesson.title} frameBorder="0" allowFullScreen />
+      )}
 
-      {/* Add more lesson details here if needed */}
-    </div>
+      {lesson.contentType === "QUIZ" && (
+        <Box sx={{ mt: 2, p: 2, border: "1px dashed #888", borderRadius: 1 }}>
+          <Typography variant="subtitle1">Quiz Data:</Typography>
+          <Typography variant="body2" sx={{ whiteSpace: "pre-wrap" }}>{lesson.content}</Typography>
+        </Box>
+      )}
+    </Box>
   );
-};
-
-export default LessonPage;
-
+}
