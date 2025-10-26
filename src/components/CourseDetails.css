@@ -1,0 +1,48 @@
+.course-details-container {
+  padding: 32px;
+}
+
+.loading-container {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.course-card {
+  max-width: 900px;
+  margin: 0 auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.course-card-content {
+  display: flex;
+  gap: 32px;
+}
+
+.course-main-content {
+  flex: 1;
+}
+
+.course-title {
+  font-weight: bold !important;
+  margin-bottom: 16px !important;
+}
+
+.course-instructor {
+  color: gray !important;
+  margin-bottom: 16px !important;
+}
+
+.course-description {
+  margin-bottom: 16px !important;
+}
+
+.course-difficulty {
+  margin-bottom: 16px !important;
+}
+
+.enroll-button-container {
+  display: flex;
+  align-items: start;
+}

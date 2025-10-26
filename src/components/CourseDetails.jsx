@@ -1,58 +1,74 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import { Box, Typography, CircularProgress, Card, CardContent, Button } from "@mui/material";
+import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Box, Typography, CircularProgress, Card, CardContent, Button } from "@mui/material";
 import CourseLessonsSection from "./CourseLessonsSection";
+import "./CourseDetails.css"; // <-- import CSS
 
 export default function CourseDetails() {
+  let authorization = "Bearer " + sessionStorage.getItem("token");
+  axios.defaults.headers.common["Authorization"] = authorization;
+
   const { id } = useParams();
+  const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
 
-
   useEffect(() => {
-    axios.get(`http://localhost:8088/api/courses/${id}`)
-      .then(res => setCourse(res.data))
-      .catch(err => console.error("Error fetching course details:", err))
+    if (!id) return;
+
+    axios
+      .get(`http://localhost:8088/api/courses/${id}`)
+      .then((res) => setCourse(res.data))
+      .catch((err) => console.error("Error fetching course details:", err))
       .finally(() => setLoading(false));
   }, [id]);
 
+  const handleEnroll = () => {
+    console.log("Enrolling in course:", id);
+    navigate("/my-enrollments");
+  };
+
   if (loading)
     return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
+      <div className="loading-container">
         <CircularProgress />
-      </Box>
+      </div>
     );
 
   if (!course) return <Typography>Course not found.</Typography>;
 
   return (
-<Box sx={{ p: 4 }}>
-      <Card sx={{ maxWidth: 900, mx: "auto", borderRadius: 3, boxShadow: 4 }}>
-        <CardContent sx={{ display: "flex", gap: 4 }}>
-          <Box sx={{ flex: 1 }}>
-            <Typography variant="h4" fontWeight="bold" gutterBottom>
+    <div className="course-details-container">
+      <Card className="course-card">
+        <CardContent className="course-card-content">
+          <div className="course-main-content">
+            <Typography variant="h4" className="course-title">
               {course.topic}
             </Typography>
-            <Typography variant="h6" sx={{ color: "gray", mb: 2 }}>
+
+            <Typography variant="h6" className="course-instructor">
               Instructor: {course.instructor}
             </Typography>
-            <Typography variant="body1" sx={{ mb: 2 }}>
+
+            <Typography variant="body1" className="course-description">
               {course.description}
             </Typography>
-            <Typography variant="body2" sx={{ mb: 2 }}>
+
+            <Typography variant="body2" className="course-difficulty">
               Difficulty Level: {course.difficultyLevel}
             </Typography>
-          </Box>
-          <Box sx={{ display: "flex", alignItems: "start" }}>
-            <Button variant="contained" color="primary">
+          </div>
+
+          <div className="enroll-button-container">
+            <Button variant="contained" color="primary" onClick={handleEnroll}>
               Enroll
             </Button>
-          </Box>
+          </div>
         </CardContent>
       </Card>
-    
-       <CourseLessonsSection courseId={id} />
-    </Box>
+
+      <CourseLessonsSection courseId={id} />
+    </div>
   );
 }
