@@ -1,5 +1,7 @@
 import { AppBar, Box, Button, IconButton, Toolbar, Typography } from "@mui/material";
 import React from "react";
+import { useNavigate } from 'react-router-dom'; 
+import LogoutIcon from '@mui/icons-material/Logout'; 
 
 import { Link, useLocation } from "react-router-dom";
 
@@ -7,8 +9,17 @@ function NavBar() {
 
   const location = useLocation();
   const currentPath = location.pathname;
+  const navigate = useNavigate();
 
   let navLinks = [];
+    
+  const handleLogout = () => {
+    console.log("Logging out...");
+    sessionStorage.setItem("token","")
+    navigate('/signin'); 
+    
+  };
+
 
   if (currentPath === "/") {
     navLinks = [
@@ -39,12 +50,13 @@ function NavBar() {
             <img
               src="/logo.png"
               alt="Logo"
-              style={{ height: 40, width: 40 }}
+              style={{ height: 50, width: 50 }}
             />
           </IconButton>
-          
-        
+ 
         </Box>
+
+
 
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Skill Pilot
@@ -63,6 +75,17 @@ function NavBar() {
               {link.label}
             </Button>
           ))}
+
+           {sessionStorage.getItem("token")!="" && ( // Conditionally render logout button
+          <IconButton
+            color="inherit"
+            aria-label="logout"
+            onClick={handleLogout}
+          >
+            <LogoutIcon />
+
+          </IconButton>
+        )}
         </Box>
       </Toolbar>
     </AppBar>
