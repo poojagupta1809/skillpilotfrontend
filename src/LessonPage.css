@@ -1,0 +1,77 @@
+.lesson-container {
+  display: flex;
+  justify-content: center;
+  padding: 40px 20px;
+}
+
+.lesson-card {
+  width: 100%;
+  max-width: 1200px;
+  background-color: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  text-align: left;
+  font-family: "Arial", sans-serif;
+}
+
+.lesson-title {
+  font-size: 28px;
+  margin-bottom: 10px;
+  color: #222;
+}
+
+.lesson-description {
+  font-size: 16px;
+  color: #555;
+  margin-bottom: 20px;
+}
+
+.lesson-type {
+  font-weight: bold;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.lesson-video {
+  position: relative;
+  padding-bottom: 56.25%; /* 16:9 ratio */
+  height: 0;
+  overflow: hidden;
+  border-radius: 10px;
+  margin-bottom: 25px;
+}
+
+.lesson-video iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  border-radius: 10px;
+}
+
+.lesson-text {
+  font-size: 17px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.lesson-link {
+  color: #1976d2;
+  text-decoration: none;
+  font-weight: bold;
+  display: inline-block;
+  margin-top: 10px;
+}
+
+.lesson-link:hover {
+  text-decoration: underline;
+}
+
+.lesson-created {
+  margin-top: 20px;
+  font-size: 14px;
+  color: #888;
+}
