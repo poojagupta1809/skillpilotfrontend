@@ -16,10 +16,11 @@ export default function ExploreCourses() {
   const [courses, setCourses] = useState([]);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
-
+let authorization = 'Bearer ' + sessionStorage.getItem("token");
+  axios.defaults.headers.common['Authorization'] = authorization;
   useEffect(() => {
     axios
-      .get("http://localhost:8080/api/courses/view")
+      .get("http://localhost:8088/api/courses/view")
       .then((res) => {
         setCourses(res.data);
         setLoading(false);

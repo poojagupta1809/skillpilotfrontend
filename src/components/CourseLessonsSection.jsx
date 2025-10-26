@@ -7,10 +7,13 @@ import LessonList from "./LessonList";
 import AddLesson from "./AddLesson";
 
 export default function CourseLessonsSection({ courseId }) {
+  let authorization = 'Bearer ' + sessionStorage.getItem("token");
+  axios.defaults.headers.common['Authorization'] = authorization;
   const [lessons, setLessons] = useState([]);
   const [showAddLesson, setShowAddLesson] = useState(false);
   const navigate = useNavigate();
-  const userRole = "ADMIN";
+const userRole = sessionStorage.getItem("role"); 
+
 
   useEffect(() => {
     axios

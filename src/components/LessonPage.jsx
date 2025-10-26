@@ -9,6 +9,8 @@ import {
 } from "@mui/material";
 
 export default function LessonPage() {
+  let authorization = 'Bearer ' + sessionStorage.getItem("token");
+  axios.defaults.headers.common['Authorization'] = authorization;
   const navigate = useNavigate();
   const { state } = useLocation();
   const lesson = state?.lesson;

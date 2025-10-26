@@ -15,8 +15,12 @@ import {
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+
 
 export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
+  let authorization = 'Bearer ' + sessionStorage.getItem("token");
+  axios.defaults.headers.common['Authorization'] = authorization;
   const navigate = useNavigate();
 
   const handleOpenLesson = (lesson) => {

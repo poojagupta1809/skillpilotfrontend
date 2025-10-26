@@ -3,6 +3,8 @@ import { Box, TextField, Button, Typography, MenuItem } from "@mui/material";
 import axios from "axios";
 
 export default function AddLesson({ courseId, onLessonAdded, onClose }) {
+  let authorization = 'Bearer ' + sessionStorage.getItem("token");
+  axios.defaults.headers.common['Authorization'] = authorization;
   const [lessonData, setLessonData] = useState({
     title: "",
     description: "",
