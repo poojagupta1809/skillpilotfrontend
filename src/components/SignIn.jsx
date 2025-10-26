@@ -41,16 +41,21 @@ export default function SignIn() {
                   sessionStorage.setItem("token",response.data.token)
                   sessionStorage.setItem("username",response.data.user.username)
                   sessionStorage.setItem("role",response.data.user.role)
+                  sessionStorage.setItem("userId",response.data.user.userId)
                   
                   console.log("Session token - " + sessionStorage.getItem("token"))
                   console.log(sessionStorage.getItem("username"))
                   console.log(sessionStorage.getItem("role"))
+                  console.log("user id - " + sessionStorage.getItem("userId"))
+
 
               
                   if(response.data.user.role === 'ADMIN')
                   {
                      navigate("/admin");
                   }
+
+              
                
                   }
             )
