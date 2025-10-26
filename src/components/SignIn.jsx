@@ -51,18 +51,12 @@ export default function SignIn() {
                   console.log(sessionStorage.getItem("role"))
                   console.log("user id - " + sessionStorage.getItem("userId"))
 
-                  // Set a common header for all request types
-                  let authorization = 'Bearer ' + sessionStorage.getItem("token");
-
-                  axios.defaults.headers.common['Authorization'] = authorization; 
-              
+                
                   if(response.data.user.role === 'ADMIN')
                   {
                      navigate("/admin");
                   }
 
-              
-               
                   }
             )
             .catch(
