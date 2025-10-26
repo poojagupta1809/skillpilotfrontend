@@ -25,8 +25,22 @@ function HomeContent() {
     
     return (
      <Box sx={{ flexGrow: 1, p: 3 }}>
-         <Typography variant="h4" gutterBottom>Welcome to the Skill Pilot Home Page!</Typography>
-          <Typography variant="h4" component="h1" gutterBottom align="center">
+         <Typography variant="h4" align="center" gutterBottom  
+         sx={{
+        fontFamily: 'Pacifico', // Use a custom font
+        fontSize: '2.5rem',
+        fontWeight: 'bold',
+        color: '#0d3980ff', // Custom color
+        textShadow: '2px 2px 4px rgba(0,0,0,0.3)', // Add a shadow
+        letterSpacing: '0.1em',
+      }}>Welcome to the Skill Pilot!</Typography>
+          <Typography variant="h4" component="h1" gutterBottom align="center"   sx={{
+        fontFamily: 'Pacifico', // Use a custom font
+        fontSize: '2.0rem',
+        color: '#0d3980ff', // Custom color
+        textShadow: '2px 2px 4px rgba(0,0,0,0.3)', // Add a shadow
+        letterSpacing: '0.1em',
+      }}>
             What Our Users Say
           </Typography>
           <Grid container justifyContent="center" spacing={4}>
