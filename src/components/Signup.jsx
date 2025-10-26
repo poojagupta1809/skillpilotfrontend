@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Container, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio } from '@mui/material';
+import { TextField, Button, Box, Typography, Container, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio, Snackbar, Alert } from '@mui/material';
 import axios from 'axios';
 import { useNavigate } from "react-router-dom";
 
@@ -8,30 +8,64 @@ function Signup() {
 
  
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [error,setError]=useState("")
+   const [errors, setErrors] = useState([]);
   const navigate = useNavigate()
 
   const[user,setUser]=useState( {"username":"" , "password":"","email":"", "role":"learner"})
 
+   const validateName = (value) => {
+       if (value.trim() === '') {
+             setErrors(prevErrors => [...prevErrors, "Name is Required"]);
+        }
+    };
+
+    const validateEmail = (value) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (value.trim() === '') {
+           setErrors(prevErrors => [...prevErrors, "Email Is Required"]);
+        } else if (!emailRegex.test(value)) {
+            setErrors(prevErrors => [...prevErrors, "Email is not valid"]);
+        
+        }
+    };
+
+ const validatePassword = (value) => {
+
+   if (value.trim() === '') {
+        setErrors(prevErrors => [...prevErrors, "Password can not be blank"]);
+    } else if (value.length < 8) {
+      setErrors(prevErrors => [...prevErrors, "Password must be at least 8 characters long."]);
+    } else if (!/[A-Z]/.test(value)) {
+      setErrors(prevErrors => [...prevErrors,'Password must contain at least one uppercase letter.']);
+    } else if (!/[a-z]/.test(value)) {
+      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one lowercase letter.']);
+    } else if (!/[0-9]/.test(value)) {
+      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one number.']);
+    } else if (!/[!@#$%^&*]/.test(value)) {
+      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one special character (!@#$%^&*).']);
+    } 
+    
+  }
+  
     const handleInput=(event)=>{
         const{name,value} =event.target
         setUser(
             {
-                ...user  ,  // keet the other form data as it is
-                [name] : value // change value of only the current text box with this name 
+                ...user  ,  
+                [name] : value 
             }
         );
     }
 
   const handleSubmit = (event) => {
     event.preventDefault();
-
-   
-    // Implement validation logic here
     if (user.password !== confirmPassword) {
-      alert('Passwords do not match!');
-      return;
+          setErrors(prevErrors => [...prevErrors, "Passwords don't match"]);
     }
+
+    validateName(user.username);
+    validateEmail(user.email);
+    validatePassword(user.password);
    
     console.log("User-" + user.username + " " + user.password + " " +user.email + " " + user.role);
 
@@ -50,19 +84,29 @@ function Signup() {
             .catch(
                 (err)=>
                     {
-                       console.log(err)
-                            if(err.status=== 403 )
-                                setError("Invalid username /password")
+                       
+                      let message = "Server not reachable. Please try again later.";
+
+                      if (err.response) {
+                        if (err.response.status === 409) {
+                          console.log(err.response.data.error);
+                          setErrors(err.response.data.error)
+                          message = "UserName/Email Already Exists";
+                        } else if (err.response.data) {
+                          message = typeof err.response.data === "string"
+                            ? err.response.data
+                            : err.response.data.message || "Signup failed. Try again.";
+                            // setErrors(message); 
+                        }
+                      }
+
+                      console.error("Backend error:", message);
+                        
                     }
-                
             )
-        
     
   };
   
-
-
-
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -135,7 +179,18 @@ function Signup() {
 
         </Box>
       </Box>
-    </Container>
+
+     <Snackbar
+      open={errors.length>0}
+      autoHideDuration={4000}
+      onClose={() => setErrors("")}
+      anchorOrigin={{ vertical: "top", horizontal: "center" }}
+     >
+      <Alert severity="error" onClose={() => setErrors([])}>
+        {errors}
+      </Alert>
+      </Snackbar>
+       </Container>
   );
 }
 
