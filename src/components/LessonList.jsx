@@ -14,15 +14,21 @@ import {
 } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate } from "react-router-dom";
 
-export default function LessonList({ lessons, onSelectLesson, onDeleteLesson, onEditLesson }) {
-  
+export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
+  const navigate = useNavigate();
+
+  const handleOpenLesson = (lesson) => {
+    navigate(`/lesson/${lesson.lessonId}`, { state: { lesson } });
+  };
+
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
       {lessons.map((lesson) => (
         <li key={lesson.lessonId} style={{ listStyle: "none" }}>
           <ListItemButton
-            onClick={() => onSelectLesson(lesson)}
+            onClick={() => handleOpenLesson(lesson)}
             sx={{
               mb: 1,
               borderRadius: 2,
@@ -43,7 +49,7 @@ export default function LessonList({ lessons, onSelectLesson, onDeleteLesson, on
               primary={<Typography variant="h6">{lesson.title}</Typography>}
               secondary={
                 <Box>
-                  <Typography variant="body2" color="text.secondary" component="div">
+                  <Typography variant="body2" color="text.secondary">
                     {lesson.description}
                   </Typography>
                   <Chip

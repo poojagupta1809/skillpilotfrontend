@@ -17,6 +17,7 @@ import LessonPage from './components/LessonPage';
 import AddLesson from './components/AddLesson';
 import UpdateLesson from './components/UpdateLesson';
 import CourseLessonsSection from './components/CourseLessonsSection';
+import CourseItem from './components/CourseItem';
 
 function HomePage() {
   return (
@@ -34,9 +35,12 @@ function HomePage() {
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/lessonlist" element={<LessonList />}/>
           <Route path="/lessonsection" element={<CourseLessonsSection/>}/>
-          <Route path="/courses/lesson" element={<LessonPage />}/>
           <Route path="/courses/lesson/addlesson" element={<AddLesson />}/>
           <Route path="/courses/lesson/updatelesson" element={<UpdateLesson/>}/>
+ 
+         <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
+        <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
+     
 
         </Routes>
       </Container>
@@ -48,3 +52,4 @@ function HomePage() {
 }
 
 export default HomePage;
+       

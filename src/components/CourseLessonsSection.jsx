@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from "react";
+import { Box, Button, Modal } from "@mui/material";
+import axios from "axios";
+import { useNavigate } from "react-router-dom";
+
 import LessonList from "./LessonList";
 import AddLesson from "./AddLesson";
-import UpdateLesson from "./UpdateLesson";
-import LessonPage from "./LessonPage";
-import { Box, Button, Dialog, DialogTitle, DialogContent } from "@mui/material";
-import axios from "axios";
 
 export default function CourseLessonsSection({ courseId }) {
   const [lessons, setLessons] = useState([]);
-  const [selectedLesson, setSelectedLesson] = useState(null);
   const [showAddLesson, setShowAddLesson] = useState(false);
-  const [editingLesson, setEditingLesson] = useState(null);
+  const navigate = useNavigate();
   const userRole = "ADMIN";
 
   useEffect(() => {
@@ -26,24 +25,13 @@ export default function CourseLessonsSection({ courseId }) {
   };
 
   const handleDeleteLesson = (lessonId) => {
-    if (!window.confirm("Are you sure you want to delete this Lesson?")) return;
+    if (!window.confirm("Are you sure you want to delete this lesson?")) return;
 
     axios
       .delete(`http://localhost:8088/api/courses/lessons/${lessonId}`)
       .then(() => setLessons((prev) => prev.filter((l) => l.lessonId !== lessonId)))
       .catch(() => console.error("Failed to delete lesson"));
   };
-
-  const handleUpdateLesson = (updatedLesson) => {
-    setLessons((prev) =>
-      prev.map((l) => (l.lessonId === updatedLesson.lessonId ? updatedLesson : l))
-    );
-    setEditingLesson(null);
-  };
-
-  if (selectedLesson) {
-    return <LessonPage lesson={selectedLesson} onBack={() => setSelectedLesson(null)} />;
-  }
 
   return (
     <Box sx={{ maxWidth: 1100, mx: "auto", p: 3 }}>
@@ -56,51 +44,34 @@ export default function CourseLessonsSection({ courseId }) {
       )}
 
       {userRole === "ADMIN" && (
-        <>
-          {/* Add Lesson using Dialog */}
-          <Dialog
-            open={showAddLesson}
-            onClose={() => setShowAddLesson(false)}
-            maxWidth="sm"
-            fullWidth
+        <Modal open={showAddLesson} onClose={() => setShowAddLesson(false)}>
+          <Box
+            sx={{
+              position: "absolute",
+              top: "50%",
+              left: "50%",
+              transform: "translate(-50%, -50%)",
+              width: 600,
+              bgcolor: "background.paper",
+              borderRadius: 2,
+              boxShadow: 24,
+              p: 3,
+            }}
           >
-            <DialogTitle>➕ Add New Lesson</DialogTitle>
-            <DialogContent>
-              <AddLesson
-                courseId={courseId}
-                onLessonAdded={handleAddLesson}
-                onClose={() => setShowAddLesson(false)}
-              />
-            </DialogContent>
-          </Dialog>
-
-          <LessonList
-            lessons={lessons}
-            onSelectLesson={setSelectedLesson}
-            onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
-            onEditLesson={userRole === "ADMIN" ? setEditingLesson : null}
-          />
-
-          {/* Edit Lesson */}
-          {editingLesson && (
-            <Dialog
-              open={true}
-              onClose={() => setEditingLesson(null)}
-              maxWidth="sm"
-              fullWidth
-            >
-              <DialogTitle>✏️ Edit Lesson</DialogTitle>
-              <DialogContent>
-                <UpdateLesson
-                  lesson={editingLesson}
-                  onLessonUpdated={handleUpdateLesson}
-                  onClose={() => setEditingLesson(null)}
-                />
-              </DialogContent>
-            </Dialog>
-          )}
-        </>
+            <AddLesson
+              courseId={courseId}
+              onLessonAdded={handleAddLesson}
+              onClose={() => setShowAddLesson(false)}
+            />
+          </Box>
+        </Modal>
       )}
+
+      <LessonList
+        lessons={lessons}
+        onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
+      />
     </Box>
   );
 }
+
