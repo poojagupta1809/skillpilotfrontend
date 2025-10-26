@@ -56,6 +56,9 @@ export default function SignIn() {
                   {
                      navigate("/admin");
                   }
+                  else(
+                    navigate("/courses")
+                  )
 
                   }
             )
