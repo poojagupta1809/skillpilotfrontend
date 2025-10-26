@@ -9,25 +9,33 @@ import {
   Checkbox,
   IconButton,
   Typography,
+  Button
 } from "@mui/material";
 import React from "react";
-const CourseCard = () => {
+import DeleteIcon from '@mui/icons-material/Delete';
+
+const CourseCard = ({courseDeleteHandler,course}) => {
+  
+  const handleDelete=()=>{
+    courseDeleteHandler(course.courseId);
+  }
   return (
     // <Card sx={{ margin: 2,height: '10',width: '15' } }>
      <Card sx={{ maxWidth: 350, textAlign: "center", padding: 2 }}>
       <CardHeader
-        avatar={
-          <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
-            R
-          </Avatar>
-        }
+        // avatar={
+        //   <Avatar sx={{ bgcolor: "red" }} aria-label="recipe">
+        //     R
+        //   </Avatar>
+        // }
         action={
           <IconButton aria-label="settings">
             <MoreVert />
           </IconButton>
         }
-        title="John Doe"
-        subheader="September 14, 2022"
+         title= {course.topic}
+        subheader={course.instructor}
+        //subheader={props.course.difficultyLevel}
       />
       <CardMedia
         component="img"
@@ -43,15 +51,13 @@ const CourseCard = () => {
         </Typography>
       </CardContent>
       <CardActions disableSpacing>
-        <IconButton aria-label="add to favorites">
-          <Checkbox
-            icon={<FavoriteBorder />}
-            checkedIcon={<Favorite sx={{ color: "red" }} />}
-          />
-        </IconButton>
-        <IconButton aria-label="share">
-          <Share />
-        </IconButton>
+        <CardActions>
+        <Button size="small">View</Button>
+        {/* <Button size="small" >Delete</Button> */}
+         <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={handleDelete}>
+        Delete
+      </Button>
+      </CardActions>
       </CardActions>
     </Card>
   );

@@ -19,9 +19,15 @@ import {
   ListItemText,
   Switch,
 } from "@mui/material";
+import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
 import React from "react";
+import { useNavigate } from "react-router-dom";
 
 const Sidebar = ({mode,setMode}) => {
+  const navigate=useNavigate();
+  const handleCreate=()=>{
+    navigate('/course/add')
+  }
   return (
     // <Grid xs={6} > 
     <Box  p={4} sx={{ display: { xs: "none", sm: "block" }}} height={'100%'} >
@@ -29,14 +35,14 @@ const Sidebar = ({mode,setMode}) => {
     
         <List>
           <ListItem disablePadding>
-            <ListItemButton component="a" href="#home">
+            <ListItemButton  onClick={handleCreate}   href="/course/add">
               <ListItemIcon>
-                <Home />
+               <AddCircleOutlineIcon/>
               </ListItemIcon>
-              <ListItemText primary="Homepage" />
+              <ListItemText primary="Creat New Course" />
             </ListItemButton>
           </ListItem>
-          <ListItem disablePadding>
+          {/* <ListItem disablePadding>
             <ListItemButton component="a" href="#simple-list">
               <ListItemIcon>
                 <Settings />
@@ -51,7 +57,7 @@ const Sidebar = ({mode,setMode}) => {
               </ListItemIcon>
               <ListItemText primary="Profile" />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           <ListItem disablePadding>
             <ListItemButton component="a" href="#simple-list">
               <ListItemIcon>

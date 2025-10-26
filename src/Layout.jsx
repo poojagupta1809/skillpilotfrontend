@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import Navbar from './components/Navbar';
 import Content from './components/DefaultContent';
 import Sidebar from './components/Sidebar';
-import { Height } from '@mui/icons-material';
 
 export default function Layout({ children }) {
     const [mode, setMode] = useState("light");
