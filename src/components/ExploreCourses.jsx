@@ -8,6 +8,7 @@ import {
   CardMedia,
   CircularProgress,
   Box,
+  Button,
 } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 
@@ -29,6 +30,12 @@ export default function ExploreCourses() {
       });
   }, []);
 
+  const handleEnroll = (e, courseId) => {
+    e.stopPropagation(); 
+    console.log("Enrolling in course:", courseId);
+    // TODO:
+  };
+
   if (loading)
     return (
       <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
@@ -46,10 +53,7 @@ export default function ExploreCourses() {
         {courses.map((course) => (
           <Grid item xs={12} sm={6} md={4} key={course.courseId}>
             <Card
-              onClick={() => {
-          console.log("Navigating to courseId:", course.courseId); 
-          navigate(`/course/${course.courseId}`);
-        }}
+              onClick={() => navigate(`/course/${course.courseId}`)}
               sx={{
                 borderRadius: 2,
                 boxShadow: 3,
@@ -63,12 +67,12 @@ export default function ExploreCourses() {
                   component="img"
                   height="160"
                   image={course.image}
-                  alt={course.topic} 
+                  alt={course.topic}
                 />
               )}
               <CardContent>
                 <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {course.topic} 
+                  {course.topic}
                 </Typography>
                 <Typography variant="body2" color="text.secondary" noWrap>
                   {course.description}
@@ -79,6 +83,16 @@ export default function ExploreCourses() {
                 >
                   Difficulty: {course.difficultyLevel}
                 </Typography>
+
+                {/* Enroll Button does nothing for now */}
+                <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  onClick={(e) => handleEnroll(e, course.courseId)}
+                >
+                  Enroll
+                </Button>
               </CardContent>
             </Card>
           </Grid>
