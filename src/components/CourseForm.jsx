@@ -4,12 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 
     export default function CourseForm( ) {
+     let authorization = 'Bearer ' + sessionStorage.getItem("token");
+     axios.defaults.headers.common['Authorization'] = authorization;
+      
       const [course, setCourse] = useState( { topic: '', description: '', instructor: '' ,difficultyLevel:''});
       const navigate = useNavigate();
-
-    //   useEffect(() => {
-    //     setCourse( {topic: '', description: '', instructor: '',difficultyLevel:'' });
-    //   }, [ ]);
 
       const handleChange = (e) => {
         const { name, value } = e.target;
