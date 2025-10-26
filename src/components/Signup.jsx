@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { TextField, Button, Box, Typography, Container, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio } from '@mui/material';
 import axios from 'axios';
+import { useNavigate } from "react-router-dom";
+
 
 function Signup() {
 
  
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error,setError]=useState("")
+  const navigate = useNavigate()
 
   const[user,setUser]=useState( {"username":"" , "password":"","email":"", "role":"learner"})
 
@@ -38,6 +41,9 @@ function Signup() {
                 {
                   //console.log(response.data.token)
                   console.log(response.data.username);
+                  console.log("Signup successful ✅");
+
+                 navigate("/SignIn");
                
                   }
             )
@@ -125,6 +131,8 @@ function Signup() {
           >
             Sign Up
           </Button>
+
+
         </Box>
       </Box>
     </Container>
