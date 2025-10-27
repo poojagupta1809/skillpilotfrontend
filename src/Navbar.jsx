@@ -45,7 +45,7 @@ function NavBar() {
       }
   } else if (currentPath === "/signin") {
     navLinks = [
-        { path: "/", label: "Back to Home" },
+        { path: "/", label: "Home" },
         { path: "/signup", label: "SignUp" },
     
     ];
