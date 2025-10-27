@@ -1,5 +1,5 @@
  import { useNavigate } from "react-router-dom";
-import { Card, CardHeader, CardContent, CardActions, Button, IconButton, Typography, CardMedia } from "@mui/material";
+import { Card, CardHeader, CardContent, CardActions, Button, IconButton, Typography, CardMedia,Chip } from "@mui/material";
 import MoreVert from "@mui/icons-material/MoreVert";
 import DeleteIcon from "@mui/icons-material/Delete";
 
@@ -20,7 +20,10 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
       <CardHeader
         action={<IconButton><MoreVert /></IconButton>}
         title={course.topic}
-        subheader={course.instructor}
+        subheader={
+          <div>{course.instructor} 
+         <Chip label={course.difficultyLevel} size="small" color="info" sx={{marginLeft:'10px'}}/>
+         </div> }
       />
 
       <CardMedia
