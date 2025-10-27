@@ -43,7 +43,7 @@ function HomePage() {
           <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
           <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/courses/myenrollments" element={<MyEnrollments />} />
-          <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={AdminDefaultPage} ></Protected>} />
+          <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={CourseItem} ></Protected>} />
 
 
         </Routes>
