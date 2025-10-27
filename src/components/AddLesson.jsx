@@ -1,10 +1,15 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, MenuItem } from "@mui/material";
+import { Box, TextField, Button, Typography, MenuItem, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
-export default function AddLesson({ courseId, onLessonAdded, onClose }) {
-  let authorization = 'Bearer ' + sessionStorage.getItem("token");
-  axios.defaults.headers.common['Authorization'] = authorization;
+export default function AddLesson() {
+  const { courseId } = useParams(); // get courseId from URL
+  const navigate = useNavigate();
+
+  let authorization = "Bearer " + sessionStorage.getItem("token");
+  axios.defaults.headers.common["Authorization"] = authorization;
+
   const [lessonData, setLessonData] = useState({
     title: "",
     description: "",
@@ -12,8 +17,9 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
     content: "",
     videoUrl: "",
   });
-  const [message, setMessage] = useState("");
-  
+
+  const [errors, setErrors] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -22,10 +28,13 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    setErrors([]);
+    setSuccessMessage("");
 
-    axios.post(`http://localhost:8088/api/courses/${courseId}/lessons`, lessonData)
+    axios
+      .post(`http://localhost:8088/api/courses/${courseId}/lessons`, lessonData)
       .then((res) => {
-        setMessage("✅ Lesson added successfully!");
+        setSuccessMessage("✅ Lesson added successfully!");
         setLessonData({
           title: "",
           description: "",
@@ -33,18 +42,30 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
           content: "",
           videoUrl: "",
         });
-        if (onLessonAdded) onLessonAdded(res.data); 
-        if (onClose) onClose(); 
+        // navigate back to course lessons page if you want
+        navigate(`/courses/${courseId}`);
       })
       .catch((err) => {
         console.error(err);
-        setMessage("❌ Failed to add lesson.");
+        if (err.response && err.response.data) {
+          // assuming backend returns validation errors as { field: "error" }
+          const backendErrors = [];
+          const data = err.response.data;
+          for (const key in data) {
+            backendErrors.push(`${key}: ${data[key]}`);
+          }
+          setErrors(backendErrors);
+        } else {
+          setErrors(["Server error. Please try again later."]);
+        }
       });
   };
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
-      <Typography variant="h5" gutterBottom>➕ Add New Lesson</Typography>
+      <Typography variant="h5" gutterBottom>
+        ➕ Add New Lesson
+      </Typography>
 
       <form onSubmit={handleSubmit}>
         <TextField
@@ -53,7 +74,6 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
           name="title"
           value={lessonData.title}
           onChange={handleChange}
-          required
           sx={{ mb: 2 }}
         />
 
@@ -65,7 +85,6 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
           name="description"
           value={lessonData.description}
           onChange={handleChange}
-          required
           sx={{ mb: 2 }}
         />
 
@@ -76,7 +95,6 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
           name="contentType"
           value={lessonData.contentType}
           onChange={handleChange}
-          required
           sx={{ mb: 2 }}
         >
           <MenuItem value="TEXT">Text</MenuItem>
@@ -93,7 +111,6 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
             name="content"
             value={lessonData.content}
             onChange={handleChange}
-            required
             sx={{ mb: 2 }}
           />
         )}
@@ -105,30 +122,44 @@ export default function AddLesson({ courseId, onLessonAdded, onClose }) {
             name="videoUrl"
             value={lessonData.videoUrl}
             onChange={handleChange}
-            required
             sx={{ mb: 2 }}
           />
         )}
 
-        {lessonData.contentType === "QUIZ" && (
-          <TextField
-            fullWidth
-            label="Quiz Content"
-            name="content"
-            value={lessonData.content}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-        )}
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-          <Button variant="contained" color="primary" type="submit">Add Lesson</Button>
-          <Button variant="outlined" color="secondary" onClick={onClose}>Close</Button>
+        <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 1 }}>
+          <Button variant="contained" color="primary" type="submit">
+            Add Lesson
+          </Button>
         </Box>
       </form>
 
-      {message && <Typography sx={{ mt: 2, textAlign: "center" }}>{message}</Typography>}
+      {/* Backend errors */}
+      <Snackbar
+        open={errors.length > 0}
+        autoHideDuration={6000}
+        onClose={() => setErrors([])}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" onClose={() => setErrors([])} sx={{ whiteSpace: "normal" }}>
+          <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+            {errors.map((errMsg, idx) => (
+              <li key={idx}>{errMsg}</li>
+            ))}
+          </ul>
+        </Alert>
+      </Snackbar>
+
+      {/* Success message */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={4000}
+        onClose={() => setSuccessMessage("")}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={() => setSuccessMessage("")}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
