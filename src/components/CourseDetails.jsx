@@ -15,10 +15,14 @@ export default function CourseDetails() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    if (!id) return;
+   
+    setLoading(true);
+
+    const token = sessionStorage.getItem("token");
+    const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
     axios
-      .get(`http://localhost:8088/api/courses/${id}`)
+      .get(`http://localhost:8088/api/courses/${id}`, { headers })
       .then((res) => setCourse(res.data))
       .catch((err) => console.error("Error fetching course details:", err))
       .finally(() => setLoading(false));

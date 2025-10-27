@@ -1,29 +1,24 @@
 import React from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import {
-  Box,
-  Typography,
-  Button,
-  Paper,
-  Divider,
-} from "@mui/material";
+import { Box, Typography, Button, Paper, Divider } from "@mui/material";
 
 export default function LessonPage() {
-  let authorization = 'Bearer ' + sessionStorage.getItem("token");
-  axios.defaults.headers.common['Authorization'] = authorization;
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const lesson = state?.lesson;
+  const location = useLocation();
+
+  // ✅ Access lesson data from navigation state
+  const lesson = location.state?.lesson;
 
   if (!lesson) {
+    // If user directly visits the URL without navigation state, show fallback
     return (
       <Box sx={{ p: 5, textAlign: "center" }}>
         <Typography variant="h5" color="error">
-          ❌ No lesson data found.
+          ⚠️ Lesson data not available.
         </Typography>
         <Button
           variant="contained"
-          sx={{ mt: 3, px: 4, py: 1.2, fontSize: "1rem" }}
+          sx={{ mt: 3, px: 4, py: 1.2 }}
           onClick={() => navigate(-1)}
         >
           Back
@@ -32,6 +27,7 @@ export default function LessonPage() {
     );
   }
 
+  // Helper to extract YouTube embed URL
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     const match = url.match(
@@ -41,20 +37,12 @@ export default function LessonPage() {
   };
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        justifyContent: "center",
-        mt: 6,
-        mb: 6,
-        px: 2,
-      }}
-    >
+    <Box sx={{ display: "flex", justifyContent: "center", mt: 6, mb: 6, px: 2 }}>
       <Paper
         elevation={6}
         sx={{
           p: 5,
-          maxWidth: 1000, // Increased width
+          maxWidth: 1000,
           width: "100%",
           borderRadius: 4,
           bgcolor: "#ffffff",
@@ -64,32 +52,16 @@ export default function LessonPage() {
         <Button
           variant="outlined"
           onClick={() => navigate(-1)}
-          sx={{
-            mb: 3,
-            fontSize: "1rem",
-            px: 3,
-            py: 1,
-            borderRadius: 2,
-          }}
+          sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
         >
           ← Back to Lessons
         </Button>
 
-        <Typography
-          variant="h3"
-          fontWeight="bold"
-          gutterBottom
-          sx={{ color: "primary.main" }}
-        >
+        <Typography variant="h3" fontWeight="bold" gutterBottom>
           {lesson.title}
         </Typography>
 
-        <Typography
-          variant="h6"
-          color="text.secondary"
-          gutterBottom
-          sx={{ fontStyle: "italic" }}
-        >
+        <Typography variant="h6" color="text.secondary" gutterBottom>
           {lesson.description}
         </Typography>
 
@@ -98,12 +70,7 @@ export default function LessonPage() {
         {lesson.contentType === "TEXT" && (
           <Typography
             variant="body1"
-            sx={{
-              whiteSpace: "pre-wrap",
-              fontSize: "1.2rem",
-              lineHeight: 1.8,
-              color: "#333",
-            }}
+            sx={{ whiteSpace: "pre-wrap", fontSize: "1.2rem", lineHeight: 1.8 }}
           >
             {lesson.content}
           </Typography>
@@ -148,4 +115,3 @@ export default function LessonPage() {
     </Box>
   );
 }
-
