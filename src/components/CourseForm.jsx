@@ -1,4 +1,4 @@
- import { TextField, Button, Box } from '@mui/material';
+ import { TextField, Button, Box,Stack } from '@mui/material';
     import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -46,15 +46,70 @@ import axios from 'axios';
          navigate('/admin')
       };
 
+      const handleCancel=()=>{
+            navigate('/admin')
+      }
       return (
-        <Box component="form" onSubmit={handleSubmit} sx={{ display:'flex',alignContent:'center' ,alignItems:'center',flexDirection: 'column', gap: 2 }}>
-          <TextField name="topic" label="Course Title" value={course.topic} onChange={handleChange} required />
-          <TextField name="description" label="Description" value={course.description} onChange={handleChange} multiline rows={4} />
-          <TextField name="instructor" label="Instructor" value={course.instructor} onChange={handleChange} required />
-          <TextField name="difficultyLevel" label="difficultyLevel" value={course.difficultyLevel} onChange={handleChange} required />
-          <Button type="submit" variant="contained" onClick={handleSubmit}>
-            Add Course
-          </Button>
-        </Box>
+    <Box
+  component="form"
+  onSubmit={handleSubmit}
+  sx={{
+    display: "flex",
+    flexDirection: "column",
+    gap: 2,
+    width: "90%",        // wider form
+    maxWidth: "900px",   // medium max width
+    margin: "auto",      // center on page
+    padding: 3,
+    backgroundColor: "#fff",
+    borderRadius: 2,
+    boxShadow: 3,
+  }}
+>
+  <TextField
+    fullWidth
+    name="topic"
+    label="Course Title"
+    value={course.topic}
+    onChange={handleChange}
+    required
+  />
+  
+  <TextField
+    fullWidth
+    name="description"
+    label="Description"
+    value={course.description}
+    onChange={handleChange}
+    multiline
+    rows={4}
+  />
+  
+  <TextField
+    fullWidth
+    name="instructor"
+    label="Instructor"
+    value={course.instructor}
+    onChange={handleChange}
+    required
+  />
+  
+  <TextField
+    fullWidth
+    name="difficultyLevel"
+    label="Difficulty Level"
+    value={course.difficultyLevel}
+    onChange={handleChange}
+    required
+  />
+    <Stack spacing={2} direction="row"  sx={{alignItems: 'center', justifyContent: "center",  }}> 
+  <Button type="submit" variant="contained" >
+    Add Course
+  </Button>
+  <Button type="text" variant="outlined" onClick={handleCancel}>
+    Cancel
+  </Button>
+  </Stack>
+</Box>
       );
     }

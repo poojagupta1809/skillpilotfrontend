@@ -14,7 +14,7 @@ export default function CourseItem() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedCourse, setEditedCourse] = useState({});
     const [loading, setLoading] = useState(true);
-     const [showComponent, setShowComponent] = useState(false); 
+    const [showComponent, setShowComponent] = useState(false);
 
 
     useEffect(() => {
@@ -62,8 +62,8 @@ export default function CourseItem() {
         setEditedCourse(course);
     };
 
-    const handleViewLesson = ()=>{
-         setShowComponent(true); 
+    const handleViewLesson = () => {
+        setShowComponent(true);
     }
 
     return (
@@ -79,21 +79,32 @@ export default function CourseItem() {
                     <TextField name="difficultyLevel" label="Difficulty Level" value={editedCourse.difficultyLevel} onChange={handleChange} required />
 
                     <Stack spacing={2} direction="row">
-                        
+
                         <Button type="submit" variant="contained">Save</Button>
                         <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
                     </Stack>
                 </Box>
             ) : (
 
-                <Box sx={{ display: 'flex', alignItems: 'center', flexDirection: 'column', gap: 2 }}>
-                    <TextField label="Course Title" value={course.topic} InputProps={{ readOnly: true }} />
-                    <TextField label="Description" value={course.description} multiline rows={4} InputProps={{ readOnly: true }} />
-                    <TextField label="Instructor" value={course.instructor} InputProps={{ readOnly: true }} />
-                    <TextField label="Difficulty Level" value={course.difficultyLevel} InputProps={{ readOnly: true }} />
-                     <Button variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
-                         {showComponent &&   <CourseLessonsSection courseId={courseId} />} 
-                    <Stack spacing={2} direction="row">                      
+                <Box sx={{
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: 2,
+                    width: "90%",        // wider form
+                    maxWidth: "900px",   // medium max width
+                    margin: "auto",      // center on page
+                    padding: 3,
+                    backgroundColor: "#fff",
+                    borderRadius: 2,
+                    boxShadow: 3,
+                }}>
+                    <TextField fullWidth label="Course Title" value={course.topic} InputProps={{ readOnly: true }} />
+                    <TextField fullWidth label="Description" value={course.description} multiline rows={4} InputProps={{ readOnly: true }} />
+                    <TextField fullWidth  label="Instructor" value={course.instructor} InputProps={{ readOnly: true }} />
+                    <TextField fullWidth label="Difficulty Level" value={course.difficultyLevel} InputProps={{ readOnly: true }} />
+                    <Button fullWidth variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
+                    {showComponent && <CourseLessonsSection courseId={courseId} />}
+                    <Stack spacing={2} direction="row" sx={{alignItems: 'center'}}>
                         {/* <Button variant="contained" onClick={() => setIsEditing(true)}>Edit</Button> */}
                         <Button variant="outlined" onClick={() => navigate("/admin")}>Back</Button>
                     </Stack>

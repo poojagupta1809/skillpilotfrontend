@@ -42,7 +42,7 @@ const Sidebar = ({mode,setMode}) => {
               <ListItemIcon>
                <AddCircleOutlineIcon/>
               </ListItemIcon>
-              <ListItemText primary="Creat New Course" />
+              <ListItemText primary="Create New Course" />
             </ListItemButton>
           </ListItem>
           {/* <ListItem disablePadding>
