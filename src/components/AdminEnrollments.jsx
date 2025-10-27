@@ -166,22 +166,16 @@ function AdminEnrollments() {
                       color="text.secondary"
                       sx={{ mb: 1 }}
                     >
-                      Instructor: {course.instructor}
+                     
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       sx={{ mb: 1 }}
                     >
-                      {course.description.length > 80
-                        ? course.description.slice(0, 80) + "..."
-                        : course.description}
+                     
                     </Typography>
-                    <Chip
-                      label={course.difficultyLevel}
-                      color={difficultyColor(course.difficultyLevel)}
-                      size="small"
-                    />
+                  
                   </CardContent>
 
                   <CardActions sx={{ flexDirection: "column", px: 2, pb: 2 }}>
