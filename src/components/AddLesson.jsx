@@ -63,7 +63,7 @@ export default function AddLesson() {
 
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h4" gutterBottom>
        Create New Lesson
       </Typography>
 
@@ -74,7 +74,11 @@ export default function AddLesson() {
           name="title"
           value={lessonData.title}
           onChange={handleChange}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2,
+      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
+      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   
+    }}
+          
         />
 
         <TextField
@@ -85,7 +89,9 @@ export default function AddLesson() {
           name="description"
           value={lessonData.description}
           onChange={handleChange}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2,
+      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
+      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   }}
         />
 
         <TextField
@@ -95,7 +101,9 @@ export default function AddLesson() {
           name="contentType"
           value={lessonData.contentType}
           onChange={handleChange}
-          sx={{ mb: 2 }}
+          sx={{ mb: 2 ,
+      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
+      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   }}
         >
           <MenuItem value="TEXT">Text</MenuItem>
           <MenuItem value="VIDEO">Video</MenuItem>
@@ -105,12 +113,14 @@ export default function AddLesson() {
           <TextField
             fullWidth
             multiline
-            rows={4}
+            rows={15}
             label="Text Content"
             name="content"
             value={lessonData.content}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2 ,
+      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
+      "& .MuiInputLabel-root": { fontSize: "1.2rem" }  }}
           />
         )}
 
@@ -121,7 +131,9 @@ export default function AddLesson() {
             name="videoUrl"
             value={lessonData.videoUrl}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 2 ,
+      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
+      "& .MuiInputLabel-root": { fontSize: "1.1rem" }  }}
           />
         )}
 
