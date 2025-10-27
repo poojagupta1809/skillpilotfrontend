@@ -40,6 +40,8 @@ function HomePage() {
  
          <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
         <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
+       <Route path="/courses/myenrollments" element={<MyEnrollments />} />
+        
      
 
         </Routes>
