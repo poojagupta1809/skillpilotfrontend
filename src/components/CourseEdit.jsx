@@ -6,15 +6,16 @@ import axios from 'axios';
 import { useEffect } from 'react';
 
 export default function CourseEdit() {
+    let authorization = 'Bearer ' + sessionStorage.getItem("token");
+    axios.defaults.headers.common['Authorization'] = authorization;
     const navigate = useNavigate();
     const { courseId } = useParams();
-
     const [course, setCourse] = useState(null);
     const [isEditing, setIsEditing] = useState(false);
     const [editedCourse, setEditedCourse] = useState({});
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
+    useEffect(() => {     
         axios.get(`http://localhost:8088/api/courses/${courseId}`)
             .then((response) => {
                 setCourse(response.data);

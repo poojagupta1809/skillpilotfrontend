@@ -33,24 +33,20 @@ function HomePage() {
           <Route path="/signup" element={<Signup />} />
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/About" element={<AboutContent />} />
-          <Route path="/course/add" element={<Protected Role={'ADMIN'} to="/course/add" Component={CourseForm} ></Protected>} ></Route>
-          <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>} />
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
-          <Route path="/lessonlist" element={<LessonList />} />
+          <Route path="/lessonlist" element={<LessonList />} /> 
           <Route path="/lessonsection" element={<CourseLessonsSection />} />
           <Route path="/courses/lesson/addlesson" element={<AddLesson />} />
           <Route path="/courses/lesson/updatelesson" element={<UpdateLesson />} />
-
           <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
           <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/courses/myenrollments" element={<MyEnrollments />} />
-          <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={CourseItem} ></Protected>} />
-          <Route path='/admin/course/edit/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course/edit/:courseId" Component={CourseEdit} ></Protected>} />
-          <Route path="/courses/admin-enrollments" element={<AdminEnrollments/>} />
-
-
-
+          <Route path="/admin" element={<Protected role="ADMIN"> < AdminDefaultPage /> </Protected>} />
+          <Route path="/course/add" element={<Protected role="ADMIN" ><CourseForm /></Protected>} ></Route>
+          <Route path="/admin/course-details/:courseId" element={<Protected role="ADMIN">< CourseItem /></Protected>} />
+          <Route path="/admin/course/edit/:courseId" element={<Protected role="ADMIN"> <CourseEdit /> </Protected>} />
+          <Route path="/courses/admin-enrollments" element={<AdminEnrollments />} />
         </Routes>
       </Container>
 

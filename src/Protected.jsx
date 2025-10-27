@@ -1,24 +1,15 @@
-import React,{useEffect} from 'react'
+import React,{Children, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom';
-export default function Protected(props) {
-    const {Component}=props
+export default function Protected({role,children}) {
     const navigate = useNavigate();
     
-    useEffect(()=>{ 
-         const admin=props.Role;
         const userRole=sessionStorage.getItem('role')  
-        if(admin===userRole){
-            console.log(userRole,"can access")
-            return navigate(props.to)
+        if(role===userRole){
+            return  children;
         }
         else{
+            console.log(userRole,"can not access")
             return navigate('/');
            
         }
-    },[])
-  return (
-    <div>
-      <Component/>
-    </div>
-  )
 }
