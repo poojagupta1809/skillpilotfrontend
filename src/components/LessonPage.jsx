@@ -6,11 +6,11 @@ export default function LessonPage() {
   const navigate = useNavigate();
   const location = useLocation();
 
-  // ✅ Access lesson data from navigation state
+  
   const lesson = location.state?.lesson;
 
   if (!lesson) {
-    // If user directly visits the URL without navigation state, show fallback
+   
     return (
       <Box sx={{ p: 5, textAlign: "center" }}>
         <Typography variant="h5" color="error">
@@ -27,7 +27,6 @@ export default function LessonPage() {
     );
   }
 
-  // Helper to extract YouTube embed URL
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     const match = url.match(
