@@ -1,7 +1,6 @@
 import { ThemeProvider } from '@emotion/react';
 import { Box, createTheme, Grid, Paper, Container, Stack } from '@mui/material';
 import React, { useState } from 'react'
-import Navbar from './components/Navbar';
 import Content from './components/DefaultContent';
 import Sidebar from './components/Sidebar';
 
