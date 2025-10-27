@@ -4,7 +4,7 @@ import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function AddLesson() {
-  const { courseId } = useParams(); // get courseId from URL
+  const { courseId } = useParams(); 
   const navigate = useNavigate();
 
   let authorization = "Bearer " + sessionStorage.getItem("token");
@@ -42,13 +42,13 @@ export default function AddLesson() {
           content: "",
           videoUrl: "",
         });
-        // navigate back to course lessons page if you want
+      
         navigate(`/courses/${courseId}`);
       })
       .catch((err) => {
         console.error(err);
         if (err.response && err.response.data) {
-          // assuming backend returns validation errors as { field: "error" }
+         
           const backendErrors = [];
           const data = err.response.data;
           for (const key in data) {
@@ -64,7 +64,7 @@ export default function AddLesson() {
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
       <Typography variant="h5" gutterBottom>
-        ➕ Add New Lesson
+       Create New Lesson
       </Typography>
 
       <form onSubmit={handleSubmit}>
@@ -99,7 +99,6 @@ export default function AddLesson() {
         >
           <MenuItem value="TEXT">Text</MenuItem>
           <MenuItem value="VIDEO">Video</MenuItem>
-          <MenuItem value="QUIZ">Quiz</MenuItem>
         </TextField>
 
         {lessonData.contentType === "TEXT" && (
@@ -133,7 +132,6 @@ export default function AddLesson() {
         </Box>
       </form>
 
-      {/* Backend errors */}
       <Snackbar
         open={errors.length > 0}
         autoHideDuration={6000}
@@ -149,7 +147,7 @@ export default function AddLesson() {
         </Alert>
       </Snackbar>
 
-      {/* Success message */}
+
       <Snackbar
         open={!!successMessage}
         autoHideDuration={4000}
