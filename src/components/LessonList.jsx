@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react"; // <-- added useState
 import {
   List,
   ListItemButton,
@@ -17,14 +17,15 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-
 export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
-  let authorization = 'Bearer ' + sessionStorage.getItem("token");
-  axios.defaults.headers.common['Authorization'] = authorization;
+  const [selectedLessonId, setSelectedLessonId] = useState(null);
   const navigate = useNavigate();
+  const authorization = "Bearer " + sessionStorage.getItem("token");
+  axios.defaults.headers.common["Authorization"] = authorization;
 
   const handleOpenLesson = (lesson) => {
-    navigate(`/lesson/${lesson.lessonId}`, { state: { lesson } });
+    setSelectedLessonId(lesson.lessonId);
+    navigate(`/courses/lesson/${lesson.lessonId}`, { state: { lesson } });
   };
 
   return (
@@ -32,11 +33,15 @@ export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
       {lessons.map((lesson) => (
         <li key={lesson.lessonId} style={{ listStyle: "none" }}>
           <ListItemButton
+            selected={selectedLessonId === lesson.lessonId} 
             onClick={() => handleOpenLesson(lesson)}
             sx={{
               mb: 1,
               borderRadius: 2,
-              "&:hover": { bgcolor: "primary.light" },
+              "&.Mui-selected": {
+                bgcolor: "primary.light",
+                "&:hover": { bgcolor: "primary.main" },
+              },
             }}
           >
             {lesson.thumbnailUrl && (
