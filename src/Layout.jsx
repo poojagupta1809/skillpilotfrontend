@@ -16,7 +16,6 @@ export default function Layout({ children }) {
     return (
         <ThemeProvider theme={darkTheme}>
             <Box bgcolor={"background.default"} color={"text.primary"} sx={{ flexGrow: 1, height: '100%' }} >
-                <Navbar />
                 <Container sx={{ mx: 0, md: 0, height: '100%' }} maxWidth={false} id="home" >
                     <Stack
                         direction={{ xs: 'row' }}

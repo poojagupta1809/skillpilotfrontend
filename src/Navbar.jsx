@@ -15,18 +15,34 @@ function NavBar() {
     
   const handleLogout = () => {
     console.log("Logging out...");
-    sessionStorage.setItem("token","")
+    sessionStorage.clear()
     navigate('/signin'); 
+    console.log('Navigation called.');
     
   };
 
 
   if (currentPath === "/") {
-    navLinks = [
-      { path: "/signin", label: "SignIn" },
-      { path: "/signup", label: "SignUp" },
-      { path: "/About", label: "About" },
-    ];
+    if(sessionStorage.getItem("token")===null){
+      navLinks = [
+        { path: "/signin", label: "SignIn" },
+        { path: "/signup", label: "SignUp" },
+        { path: "/About", label: "About" },
+      ];
+      }else if(sessionStorage.getItem("role")==="ADMIN")
+      {
+          navLinks = [
+          { path: "/admin", label: "Courses" },
+          { path: "/About", label: "About" },
+        ];
+      }
+      else if(sessionStorage.getItem("role")==="LEARNER")
+      {
+          navLinks = [
+          { path: "/courses", label: "Courses" },
+          { path: "/About", label: "About" },
+        ];
+      }
   } else if (currentPath === "/signin") {
     navLinks = [
         { path: "/", label: "Back to Home" },
@@ -39,7 +55,11 @@ function NavBar() {
    
     ];
   } else {
-    navLinks = [{ path: "/", label: "Home" }];
+     navLinks = [
+          { path: "/", label: "Home" },
+          { path: "/About", label: "About" },
+        ];
+    
   }
 
   return (
@@ -55,8 +75,6 @@ function NavBar() {
           </IconButton>
  
         </Box>
-
-
 
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Skill Pilot
@@ -76,7 +94,7 @@ function NavBar() {
             </Button>
           ))}
 
-           {sessionStorage.getItem("token")!="" && ( // Conditionally render logout button
+           {sessionStorage.getItem("token")!=null && ( // Conditionally render logout button
           <IconButton
             color="inherit"
             aria-label="logout"
