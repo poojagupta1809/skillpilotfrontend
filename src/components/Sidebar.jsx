@@ -28,6 +28,9 @@ const Sidebar = ({mode,setMode}) => {
   const handleCreate=()=>{
     navigate('/course/add')
   }
+  const handleEnrollment=()=>{
+    navigate('/courses/admin-enrollments')
+  }
   return (
     // <Grid xs={6} > 
     <Box  p={4} sx={{ display: { xs: "none", sm: "block" }}} height={'100%'} >
@@ -51,7 +54,7 @@ const Sidebar = ({mode,setMode}) => {
             </ListItemButton>
           </ListItem> */}
           <ListItem disablePadding>
-            <ListItemButton  href="#simple-list">
+            <ListItemButton  onClick={handleEnrollment} href="/courses/admin-enrollments">
               <ListItemIcon>
                 <AccountBox />
               </ListItemIcon>
