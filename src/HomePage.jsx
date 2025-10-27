@@ -20,10 +20,11 @@ import CourseLessonsSection from './components/CourseLessonsSection';
 import CourseItem from './components/CourseItem';
 import MyEnrollments from './components/MyEnrollments';
 
+
 function HomePage() {
   return (
     <Router>
-    <NavBar/>
+      <NavBar />
       <Container maxWidth={false} sx={{ mt: 4, mb: 4 }}>
         <Routes>
           <Route path="/" element={<HomeContent />} />
@@ -31,28 +32,27 @@ function HomePage() {
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/About" element={<AboutContent />} />
           <Route path="/course/add" element={<Protected Role={'ADMIN'} to="/course/add" Component={CourseForm} ></Protected>} ></Route>
-          <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>}/>
+          <Route path='/admin' element={<Protected Role={'ADMIN'} to="/admin" Component={AdminDefaultPage} ></Protected>} />
           <Route path="/courses" element={<ExploreCourses />} />
           <Route path="/course/:id" element={<CourseDetails />} />
-          <Route path="/lessonlist" element={<LessonList />}/>
-          <Route path="/lessonsection" element={<CourseLessonsSection/>}/>
-          <Route path="/courses/lesson/addlesson" element={<AddLesson />}/>
-          <Route path="/courses/lesson/updatelesson" element={<UpdateLesson/>}/>
- 
-         <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
-        <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
-       <Route path="/courses/myenrollments" element={<MyEnrollments />} />
-        
-     
+          <Route path="/lessonlist" element={<LessonList />} />
+          <Route path="/lessonsection" element={<CourseLessonsSection />} />
+          <Route path="/courses/lesson/addlesson" element={<AddLesson />} />
+          <Route path="/courses/lesson/updatelesson" element={<UpdateLesson />} />
+
+          <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
+          <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
+          <Route path="/courses/myenrollments" element={<MyEnrollments />} />
+          <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={AdminDefaultPage} ></Protected>} />
+
 
         </Routes>
       </Container>
 
     </Router>
 
-   
+
   );
 }
 
 export default HomePage;
-       
