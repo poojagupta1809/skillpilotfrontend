@@ -3,6 +3,7 @@ import { Card, CardContent, Typography, CircularProgress, Box, TextField, Autoco
 import axios from "axios";
 import { useNavigate, useLocation } from "react-router-dom";
 import "./ExploreCourses.css";
+import "./MyEnrollments.jsx";
 
 const ExploreCourses = () => {
   const authorization = "Bearer " + sessionStorage.getItem("token");
@@ -102,7 +103,7 @@ const ExploreCourses = () => {
         <Typography
           variant="subtitle1"
           className="my-courses-link"
-          onClick={() => navigate("/myenrollmentss")}
+          onClick={() => navigate("/courses/myenrollments")}
           sx={{ cursor: "pointer" }}
         >
           My Courses

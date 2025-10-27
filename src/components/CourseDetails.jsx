@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
 import { Box, Typography, CircularProgress, Card, CardContent, Button } from "@mui/material";
 import CourseLessonsSection from "./CourseLessonsSection";
-import "./CourseDetails.css"; // <-- import CSS
+import "./CourseDetails.css";
 
 export default function CourseDetails() {
   let authorization = "Bearer " + sessionStorage.getItem("token");
@@ -13,6 +13,8 @@ export default function CourseDetails() {
   const navigate = useNavigate();
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [userEnrollments, setUserEnrollments] = useState([]);
+  const userId = sessionStorage.getItem("userId");
 
   useEffect(() => {
    
@@ -29,9 +31,21 @@ export default function CourseDetails() {
   }, [id]);
 
   const handleEnroll = () => {
-    console.log("Enrolling in course:", id);
-    navigate("/my-enrollments");
-  };
+  axios
+    .post(
+      `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
+    )
+    .then((res) => {
+      alert("You have successfully enrolled in this course!");
+      setEnrolled(true);
+    })
+    .catch((err) => {
+      console.error("Error enrolling:", err);
+      if (err.response && err.response.data) {
+        alert(`Enrollment failed: ${err.response.data}`);
+      } 
+    });
+};
 
   if (loading)
     return (
@@ -65,9 +79,17 @@ export default function CourseDetails() {
           </div>
 
           <div className="enroll-button-container">
-            <Button variant="contained" color="primary" onClick={handleEnroll}>
-              Enroll
-            </Button>
+            <Button
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  onClick={(e) => handleEnroll(e, course.courseId)}
+                  disabled={userEnrollments.includes(course.courseId)}
+                >
+                  {userEnrollments.includes(course.courseId)
+                    ? "Enrolled"
+                    : "Enroll"}
+                </Button>
           </div>
         </CardContent>
       </Card>
