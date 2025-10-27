@@ -166,22 +166,16 @@ function AdminEnrollments() {
                       color="text.secondary"
                       sx={{ mb: 1 }}
                     >
-                      Instructor: {course.instructor}
+                     
                     </Typography>
                     <Typography
                       variant="body2"
                       color="text.secondary"
                       sx={{ mb: 1 }}
                     >
-                      {course.description.length > 80
-                        ? course.description.slice(0, 80) + "..."
-                        : course.description}
+                     
                     </Typography>
-                    <Chip
-                      label={course.difficultyLevel}
-                      color={difficultyColor(course.difficultyLevel)}
-                      size="small"
-                    />
+                  
                   </CardContent>
 
                   <CardActions sx={{ flexDirection: "column", px: 2, pb: 2 }}>
@@ -196,11 +190,9 @@ function AdminEnrollments() {
                             "linear-gradient(90deg, #3B82F6 0%, #1E3A8A 100%)",
                         },
                       }}
-                      onClick={() =>
-                        navigate(`/course/${course.courseId}`)
-                      }
+                      
                     >
-                      View Course
+                     Enrollments
                     </Button>
 
                     {/* Display all users enrolled in this course */}
