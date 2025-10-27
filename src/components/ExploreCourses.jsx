@@ -26,6 +26,9 @@ const ExploreCourses = () => {
       const response = await axios.get("http://localhost:8088/api/courses/view");
       setCourses(response.data);
       if (!response.data.length) setNoResults(true);
+
+      const topics = [...new Set(response.data.map((course) => course.topic))];
+      setTopicSuggestions(topics.filter(Boolean));
     } catch (error) {
       console.error("Error fetching all courses:", error);
       setNoResults(true);
@@ -49,16 +52,8 @@ const ExploreCourses = () => {
     }
   };
 
-  const fetchAvailableTopics = async () => {
-    try {
-      const response = await axios.get("http://localhost:8088/api/courses/topics");
-      setTopicSuggestions(response.data);
-    } catch (error) {
-      console.error("Error fetching topics:", error);
-    }
-  };
-
   const handleSearchInputChange = (event, value) => setSearchTerm(value);
+
   const handleSearch = () => {
     const query = searchTerm.trim();
     if (!query) return;
@@ -84,8 +79,6 @@ const ExploreCourses = () => {
       setSelectedDifficulty([]);
       fetchAllCourses();
     }
-
-    fetchAvailableTopics();
   }, [location.search]);
 
   useEffect(() => {
@@ -102,7 +95,6 @@ const ExploreCourses = () => {
 
   return (
     <Box className="explore-container">
-      {/* Header with Explore Courses title and My Courses link */}
       <Box className="header-container">
         <Typography variant="h4" className="page-title">
           Explore Courses
@@ -110,7 +102,7 @@ const ExploreCourses = () => {
         <Typography
           variant="subtitle1"
           className="my-courses-link"
-          onClick={() => navigate("/my-enrollmentss")}
+          onClick={() => navigate("/myenrollmentss")}
           sx={{ cursor: "pointer" }}
         >
           My Courses
