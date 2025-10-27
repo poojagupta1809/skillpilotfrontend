@@ -15,8 +15,8 @@ function NavBar() {
     
   const handleLogout = () => {
     console.log("Logging out...");
-    sessionStorage.clear()
     navigate('/signin'); 
+    sessionStorage.clear()
     console.log('Navigation called.');
     
   };

@@ -14,7 +14,7 @@ export default function Protected(props) {
             return navigate('/');
            
         }
-    })
+    },[])
   return (
     <div>
       <Component/>

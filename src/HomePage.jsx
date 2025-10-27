@@ -18,6 +18,7 @@ import AddLesson from './components/AddLesson';
 import UpdateLesson from './components/UpdateLesson';
 import CourseLessonsSection from './components/CourseLessonsSection';
 import CourseItem from './components/CourseItem';
+import MyEnrollments from './components/MyEnrollments';
 
 function HomePage() {
   return (
