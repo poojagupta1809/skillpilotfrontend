@@ -2,6 +2,7 @@ import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 import { Box, TextField, Button, Stack } from "@mui/material";
+import CourseLessonsSection from "./CourseLessonsSection";
 
 export default function CourseItem() {
     let authorization = 'Bearer ' + sessionStorage.getItem("token");
@@ -13,6 +14,7 @@ export default function CourseItem() {
     const [isEditing, setIsEditing] = useState(false);
     const [editedCourse, setEditedCourse] = useState({});
     const [loading, setLoading] = useState(true);
+     const [showComponent, setShowComponent] = useState(false); 
 
 
     useEffect(() => {
@@ -60,6 +62,10 @@ export default function CourseItem() {
         setEditedCourse(course);
     };
 
+    const handleViewLesson = ()=>{
+         setShowComponent(true); 
+    }
+
     return (
         <>
             {isEditing ? (
@@ -73,6 +79,7 @@ export default function CourseItem() {
                     <TextField name="difficultyLevel" label="Difficulty Level" value={editedCourse.difficultyLevel} onChange={handleChange} required />
 
                     <Stack spacing={2} direction="row">
+                        
                         <Button type="submit" variant="contained">Save</Button>
                         <Button variant="outlined" onClick={handleCancel}>Cancel</Button>
                     </Stack>
@@ -84,8 +91,9 @@ export default function CourseItem() {
                     <TextField label="Description" value={course.description} multiline rows={4} InputProps={{ readOnly: true }} />
                     <TextField label="Instructor" value={course.instructor} InputProps={{ readOnly: true }} />
                     <TextField label="Difficulty Level" value={course.difficultyLevel} InputProps={{ readOnly: true }} />
-
-                    <Stack spacing={2} direction="row">
+                     <Button variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
+                         {showComponent &&   <CourseLessonsSection courseId={courseId} />} 
+                    <Stack spacing={2} direction="row">                      
                         <Button variant="contained" onClick={() => setIsEditing(true)}>Edit</Button>
                         <Button variant="outlined" onClick={() => navigate("/admin")}>Back</Button>
                     </Stack>
