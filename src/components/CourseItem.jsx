@@ -94,7 +94,7 @@ export default function CourseItem() {
                      <Button variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
                          {showComponent &&   <CourseLessonsSection courseId={courseId} />} 
                     <Stack spacing={2} direction="row">                      
-                        <Button variant="contained" onClick={() => setIsEditing(true)}>Edit</Button>
+                        {/* <Button variant="contained" onClick={() => setIsEditing(true)}>Edit</Button> */}
                         <Button variant="outlined" onClick={() => navigate("/admin")}>Back</Button>
                     </Stack>
                 </Box>
