@@ -190,11 +190,9 @@ function AdminEnrollments() {
                             "linear-gradient(90deg, #3B82F6 0%, #1E3A8A 100%)",
                         },
                       }}
-                      onClick={() =>
-                        navigate(`/course/${course.courseId}`)
-                      }
+                      
                     >
-                      View Course
+                     Enrollments
                     </Button>
 
                     {/* Display all users enrolled in this course */}
