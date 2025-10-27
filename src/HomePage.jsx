@@ -20,6 +20,7 @@ import CourseLessonsSection from './components/CourseLessonsSection';
 import CourseItem from './components/CourseItem';
 import MyEnrollments from './components/MyEnrollments';
 import AdminEnrollments from './components/AdminEnrollments';
+import CourseEdit from './components/CourseEdit';
 
 
 function HomePage() {
@@ -45,6 +46,7 @@ function HomePage() {
           <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/courses/myenrollments" element={<MyEnrollments />} />
           <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={CourseItem} ></Protected>} />
+          <Route path='/admin/course/edit/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course/edit/:courseId" Component={CourseEdit} ></Protected>} />
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments/>} />
 
 

@@ -5,9 +5,10 @@ export default function Protected(props) {
     const navigate = useNavigate();
     
     useEffect(()=>{ 
-         const admin='ADMIN';
-        // sessionStorage.getItem('roleType')
-        if(props.Role===admin){
+         const admin=props.Role;
+        const userRole=sessionStorage.getItem('role')  
+        if(admin===userRole){
+            console.log(userRole,"can access")
             return navigate(props.to)
         }
         else{
