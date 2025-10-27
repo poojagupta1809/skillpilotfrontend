@@ -1,104 +1,194 @@
 import React, { useEffect, useState } from "react";
+import { Card, CardContent, Typography, CircularProgress, Box, TextField, Autocomplete, FormGroup, FormControlLabel, Checkbox, Paper, Divider, Alert } from "@mui/material";
 import axios from "axios";
-import {
-  Grid,
-  Card,
-  CardContent,
-  Typography,
-  CardMedia,
-  CircularProgress,
-  Box,
-  Button,
-} from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
+import "./ExploreCourses.css";
 
-export default function ExploreCourses() {
+const ExploreCourses = () => {
+  const authorization = "Bearer " + sessionStorage.getItem("token");
+  axios.defaults.headers.common["Authorization"] = authorization;
+
   const [courses, setCourses] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const navigate = useNavigate();
-let authorization = 'Bearer ' + sessionStorage.getItem("token");
-  axios.defaults.headers.common['Authorization'] = authorization;
-  useEffect(() => {
-    axios
-      .get("http://localhost:8088/api/courses/view")
-      .then((res) => {
-        setCourses(res.data);
-        setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error fetching courses:", err);
-        setLoading(false);
-      });
-  }, []);
+  const [loading, setLoading] = useState(false);
+  const [searchTerm, setSearchTerm] = useState("");
+  const [topicSuggestions, setTopicSuggestions] = useState([]);
+  const [selectedDifficulty, setSelectedDifficulty] = useState([]);
+  const [showFilters, setShowFilters] = useState(false);
+  const [noResults, setNoResults] = useState(false);
 
-  const handleEnroll = (e, courseId) => {
-    e.stopPropagation(); 
-    console.log("Enrolling in course:", courseId);
-    // TODO:
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const fetchAllCourses = async () => {
+    setLoading(true);
+    setNoResults(false);
+    try {
+      const response = await axios.get("http://localhost:8088/api/courses/view");
+      setCourses(response.data);
+      if (!response.data.length) setNoResults(true);
+    } catch (error) {
+      console.error("Error fetching all courses:", error);
+      setNoResults(true);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  if (loading)
-    return (
-      <Box sx={{ display: "flex", justifyContent: "center", py: 10 }}>
-        <CircularProgress />
-      </Box>
+  const fetchFilteredCourses = async (params) => {
+    setLoading(true);
+    setNoResults(false);
+    try {
+      const response = await axios.get("http://localhost:8088/api/courses/filter", { params });
+      setCourses(response.data);
+      if (!response.data.length) setNoResults(true);
+    } catch (error) {
+      console.error("Error fetching filtered courses:", error);
+      setNoResults(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchAvailableTopics = async () => {
+    try {
+      const response = await axios.get("http://localhost:8088/api/courses/topics");
+      setTopicSuggestions(response.data);
+    } catch (error) {
+      console.error("Error fetching topics:", error);
+    }
+  };
+
+  const handleSearchInputChange = (event, value) => setSearchTerm(value);
+  const handleSearch = () => {
+    const query = searchTerm.trim();
+    if (!query) return;
+    navigate(`/courses?search=${encodeURIComponent(query)}`, { replace: false });
+  };
+
+  const handleFilterChange = (value) => {
+    setSelectedDifficulty((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
     );
+  };
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const query = params.get("search");
+
+    if (query) {
+      setSearchTerm(query);
+      setShowFilters(true);
+      fetchFilteredCourses({ topic: query });
+    } else {
+      setShowFilters(false);
+      setSelectedDifficulty([]);
+      fetchAllCourses();
+    }
+
+    fetchAvailableTopics();
+  }, [location.search]);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const topic = params.get("search");
+
+    if (showFilters && topic) {
+      fetchFilteredCourses({
+        topic,
+        difficultyLevel: selectedDifficulty.join(",") || undefined,
+      });
+    }
+  }, [selectedDifficulty]);
 
   return (
-    <Box sx={{ p: 4 }}>
-      <Typography variant="h5" fontWeight="bold" gutterBottom>
-        Available Courses
-      </Typography>
+    <Box className="explore-container">
+      {/* Header with Explore Courses title and My Courses link */}
+      <Box className="header-container">
+        <Typography variant="h4" className="page-title">
+          Explore Courses
+        </Typography>
+        <Typography
+          variant="subtitle1"
+          className="my-courses-link"
+          onClick={() => navigate("/my-enrollmentss")}
+          sx={{ cursor: "pointer" }}
+        >
+          My Courses
+        </Typography>
+      </Box>
 
-      <Grid container spacing={3}>
-        {courses.map((course) => (
-          <Grid item xs={12} sm={6} md={4} key={course.courseId}>
-            <Card
-              onClick={() => navigate(`/course/${course.courseId}`)}
-              sx={{
-                borderRadius: 2,
-                boxShadow: 3,
-                cursor: "pointer",
-                "&:hover": { boxShadow: 6, transform: "scale(1.02)" },
-                transition: "all 0.3s ease",
-              }}
-            >
-              {course.image && (
-                <CardMedia
-                  component="img"
-                  height="160"
-                  image={course.image}
-                  alt={course.topic}
+      <Autocomplete
+        freeSolo
+        options={topicSuggestions}
+        inputValue={searchTerm}
+        onInputChange={handleSearchInputChange}
+        onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+        renderInput={(params) => (
+          <TextField
+            {...params}
+            label="Search by topic..."
+            variant="outlined"
+            className="search-bar"
+          />
+        )}
+      />
+
+      <Divider className="divider" />
+
+      <Box className="main-content">
+        {showFilters && (
+          <Paper className="filters-panel">
+            <Typography variant="h6" gutterBottom>
+              Difficulty
+            </Typography>
+            <FormGroup>
+              {["Beginner", "Intermediate", "Advanced"].map((level) => (
+                <FormControlLabel
+                  key={level}
+                  control={
+                    <Checkbox
+                      checked={selectedDifficulty.includes(level)}
+                      onChange={() => handleFilterChange(level)}
+                    />
+                  }
+                  label={level}
                 />
-              )}
-              <CardContent>
-                <Typography variant="h6" fontWeight="bold" gutterBottom>
-                  {course.topic}
-                </Typography>
-                <Typography variant="body2" color="text.secondary" noWrap>
-                  {course.description}
-                </Typography>
-                <Typography
-                  variant="subtitle1"
-                  sx={{ mt: 1, color: "#5728D6" }}
-                >
-                  Difficulty: {course.difficultyLevel}
-                </Typography>
+              ))}
+            </FormGroup>
+          </Paper>
+        )}
 
-                {/* Enroll Button does nothing for now */}
-                <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2 }}
-                  onClick={(e) => handleEnroll(e, course.courseId)}
-                >
-                  Enroll
-                </Button>
-              </CardContent>
-            </Card>
-          </Grid>
-        ))}
-      </Grid>
+        {loading ? (
+          <Box className="loading-container">
+            <CircularProgress />
+          </Box>
+        ) : noResults ? (
+          <Alert severity="info" sx={{ mt: 3 }}>
+            No courses found for “{searchTerm}”. Try another topic.
+          </Alert>
+        ) : (
+          <Box className="courses-container">
+            {courses.map((course) => (
+              <Card
+                key={course.courseId}
+                className="course-card"
+                onClick={() => navigate(`/course/${course.courseId}`)}
+              >
+                <CardContent className="card-content">
+                  <Typography className="course-title">{course.title}</Typography>
+                  <Typography className="course-description">{course.description}</Typography>
+                  <Typography className="instructor-text">
+                    Instructor: {course.instructorName || course.instructor || "Unknown"}
+                  </Typography>
+                  <Typography className="difficulty-text">{course.difficultyLevel}</Typography>
+                </CardContent>
+              </Card>
+            ))}
+          </Box>
+        )}
+      </Box>
     </Box>
   );
-}
+};
+
+export default ExploreCourses;
