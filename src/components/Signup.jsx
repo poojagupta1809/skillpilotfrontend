@@ -13,38 +13,48 @@ function Signup() {
 
   const[user,setUser]=useState( {"username":"" , "password":"","email":"", "role":"learner"})
 
+   // Validation helpers now return arrays of error messages instead of mutating state directly
    const validateName = (value) => {
-       if (value.trim() === '') {
-             setErrors(prevErrors => [...prevErrors, "Name is Required"]);
+       const errs = [];
+       if (!value || value.trim() === '') {
+             errs.push("Name is required");
         }
+        return errs;
     };
 
     const validateEmail = (value) => {
+        const errs = [];
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (value.trim() === '') {
-           setErrors(prevErrors => [...prevErrors, "Email Is Required"]);
+        if (!value || value.trim() === '') {
+           errs.push("Email is required");
         } else if (!emailRegex.test(value)) {
-            setErrors(prevErrors => [...prevErrors, "Email is not valid"]);
-        
+            errs.push("Email is not valid");
         }
+        return errs;
     };
 
  const validatePassword = (value) => {
-
-   if (value.trim() === '') {
-        setErrors(prevErrors => [...prevErrors, "Password can not be blank"]);
-    } else if (value.length < 8) {
-      setErrors(prevErrors => [...prevErrors, "Password must be at least 8 characters long."]);
-    } else if (!/[A-Z]/.test(value)) {
-      setErrors(prevErrors => [...prevErrors,'Password must contain at least one uppercase letter.']);
-    } else if (!/[a-z]/.test(value)) {
-      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one lowercase letter.']);
-    } else if (!/[0-9]/.test(value)) {
-      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one number.']);
-    } else if (!/[!@#$%^&*]/.test(value)) {
-      setErrors(prevErrors => [...prevErrors, 'Password must contain at least one special character (!@#$%^&*).']);
-    } 
-    
+   const errs = [];
+   if (!value || value.trim() === '') {
+        errs.push("Password cannot be blank");
+    } else {
+      if (value.length < 8) {
+        errs.push("Password must be at least 8 characters long.");
+      }
+      if (!/[A-Z]/.test(value)) {
+        errs.push('Password must contain at least one uppercase letter.');
+      }
+      if (!/[a-z]/.test(value)) {
+        errs.push('Password must contain at least one lowercase letter.');
+      }
+      if (!/[0-9]/.test(value)) {
+        errs.push('Password must contain at least one number.');
+      }
+      if (!/[!@#$%^&*]/.test(value)) {
+        errs.push('Password must contain at least one special character (!@#$%^&*).');
+      }
+    }
+    return errs;
   }
   
     const handleInput=(event)=>{
@@ -59,23 +69,30 @@ function Signup() {
 
   const handleSubmit = (event) => {
     event.preventDefault();
+    // collect all validation errors
+    const validationErrors = [];
+
+    validationErrors.push(...validateName(user.username));
+    validationErrors.push(...validateEmail(user.email));
+    validationErrors.push(...validatePassword(user.password));
+
     if (user.password !== confirmPassword) {
-          setErrors(prevErrors => [...prevErrors, "Passwords don't match"]);
+          validationErrors.push("Passwords don't match");
     }
 
-    validateName(user.username);
-    validateEmail(user.email);
-    validatePassword(user.password);
-   
+    if (validationErrors.length > 0) {
+      setErrors(validationErrors);
+      return; // don't submit to server when client-side validation fails
+    }
+
     console.log("User-" + user.username + " " + user.password + " " +user.email + " " + user.role);
 
     axios.post("http://localhost:8088/api/users/register-user",user)
             .then(
-                (response)=>
+                 (response)=>
                 {
-                  //console.log(response.data.token)
                   console.log(response.data.username);
-                  console.log("Signup successful ✅");
+                  console.log("Signup successful");
 
                  navigate("/SignIn");
                
@@ -84,29 +101,52 @@ function Signup() {
             .catch(
                 (err)=>
                     {
-                       
-                      let message = "Server not reachable. Please try again later.";
+                      // Normalize backend errors into an array of strings
+                      let serverErrors = [];
 
                       if (err.response) {
-                        if (err.response.status === 409) {
-                          console.log(err.response.data.error);
-                          setErrors(err.response.data.error)
-                          message = "UserName/Email Already Exists";
-                        } else if (err.response.data) {
-                          message = typeof err.response.data === "string"
-                            ? err.response.data
-                            : err.response.data.message || "Signup failed. Try again.";
-                            // setErrors(message); 
+                        // try common API shapes
+                        const data = err.response.data;
+                        if (Array.isArray(data)) {
+                          serverErrors = data.map(String);
+                        } else if (data && typeof data === 'object') {
+                          // prefer `error` or `errors` or `message`
+                          if (data.error) {
+                            serverErrors = Array.isArray(data.error) ? data.error.map(String) : [String(data.error)];
+                          } else if (data.errors) {
+                            serverErrors = Array.isArray(data.errors) ? data.errors.map(String) : [String(data.errors)];
+                          } else if (data.message) {
+                            serverErrors = [String(data.message)];
+                          } else {
+                            serverErrors = [JSON.stringify(data)];
+                          }
+                        } else {
+                          serverErrors = [String(data)];
                         }
+
+                        // specific handling for 409 conflict (username/email exists)
+                        if (err.response.status === 409 && err.response.data && err.response.data.error) {
+                          serverErrors = Array.isArray(err.response.data.error) ? err.response.data.error.map(String) : [String(err.response.data.error)];
+                        }
+                      } else {
+                        serverErrors = ["Server not reachable. Please try again later."];
                       }
 
-                      console.error("Backend error:", message);
-                        
+                      setErrors(serverErrors);
+
+                      console.error("Backend error:", serverErrors);
+
                     }
             )
     
   };
-  
+
+  // Close handler for Snackbar/Alert. Ignore clickaway so users can click outside without dismissing.
+  const handleSnackClose = (event, reason) => {
+    if (reason === 'clickaway') return;
+    setErrors([]);
+  };
+
   return (
     <Container component="main" maxWidth="xs">
       <Box
@@ -182,12 +222,16 @@ function Signup() {
 
      <Snackbar
       open={errors.length>0}
-      autoHideDuration={4000}
-      onClose={() => setErrors("")}
+      autoHideDuration={6000}
+      onClose={handleSnackClose}
       anchorOrigin={{ vertical: "top", horizontal: "center" }}
      >
-      <Alert severity="error" onClose={() => setErrors([])}>
-        {errors}
+      <Alert severity="error" onClose={handleSnackClose} sx={{ whiteSpace: 'normal' }}>
+        <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
+          {errors.map((errMsg, idx) => (
+            <li key={idx}>{errMsg}</li>
+          ))}
+        </ul>
       </Alert>
       </Snackbar>
        </Container>
@@ -195,3 +239,4 @@ function Signup() {
 }
 
 export default Signup;
+
