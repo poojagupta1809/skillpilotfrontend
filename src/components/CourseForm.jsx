@@ -1,4 +1,4 @@
- import { TextField, Button, Box,Stack } from '@mui/material';
+ import { TextField, Button, Box,Stack ,Typography} from '@mui/material';
     import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
@@ -66,6 +66,9 @@ import axios from 'axios';
     boxShadow: 3,
   }}
 >
+   <Typography variant="h4" align="center" gutterBottom sx={{ color: "primary.main", fontWeight: 400 }}>
+  Create New Course
+</Typography>
   <TextField
     fullWidth
     name="topic"
