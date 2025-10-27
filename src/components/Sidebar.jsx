@@ -49,15 +49,15 @@ const Sidebar = ({mode,setMode}) => {
               </ListItemIcon>
               <ListItemText primary="Settings" />
             </ListItemButton>
-          </ListItem>
+          </ListItem> */}
           <ListItem disablePadding>
-            <ListItemButton component="a" href="#simple-list">
+            <ListItemButton  href="#simple-list">
               <ListItemIcon>
                 <AccountBox />
               </ListItemIcon>
-              <ListItemText primary="Profile" />
+              <ListItemText primary="Manage Enrollments" />
             </ListItemButton>
-          </ListItem> */}
+          </ListItem>
           <ListItem disablePadding>
             <ListItemButton component="a" href="#simple-list">
               <ListItemIcon>
