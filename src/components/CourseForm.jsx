@@ -43,7 +43,7 @@ import axios from 'axios';
         
         setCourse({ topic: '', description: '', instructor: '',difficultyLevel:'' });
          // Clear form after submission
-         navigate('/')
+         navigate('/admin')
       };
 
       return (
