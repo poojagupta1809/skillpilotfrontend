@@ -39,7 +39,6 @@ const ExploreCourses = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
-  // New states for dialog
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
 
@@ -48,13 +47,12 @@ const ExploreCourses = () => {
 
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-  // Fetch all courses
   const fetchCourses = async () => {
     setLoading(true);
     setNoResults(false);
     try {
       const res = await axios.get("http://localhost:8088/api/courses/view");
-      console.log("Fetched courses:", res.data); 
+      console.log("Fetched courses:", res.data);
       setCourses(res.data);
       setFilteredCourses(res.data);
       setShowFilters(true);
@@ -71,7 +69,6 @@ const ExploreCourses = () => {
     }
   };
 
-  // Fetch user's enrollments
   const fetchEnrollments = async () => {
     if (!userId) return;
     try {
@@ -82,14 +79,12 @@ const ExploreCourses = () => {
     }
   };
 
-  // Handle enrollment
   const handleEnroll = async (courseId) => {
     if (!userId) return;
     try {
       await axios.post(`http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`);
       setEnrolledCourseIds((prev) => [...prev, courseId]);
 
-      // Open custom dialog
       setSelectedCourseId(courseId);
       setDialogOpen(true);
     } catch (err) {
@@ -102,7 +97,6 @@ const ExploreCourses = () => {
     }
   };
 
-  // Handle filters and search
   useEffect(() => {
     let filtered = courses;
 
@@ -140,7 +134,6 @@ const ExploreCourses = () => {
 
   return (
     <Box sx={{ py: 4, px: 2, bgcolor: "#F0F4FF", minHeight: "100vh" }}>
-      {/* Header */}
       <Box
         sx={{
           display: "flex",
@@ -170,7 +163,6 @@ const ExploreCourses = () => {
         </Stack>
       </Box>
 
-      {/* Search Bar */}
       <Autocomplete
         freeSolo
         options={topicSuggestions}
@@ -189,7 +181,6 @@ const ExploreCourses = () => {
       <Divider sx={{ mb: 3 }} />
 
       <Box sx={{ display: "flex", gap: 3 }}>
-        {/* Filters */}
         {showFilters && (
           <Paper sx={{ p: 2, minWidth: 200 }}>
             <Typography variant="h6" gutterBottom>
@@ -212,7 +203,6 @@ const ExploreCourses = () => {
           </Paper>
         )}
 
-        {/* Courses Display */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, flex: 1 }}>
           {loading ? (
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
@@ -246,32 +236,40 @@ const ExploreCourses = () => {
                     image={course.imageUrl != null ? course.imageUrl : "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"}
                     alt="Course Image"
                   />
-                  {/* Content Overlay */}
                   <CardContent sx={{ bgcolor: "rgba(255, 255, 255, 0.9)" }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
-                      {course.topic || "Untitled Course"}
+                    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A", mb: 1 }}>
+                      {course.topic}
                     </Typography>
-                    <Typography sx={{ mb: 1 }}>
-                      {course.description || "No description available"}
-                    </Typography>
-                    <Typography sx={{ mb: 1 }}>
-                      Instructor: {course.instructorName || course.instructor || "Unknown"}
-                    </Typography>
-                    <Typography sx={{ fontWeight: "bold", mb: 2 }}>
-                      {course.difficultyLevel || "N/A"}
+
+                    {course.instructor ? (
+                      <Typography sx={{ mb: 1, color: "#555" }}>
+                        {course.instructor}
+                      </Typography>
+                    ) : null}
+
+                    {course.difficultyLevel ? (
+                      <Typography sx={{ fontWeight: "bold", mb: 2 }}>
+                        {course.difficultyLevel}
+                      </Typography>
+                    ) : null}
+
+                    <Typography sx={{ fontWeight: "bold", mb: 2, color: "#1E3A8A" }}>
+                      {course.courseType && course.courseType.toLowerCase() === "paid" && course.price
+                        ? `₹${course.price}`
+                        : "Free"}
                     </Typography>
 
                     <Button
                       fullWidth
-                      variant={isEnrolled ? "contained" : "outlined"}
-                      color={isEnrolled ? "success" : "primary"}
-                      disabled={isEnrolled}
+                      variant={enrolledCourseIds.includes(course.courseId) ? "contained" : "outlined"}
+                      color={enrolledCourseIds.includes(course.courseId) ? "success" : "primary"}
+                      disabled={enrolledCourseIds.includes(course.courseId)}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEnroll(course.courseId);
                       }}
                     >
-                      {isEnrolled ? "Enrolled" : "Enroll"}
+                      {enrolledCourseIds.includes(course.courseId) ? "Enrolled" : "Enroll"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -281,7 +279,6 @@ const ExploreCourses = () => {
         </Box>
       </Box>
 
-      {/* Snackbar */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -297,7 +294,6 @@ const ExploreCourses = () => {
         </Alert>
       </Snackbar>
 
-      {/* Custom Dialog after enrollment */}
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
