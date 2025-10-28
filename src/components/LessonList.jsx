@@ -103,13 +103,14 @@ const handleOpenLesson = (lesson) => {
               }
             />
 
-            {onEditLesson && (<Tooltip title="Edit lesson" placement="bottom-start">
+           {onEditLesson && (
+  <Tooltip title="Edit lesson" placement="bottom-start">
     <IconButton
       edge="end"
       color="primary"
       onClick={(e) => {
         e.stopPropagation();
-        navigate(`/course/lessons/${lesson.lessonId}/edit`);
+        onEditLesson(lesson.lessonId); 
       }}
       sx={{ mr: 1 }}
     >
@@ -117,6 +118,7 @@ const handleOpenLesson = (lesson) => {
     </IconButton>
   </Tooltip>
 )}
+
             {onDeleteLesson && (
               <Tooltip title="Delete lesson" placement="bottom-start">
                 <IconButton
