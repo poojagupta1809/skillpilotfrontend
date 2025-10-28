@@ -16,6 +16,11 @@ import {
   Stack,
   Snackbar,
   Alert,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -33,12 +38,16 @@ const ExploreCourses = () => {
   const [showFilters, setShowFilters] = useState(false);
   const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
 
+  // New states for dialog
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedCourseId, setSelectedCourseId] = useState(null);
+
   const token = sessionStorage.getItem("token");
   const userId = sessionStorage.getItem("userId");
 
   axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-  // Fetch courses
+  // Fetch all courses
   const fetchCourses = async () => {
     setLoading(true);
     setNoResults(false);
@@ -71,23 +80,18 @@ const ExploreCourses = () => {
     }
   };
 
-  // Enroll in course
+  // Handle enrollment
   const handleEnroll = async (courseId) => {
     if (!userId) return;
     try {
       await axios.post(`http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`);
       setEnrolledCourseIds((prev) => [...prev, courseId]);
 
-      setSnackbar({
-        open: true,
-        message: "You have successfully enrolled in this course!",
-        severity: "success",
-      });
 
-      setTimeout(() => {
-        const proceed = window.confirm("Do you want to go to the course details?");
-        if (proceed) navigate(`/course/${courseId}`);
-      }, 500);
+
+      // Open custom dialog
+      setSelectedCourseId(courseId);
+      setDialogOpen(true);
     } catch (err) {
       console.error("Error enrolling:", err);
       setSnackbar({
@@ -98,7 +102,7 @@ const ExploreCourses = () => {
     }
   };
 
-  // Live filtering
+  // Handle filters and search
   useEffect(() => {
     let filtered = courses;
 
@@ -161,12 +165,12 @@ const ExploreCourses = () => {
             sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
             onClick={() => navigate("/courses/myenrollments")}
           >
-            My Courses
+            My Learnings
           </Button>
         </Stack>
       </Box>
 
-      {/* Search */}
+      {/* Search Bar */}
       <Autocomplete
         freeSolo
         options={topicSuggestions}
@@ -208,7 +212,7 @@ const ExploreCourses = () => {
           </Paper>
         )}
 
-        {/* Courses */}
+        {/* Courses Display */}
         <Box sx={{ display: "flex", flexWrap: "wrap", gap: 3, flex: 1 }}>
           {loading ? (
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
@@ -252,7 +256,7 @@ const ExploreCourses = () => {
                       color={isEnrolled ? "success" : "primary"}
                       disabled={isEnrolled}
                       onClick={(e) => {
-                        e.stopPropagation(); // Prevent double-click
+                        e.stopPropagation();
                         handleEnroll(course.courseId);
                       }}
                     >
@@ -281,6 +285,45 @@ const ExploreCourses = () => {
           {snackbar.message}
         </Alert>
       </Snackbar>
+
+      {/* Custom Dialog after enrollment */}
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        PaperProps={{
+          sx: { borderRadius: 3, p: 1 },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+          🎉 Enrollment Successful!
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            You’ve successfully enrolled in this course. Would you like to start learning now or explore more courses?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setDialogOpen(false);
+              navigate(`/course/${selectedCourseId}`);
+            }}
+          >
+            Start Learning Now
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => setDialogOpen(false)}
+          >
+            Explore More
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 };
