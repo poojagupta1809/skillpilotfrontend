@@ -24,8 +24,8 @@ export default function SignIn() {
     const { name, value } = event.target
     setUser(
       {
-        ...user,  // keet the other form data as it is
-        [name]: value // change value of only the current text box with this name 
+        ...user,
+        [name]: value //
       }
     );
   }
