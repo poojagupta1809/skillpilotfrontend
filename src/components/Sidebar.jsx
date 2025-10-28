@@ -20,6 +20,7 @@ import {
   Switch,
 } from "@mui/material";
 import AddCircleOutlineIcon from '@mui/icons-material/AddCircleOutline';
+import AnalyticsIcon from '@mui/icons-material/Analytics';
 import React from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -59,6 +60,14 @@ const Sidebar = ({mode,setMode}) => {
                 <AccountBox />
               </ListItemIcon>
               <ListItemText primary="Manage Enrollments" />
+            </ListItemButton>
+          </ListItem>
+            <ListItem disablePadding>
+            <ListItemButton  onClick={handleEnrollment} href="/courses/admin-enrollments">
+              <ListItemIcon>
+                 <AnalyticsIcon/>
+              </ListItemIcon>
+              <ListItemText primary="Analytics" />
             </ListItemButton>
           </ListItem>
           <ListItem disablePadding>
