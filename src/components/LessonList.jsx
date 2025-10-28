@@ -1,4 +1,4 @@
-import React, { useState } from "react"; // <-- added useState
+import React, { useState } from "react"; 
 import {
   List,
   ListItemButton,
@@ -71,22 +71,20 @@ export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
               }
             />
 
-            {onEditLesson && (
-              <Tooltip title="Edit lesson" placement="bottom-start">
-                <IconButton
-                  edge="end"
-                  color="primary"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onEditLesson(lesson);
-                  }}
-                  sx={{ mr: 1 }}
-                >
-                  <EditIcon />
-                </IconButton>
-              </Tooltip>
-            )}
-
+            {onEditLesson && (<Tooltip title="Edit lesson" placement="bottom-start">
+    <IconButton
+      edge="end"
+      color="primary"
+      onClick={(e) => {
+        e.stopPropagation();
+        navigate(`/courses/lessons/${lesson.lessonId}/edit`);
+      }}
+      sx={{ mr: 1 }}
+    >
+      <EditIcon />
+    </IconButton>
+  </Tooltip>
+)}
             {onDeleteLesson && (
               <Tooltip title="Delete lesson" placement="bottom-start">
                 <IconButton
