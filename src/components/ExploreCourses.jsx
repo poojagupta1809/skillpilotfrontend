@@ -240,16 +240,6 @@ const ExploreCourses = () => {
                   }}
                   onDoubleClick={() => navigate(`/course/${course.courseId}`)}
                 >
-                  
-                  {/* Background Image */}
-                  <Box
-                    sx={{
-                      height: 150,
-                      backgroundImage: `url(${course.image_url || "https://via.placeholder.com/300x150?text=No+Image"})`,
-                      backgroundSize: "cover",
-                      backgroundPosition: "center",
-                    }}
-                  />
                    <CardMedia
                     component="img"
                     height="160"

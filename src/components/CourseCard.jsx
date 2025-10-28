@@ -32,8 +32,8 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
   };
 
   return (
-    <Card sx={{ maxWidth: 350, textAlign: "center", padding: 2 }}>
-      <CardHeader
+    <Card sx={{ maxWidth: 350, textAlign: "center" }}>
+      {/* <CardHeader
         action={
           <>
             <IconButton onClick={handleMenuOpen}>
@@ -46,9 +46,9 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
               onClose={handleMenuClose}
             >
               <MenuItem onClick={handleEditClick}>Edit</MenuItem>
-              {/* <MenuItem onClick={() => console.log("Delete Clicked")}>
+              <MenuItem onClick={() => console.log("Delete Clicked")}>
                 Delete
-              </MenuItem> */}
+              </MenuItem>
               
             </Menu>
           </>
@@ -58,7 +58,7 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
           <div>{course.instructor} 
          <Chip label={course.difficultyLevel} size="small" color="info" sx={{marginLeft:'10px'}}/>
          </div> }
-      />
+      /> */}
 
       <CardMedia
         component="img"
@@ -66,21 +66,105 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
         image={course.imageUrl!=null?course.imageUrl:"https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"}
         alt="Course Image"
       />
-
+{/* 
       <CardContent>
-        <Typography variant="body2" color="text.secondary">
-          {course.description?.substring(0, 80)}...
+         <Typography gutterBottom variant="h5" component="div">
+        {course.topic}
         </Typography>
-      </CardContent>
+          <Typography gutterBottom variant="h6" component="div">
+         <div>{course.instructor} 
+         <Chip label={course.difficultyLevel} size="small" color="info" sx={{marginLeft:'10px'}}/>
+         </div>
+         </Typography>
+        <Typography variant="body2" color="text.secondary">
+          {course.description?.substring(0, 100)}...
+        </Typography>
+      </CardContent> */}
 
-      <CardActions>
+                          <CardContent>
+                          <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+                            {course.topic || "Untitled Course"}
+                          </Typography>
+                          <Typography sx={{ mb: 1 }}>
+                          {course.instructorName || course.instructor || "Unknown"}
+                          </Typography>
+                          <Typography sx={{ fontWeight: "bold", mb: 2 }}>
+                            {/* {course.difficultyLevel || "N/A"} */}
+                          <Chip label={course.difficultyLevel} size="small" color="info" sx={{marginLeft:'10px'}}/>
+                          </Typography>
+                          {/* <Button
+                            fullWidth
+                            variant={isEnrolled ? "contained" : "outlined"}
+                            color={isEnrolled ? "success" : "primary"}
+                            disabled={isEnrolled}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleEnroll(course.courseId);
+                            }}
+                          >
+                            {isEnrolled ? "Enrolled" : "Enroll"}
+                          </Button> */}
+                        </CardContent>
+      {/* <CardActions>
         <Button size="small" onClick={handleView}>View</Button>
         <Button variant="outlined" color="error" startIcon={<DeleteIcon />} onClick={handleDelete}>
           Delete
         </Button>
-      </CardActions>
+      </CardActions> */}
     </Card>
   );
 };
 
+// export default function ImgMediaCard() {
+//   return (
+//     <Card sx={{ maxWidth: 345 }}>
+//        <CardHeader
+//         action={
+//           <>
+//             <IconButton onClick={handleMenuOpen}>
+//             <EditNoteIcon/>
+//             </IconButton>
+
+//             <Menu
+//               anchorEl={anchorEl}
+//               open={Boolean(anchorEl)}
+//               onClose={handleMenuClose}
+//             >
+//               <MenuItem onClick={handleEditClick}>Edit</MenuItem>
+//               {/* <MenuItem onClick={() => console.log("Delete Clicked")}>
+//                 Delete
+//               </MenuItem> */}
+              
+//             </Menu>
+//           </>
+//         }
+//         title={course.topic}
+//         subheader={
+//           <div>{course.instructor} 
+//          <Chip label={course.difficultyLevel} size="small" color="info" sx={{marginLeft:'10px'}}/>
+//          </div> }
+//       />
+
+//       <CardMedia
+//         component="img"
+//         alt="green iguana"
+//         height="140"
+//         image="/static/images/cards/contemplative-reptile.jpg"
+//       />
+//       <CardContent>
+//         <Typography gutterBottom variant="h5" component="div">
+//           Lizard
+//         </Typography>
+//         <Typography variant="body2" sx={{ color: 'text.secondary' }}>
+//           Lizards are a widespread group of squamate reptiles, with over 6,000
+//           species, ranging across all continents except Antarctica
+//         </Typography>
+//       </CardContent>
+//       <CardActions>
+//         <Button size="small">Share</Button>
+//         <Button size="small">Learn More</Button>
+//       </CardActions>
+//     </Card>
+//   );
+// }
 export default CourseCard;
