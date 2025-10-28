@@ -74,8 +74,8 @@ export default function SignIn() {
           sessionStorage.setItem("userId", response.data.user.userId)
 
           console.log("Session token - " + sessionStorage.getItem("token"))
-          console.log(sessionStorage.getItem("username"))
-          console.log(sessionStorage.getItem("role"))
+          console.log("User name -" + sessionStorage.getItem("username"))
+          console.log("Role-" + sessionStorage.getItem("role"))
           console.log("user id - " + sessionStorage.getItem("userId"))
 
 

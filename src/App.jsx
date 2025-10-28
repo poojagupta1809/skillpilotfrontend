@@ -14,8 +14,8 @@ function App() {
     <Box
       sx={{
         width: "100vw",
-        height: "100vh",  // full viewport height
-        overflow: "hidden", // optional: hide scrollbars
+        height: "100vh",  
+        overflow: "auto", 
       }}
     >
       <HomePage />
