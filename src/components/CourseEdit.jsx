@@ -15,7 +15,7 @@ export default function CourseEdit() {
     const [editedCourse, setEditedCourse] = useState({});
     const [loading, setLoading] = useState(true);
 
-    useEffect(() => {     
+    useEffect(() => {
         axios.get(`http://localhost:8088/api/courses/${courseId}`)
             .then((response) => {
                 setCourse(response.data);
@@ -78,7 +78,14 @@ export default function CourseEdit() {
             <TextField name="description" label="Description" value={editedCourse.description} onChange={handleChange} multiline rows={4} />
             <TextField name="instructor" label="Instructor" value={editedCourse.instructor} onChange={handleChange} required />
             <TextField name="difficultyLevel" label="Difficulty Level" value={editedCourse.difficultyLevel} onChange={handleChange} required />
-
+            <TextField
+                fullWidth
+                name="imageUrl"
+                label="Image Url"
+                value={editedCourse.imageUrl != null ? editedCourse.imageUrl : null}
+                onChange={handleChange}
+                required
+            />
             <Stack spacing={2} direction="row" sx={{ alignItems: 'center', justifyContent: "center", }}>
 
                 <Button type="submit" variant="contained" onClick={handleSubmit}>Save</Button>

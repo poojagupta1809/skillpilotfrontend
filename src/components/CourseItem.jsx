@@ -33,7 +33,7 @@ export default function CourseItem() {
 
     if (loading) return <h3>Loading course...</h3>;
 
-    
+
 
     const handleViewLesson = () => {
         setShowComponent(true);
@@ -57,6 +57,14 @@ export default function CourseItem() {
                 <TextField fullWidth label="Description" value={course.description} multiline rows={4} InputProps={{ readOnly: true }} />
                 <TextField fullWidth label="Instructor" value={course.instructor} InputProps={{ readOnly: true }} />
                 <TextField fullWidth label="Difficulty Level" value={course.difficultyLevel} InputProps={{ readOnly: true }} />
+                {course.imageUrl ? <TextField
+                    fullWidth
+                    name="imageUrl"
+                    label="Image Url"
+                    value={course.imageUrl}
+                    InputProps={{ readOnly: true }}
+                    required
+                /> : <></>}
                 <Button fullWidth variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
                 {showComponent && <CourseLessonsSection courseId={courseId} />}
                 <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>

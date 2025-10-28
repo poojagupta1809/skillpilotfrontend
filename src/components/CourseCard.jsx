@@ -63,7 +63,7 @@ const CourseCard = ({ courseDeleteHandler, course }) => {
       <CardMedia
         component="img"
         height="160"
-        image="https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"
+        image={course.imageUrl!=null?course.imageUrl:"https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"}
         alt="Course Image"
       />
 

@@ -7,11 +7,11 @@ import axios from 'axios';
      let authorization = 'Bearer ' + sessionStorage.getItem("token");
      axios.defaults.headers.common['Authorization'] = authorization;
       
-      const [course, setCourse] = useState( { topic: '', description: '', instructor: '' ,difficultyLevel:''});
+      const [course, setCourse] = useState( { topic: '', description: '', instructor: '' ,difficultyLevel:'',imageUrl:''});
       const navigate = useNavigate();
 
       const handleChange = (e) => {
-        const { name, value } = e.target;
+        const { name, value } = e.target; 
         setCourse({ 
             ...course,
              [name]: value });
@@ -102,6 +102,14 @@ import axios from 'axios';
     name="difficultyLevel"
     label="Difficulty Level"
     value={course.difficultyLevel}
+    onChange={handleChange}
+    required
+  />
+  <TextField
+    fullWidth
+    name="imageUrl"
+    label="Image Url"
+    value={course.imageUrl}
     onChange={handleChange}
     required
   />
