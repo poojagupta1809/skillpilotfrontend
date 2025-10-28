@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, MenuItem,Snackbar, 
-  Alert  } from "@mui/material";
+import { Box, TextField, Button, Typography, MenuItem, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
+import { useParams, useNavigate } from "react-router-dom";
 
-export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
-  let authorization = 'Bearer ' + sessionStorage.getItem("token");
-  axios.defaults.headers.common['Authorization'] = authorization;
-  
+export default function UpdateLesson() {
+  const { courseId, lessonId } = useParams();
+  const navigate = useNavigate();
+
   const [lessonData, setLessonData] = useState({
     title: "",
     description: "",
@@ -14,22 +14,35 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
     content: "",
     videoUrl: "",
   });
-   const [errors, setErrors] = useState([]);
-  const [successMessage, setSuccessMessage] = useState("");
-  const [loading, setLoading] = useState(false);
 
-  
+  const [errors, setErrors] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
+  const [loading, setLoading] = useState(true);
+
+  // Set Authorization header
+  const authorization = "Bearer " + sessionStorage.getItem("token");
+  axios.defaults.headers.common["Authorization"] = authorization;
+
+  // Fetch lesson data
   useEffect(() => {
-    if (lesson) {
-      setLessonData({
-        title: lesson.title || "",
-        description: lesson.description || "",
-        contentType: lesson.contentType || "",
-        content: lesson.content || "",
-        videoUrl: lesson.videoUrl || "",
+    axios
+      .get(`http://localhost:8088/api/courses/lessons/${lessonId}`)
+      .then((res) => {
+        setLessonData({
+          title: res.data.title || "",
+          description: res.data.description || "",
+          contentType: res.data.contentType || "",
+          content: res.data.content || "",
+          videoUrl: res.data.videoUrl || "",
+        });
+        setLoading(false);
+      })
+      .catch((err) => {
+        console.error("Failed to fetch lesson:", err);
+        setErrors(["Failed to load lesson data."]);
+        setLoading(false);
       });
-    }
-  }, [lesson]);
+  }, [lessonId]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -38,19 +51,16 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    setLoading(true);
+    setErrors([]);
+    setSuccessMessage("");
 
     axios
-      .put(
-        `http://localhost:8088/api/courses/lessons/${lesson.lessonId}`,
-        lessonData
-      )
+      .put(`http://localhost:8088/api/courses/lessons/${lessonId}`, lessonData)
       .then((res) => {
         setSuccessMessage("✅ Lesson updated successfully!");
-        if (onLessonUpdated) onLessonUpdated(res.data);
-       
+        navigate(`/courses/${courseId}`); // Redirect after update
       })
-          .catch((err) => {
+      .catch((err) => {
         console.error(err);
         if (err.response && err.response.data) {
           const backendErrors = [];
@@ -62,23 +72,15 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
         } else {
           setErrors(["Server error. Please try again later."]);
         }
-      })
-      .finally(() => setLoading(false));
+      });
   };
 
-  if (!lesson) return null; 
+  if (loading) return <Typography>Loading lesson...</Typography>;
+
   return (
-    <Box
-      sx={{
-        maxWidth: 600,
-        mx: "auto",
-        p: 3,
-        bgcolor: "#fff",
-        borderRadius: 2,
-      }}
-    >
+    <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
       <Typography variant="h4" gutterBottom>
-        ✏️ Update Lesson
+        Edit Lesson
       </Typography>
 
       <form onSubmit={handleSubmit}>
@@ -88,9 +90,7 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="title"
           value={lessonData.title}
           onChange={handleChange}
-          sx={{ mb: 2 ,
-            "& .MuiInputBase-input": { fontSize: "1.2rem" },
-            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
+          sx={{ mb: 2 }}
         />
 
         <TextField
@@ -101,9 +101,7 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="description"
           value={lessonData.description}
           onChange={handleChange}
-          sx={{ mb: 2 ,
-            "& .MuiInputBase-input": { fontSize: "1.2rem" },
-            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
+          sx={{ mb: 2 }}
         />
 
         <TextField
@@ -113,10 +111,7 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="contentType"
           value={lessonData.contentType}
           onChange={handleChange}
-         
-          sx={{ mb: 2,
-            "& .MuiInputBase-input": { fontSize: "1.2rem" },
-            "& .MuiInputLabel-root": { fontSize: "1.1rem" }, }}
+          sx={{ mb: 2 }}
         >
           <MenuItem value="TEXT">Text</MenuItem>
           <MenuItem value="VIDEO">Video</MenuItem>
@@ -131,10 +126,7 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
             name="content"
             value={lessonData.content}
             onChange={handleChange}
-  
-            sx={{ mb: 2 ,
-            "& .MuiInputBase-input": { fontSize: "1.2rem" },
-            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
+            sx={{ mb: 2 }}
           />
         )}
 
@@ -145,18 +137,15 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
             name="videoUrl"
             value={lessonData.videoUrl}
             onChange={handleChange}
-            sx={{ mb: 2 ,
-            "& .MuiInputBase-input": { fontSize: "1.2rem" },
-            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
+            sx={{ mb: 2 }}
           />
         )}
 
-
-        <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
-          <Button variant="contained" color="primary" type="submit" disabled={loading}>
-            {loading ? "Updating..." : "Update Lesson"}
+        <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+          <Button variant="contained" color="primary" type="submit">
+            Update Lesson
           </Button>
-          <Button variant="outlined" color="secondary" onClick={onClose} disabled={loading}>
+          <Button variant="outlined" color="secondary" onClick={() => navigate(`/courses/${courseId}`)}>
             Cancel
           </Button>
         </Box>
@@ -168,8 +157,8 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
         onClose={() => setErrors([])}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
-        <Alert severity="error" onClose={() => setErrors([])} sx={{ whiteSpace: "normal" }}>
-          <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+        <Alert severity="error" onClose={() => setErrors([])}>
+          <ul>
             {errors.map((errMsg, idx) => (
               <li key={idx}>{errMsg}</li>
             ))}
@@ -177,14 +166,10 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
         </Alert>
       </Snackbar>
 
-      {/* Success Snackbar */}
       <Snackbar
         open={!!successMessage}
         autoHideDuration={4000}
-        onClose={() => {
-          setSuccessMessage("");
-          if (onClose) onClose();
-        }}
+        onClose={() => setSuccessMessage("")}
         anchorOrigin={{ vertical: "top", horizontal: "center" }}
       >
         <Alert severity="success" onClose={() => setSuccessMessage("")}>
