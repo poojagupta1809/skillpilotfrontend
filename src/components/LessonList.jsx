@@ -38,9 +38,14 @@ export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
             sx={{
               mb: 1,
               borderRadius: 2,
-              "&.Mui-selected": {
-                bgcolor: "primary.light",
-                "&:hover": { bgcolor: "primary.main" },
+          height: { xs: 140, sm: 120 },
+                alignItems: "flex-start", 
+              overflow: "hidden",      
+              "&:hover": {
+      bgcolor: "#8cc0f7ff", 
+    },
+    "&.Mui-selected": {
+      bgcolor: "primary.light",
               },
             }}
           >
@@ -49,17 +54,44 @@ export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
                 <Avatar
                   variant="rounded"
                   src={lesson.thumbnailUrl}
-                  sx={{ width: 60, height: 60, mr: 2 }}
+                 sx={{ width: { xs: 50, sm: 60 }, height: { xs: 50, sm: 60 }, mr: 2 }}
+
                 />
               </ListItemAvatar>
             )}
 
             <ListItemText
-              primary={<Typography variant="h6">{lesson.title}</Typography>}
+             primary={
+                <Typography
+                  variant="h6"
+                sx={{
+    fontWeight: 600,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
+    display: "-webkit-box",
+    WebkitBoxOrient: "vertical",
+    WebkitLineClamp: { xs: 2, sm: 1 }, 
+    whiteSpace: { xs: "normal", sm: "nowrap" },
+  }}
+                >
+                  {lesson.title}
+                </Typography>
+              }
               secondary={
                 <Box>
-                  <Typography variant="body2" color="text.secondary">
-                    {lesson.description}
+                  <Typography
+                    variant="body2"
+                    color="text.secondary"
+                    sx={{
+                      display: "-webkit-box",
+                      WebkitBoxOrient: "vertical",
+                      WebkitLineClamp: 2,   
+                      overflow: "hidden",
+                      textOverflow: "ellipsis",
+                      mb: 0.5,
+                    }}
+                  >
+                    {lesson.description || "No description available"}
                   </Typography>
                   <Chip
                     label={lesson.contentType}
