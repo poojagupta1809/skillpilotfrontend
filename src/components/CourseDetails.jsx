@@ -8,12 +8,16 @@ import {
   Card,
   CardContent,
   Button,
+  TextField,
+  Tooltip,
+  IconButton,
   Dialog,
   DialogActions,
   DialogContent,
   DialogContentText,
   DialogTitle,
 } from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
 import CourseLessonsSection from "./CourseLessonsSection";
 import "./CourseDetails.css";
 
@@ -29,6 +33,7 @@ export default function CourseDetails() {
   const [loading, setLoading] = useState(true);
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [completedLessons, setCompletedLessons] = useState("0");
 
   useEffect(() => {
     setLoading(true);
@@ -68,6 +73,17 @@ export default function CourseDetails() {
     alert("Course marked as completed!");
   };
 
+  const handleLessonsCount = () => {
+    alert("Updating Progress at backend");
+
+    // Example: You can later replace this with a PUT/PATCH API call like:
+    // axios.put(`http://localhost:8088/api/enrollments/${userId}/courses/${id}/progress`, {
+    //   completedLessons: Number(completedLessons),
+    // })
+    // .then(() => alert("Progress updated successfully!"))
+    // .catch(err => console.error("Error updating progress:", err));
+  };
+
   if (loading)
     return (
       <div className="loading-container">
@@ -99,19 +115,44 @@ export default function CourseDetails() {
             </Typography>
           </div>
 
+          {/* Action Buttons and Lesson Progress */}
           <div
             className="enroll-button-container"
             style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}
           >
             {/* Enroll Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEnroll}
-              disabled={userEnrollments.includes(course.courseId)}
-            >
-              {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
-            </Button>
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleEnroll}
+                disabled={userEnrollments.includes(course.courseId)}
+              >
+                {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
+              </Button>
+            </Box>
+
+            {/* Lessons Completed TextField + Update Icon */}
+            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+              <TextField
+                label="Lessons Completed"
+                placeholder="0"
+                value={completedLessons}
+                onChange={(e) => setCompletedLessons(e.target.value)}
+                inputProps={{
+                  maxLength: 2,
+                  style: { textAlign: "center", width: "50px" },
+                }}
+                size="medium"
+                variant="outlined"
+              />
+
+              <Tooltip title="Update Progress">
+                <IconButton color="secondary" onClick={handleLessonsCount}>
+                  <UpdateIcon />
+                </IconButton>
+              </Tooltip>
+            </Box>
 
             {/* Explore Courses Button */}
             <Button
@@ -140,8 +181,7 @@ export default function CourseDetails() {
 
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            You’ve successfully enrolled in this course. Would you like to start
-            learning now or explore more courses?
+            You’ve successfully enrolled in this course. Would you like to start learning now or explore more courses?
           </DialogContentText>
         </DialogContent>
 
