@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Typography, CircularProgress, Card, CardContent, Button } from "@mui/material";
+import { Box, Typography, CircularProgress, Card, CardContent, Button, TextField, Tooltip, IconButton } from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
 import CourseLessonsSection from "./CourseLessonsSection";
 import "./CourseDetails.css";
 
@@ -14,10 +15,13 @@ export default function CourseDetails() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userEnrollments, setUserEnrollments] = useState([]);
+  const [completedLessons, setCompletedLessons] = useState("0");
   const userId = sessionStorage.getItem("userId");
 
+
+
   useEffect(() => {
-   
+
     setLoading(true);
 
     const token = sessionStorage.getItem("token");
@@ -31,21 +35,26 @@ export default function CourseDetails() {
   }, [id]);
 
   const handleEnroll = () => {
-  axios
-    .post(
-      `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
-    )
-    .then((res) => {
-      alert("You have successfully enrolled in this course!");
-      setEnrolled(true);
-    })
-    .catch((err) => {
-      console.error("Error enrolling:", err);
-      if (err.response && err.response.data) {
-        alert(`Enrollment failed: ${err.response.data}`);
-      } 
-    });
-};
+    axios
+      .post(
+        `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
+      )
+      .then((res) => {
+        alert("You have successfully enrolled in this course!");
+        setEnrolled(true);
+      })
+      .catch((err) => {
+        console.error("Error enrolling:", err);
+        if (err.response && err.response.data) {
+          alert(`Enrollment failed: ${err.response.data}`);
+        }
+      });
+  };
+
+  const handleLessonsCount = (e) => {
+
+    alert("Updating Progress at backend");
+  };
 
   if (loading)
     return (
@@ -78,21 +87,49 @@ export default function CourseDetails() {
             </Typography>
           </div>
 
-          <div className="enroll-button-container">
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            
             <Button
-                  variant="contained"
-                  color="primary"
-                  sx={{ mt: 2 }}
-                  onClick={(e) => handleEnroll(e, course.courseId)}
-                  disabled={userEnrollments.includes(course.courseId)}
-                >
-                  {userEnrollments.includes(course.courseId)
-                    ? "Enrolled"
-                    : "Enroll"}
-                </Button>
-          </div>
+              variant="contained"
+              color="primary"
+              sx={{ mt: 2 }}
+              onClick={(e) => handleEnroll(e, course.courseId)}
+              disabled={userEnrollments.includes(course.courseId)}
+            >
+              {userEnrollments.includes(course.courseId)
+                ? "Enrolled"
+                : "Enroll"}
+            </Button>
+            </Box>
+          
+
+
+          <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+            <TextField
+              label="Lessons Completed"
+              placeholder="0"
+              value={completedLessons}
+              onChange={(e) => setCompletedLessons(e.target.value)}
+              inputProps={{ maxLength: 2, style: { textAlign: "center", width: "50px" } }}
+              size="medium"          
+              variant="outlined"
+            />
+
+            <Tooltip title="Update Progress">
+              <IconButton
+                color="secondary"
+                onClick={handleLessonsCount}
+              >
+                <UpdateIcon />
+              </IconButton>
+            </Tooltip>
+
+          </Box>
+
+
         </CardContent>
       </Card>
+
 
       <CourseLessonsSection courseId={id} />
     </div>
