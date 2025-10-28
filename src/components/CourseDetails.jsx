@@ -1,21 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { Box, Typography, CircularProgress, Card, CardContent, Button, TextField, Tooltip, IconButton } from "@mui/material";
-import UpdateIcon from "@mui/icons-material/Update";
-import {
-  Box,
-  Typography,
-  CircularProgress,
-  Card,
-  CardContent,
-  Button,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogContentText,
-  DialogTitle,
-} from "@mui/material";
+import { Box, Typography, CircularProgress, Card, CardContent, Button } from "@mui/material";
 import CourseLessonsSection from "./CourseLessonsSection";
 import "./CourseDetails.css";
 
