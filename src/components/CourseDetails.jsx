@@ -37,17 +37,14 @@ export default function CourseDetails() {
 
   useEffect(() => {
     setLoading(true);
-
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
 
-    // Fetch course details
     axios
       .get(`http://localhost:8088/api/courses/${id}`, { headers })
       .then((res) => setCourse(res.data))
       .catch((err) => console.error("Error fetching course details:", err))
       .finally(() => setLoading(false));
 
-    // Fetch user enrollments
     if (userId) {
       axios
         .get(`http://localhost:8088/api/enrollments/users/${userId}/enrollments`, { headers })
@@ -69,20 +66,8 @@ export default function CourseDetails() {
       });
   };
 
-  const handleMarkCompleted = () => {
-    alert("Course marked as completed!");
-  };
-
-  const handleLessonsCount = () => {
-    alert("Updating Progress at backend");
-
-    // Example: You can later replace this with a PUT/PATCH API call like:
-    // axios.put(`http://localhost:8088/api/enrollments/${userId}/courses/${id}/progress`, {
-    //   completedLessons: Number(completedLessons),
-    // })
-    // .then(() => alert("Progress updated successfully!"))
-    // .catch(err => console.error("Error updating progress:", err));
-  };
+  const handleMarkCompleted = () => alert("Course marked as completed!");
+  const handleLessonsCount = () => alert("Updating Progress at backend");
 
   if (loading)
     return (
@@ -93,60 +78,46 @@ export default function CourseDetails() {
 
   if (!course) return <Typography>Course not found.</Typography>;
 
+  // 👇 This is the return that should exist INSIDE the function
   return (
     <div className="course-details-container">
-      <Card className="course-card">
-        <CardContent className="course-card-content">
-          <div className="course-main-content">
-            <Typography variant="h4" className="course-title">
-              {course.topic}
-            </Typography>
+      <Card className="course-details-card">
+        <CardContent className="course-header">
+          <Typography variant="h4" className="course-title">
+            {course.topic}
+          </Typography>
 
-            <Typography variant="h6" className="course-instructor">
-              Instructor: {course.instructor}
-            </Typography>
+          <Typography variant="subtitle1" className="course-instructor">
+            Instructor: {course.instructor}
+          </Typography>
 
-            <Typography variant="body1" className="course-description">
-              {course.description}
-            </Typography>
+          <Typography variant="body1" className="course-description">
+            {course.description}
+          </Typography>
 
-            <Typography variant="body2" className="course-difficulty">
-              Difficulty Level: {course.difficultyLevel}
-            </Typography>
-          </div>
+          <Typography variant="body2" className="course-difficulty">
+            Difficulty Level: {course.difficultyLevel}
+          </Typography>
 
-          {/* Action Buttons and Lesson Progress */}
-          <div
-            className="enroll-button-container"
-            style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}
-          >
-            {/* Enroll Button */}
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <Button
-                variant="contained"
-                color="primary"
-                onClick={handleEnroll}
-                disabled={userEnrollments.includes(course.courseId)}
-              >
-                {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
-              </Button>
-            </Box>
+          <Box className="course-actions">
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleEnroll}
+              disabled={userEnrollments.includes(course.courseId)}
+            >
+              {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
+            </Button>
 
-            {/* Lessons Completed TextField + Update Icon */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TextField
                 label="Lessons Completed"
-                placeholder="0"
                 value={completedLessons}
                 onChange={(e) => setCompletedLessons(e.target.value)}
-                inputProps={{
-                  maxLength: 2,
-                  style: { textAlign: "center", width: "50px" },
-                }}
-                size="medium"
+                size="small"
                 variant="outlined"
+                inputProps={{ style: { width: "70px", textAlign: "center" } }}
               />
-
               <Tooltip title="Update Progress">
                 <IconButton color="secondary" onClick={handleLessonsCount}>
                   <UpdateIcon />
@@ -154,37 +125,36 @@ export default function CourseDetails() {
               </Tooltip>
             </Box>
 
-            {/* Explore Courses Button */}
             <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/explore-courses")}
+              variant="outlined"
+              color="secondary"
+              onClick={handleMarkCompleted}
             >
-              Explore Courses
+              Mark as Completed
             </Button>
+          </Box>
+        </CardContent>
 
-            {/* Completed Button */}
-            <Button variant="contained" color="primary" onClick={handleMarkCompleted}>
-              Completed
-            </Button>
-          </div>
+        <Box sx={{ height: "1px", backgroundColor: "#ddd", margin: "16px 0" }} />
+
+        <CardContent className="lessons-section">
+          <Typography variant="h5" className="lessons-title">
+            Course Lessons
+          </Typography>
+          <CourseLessonsSection courseId={id} />
         </CardContent>
       </Card>
 
-      <CourseLessonsSection courseId={id} />
-
-      {/* Enrollment Dialog */}
       <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
         <DialogTitle sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
           🎉 Enrollment Successful!
         </DialogTitle>
-
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            You’ve successfully enrolled in this course. Would you like to start learning now or explore more courses?
+            You’ve successfully enrolled in this course. Would you like to start
+            learning now or explore more courses?
           </DialogContentText>
         </DialogContent>
-
         <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
           <Button variant="contained" color="primary" onClick={() => setDialogOpen(false)}>
             Stay on Page
