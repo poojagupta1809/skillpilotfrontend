@@ -146,13 +146,7 @@ const ExploreCourses = () => {
           Explore Courses
         </Typography>
         <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-            sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
-            onClick={() => navigate("/")}
-          >
-            Home
-          </Button>
+         
           <Button
             variant="contained"
             sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
