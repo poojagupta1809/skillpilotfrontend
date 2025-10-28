@@ -19,6 +19,7 @@ import {
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import CourseLessonsSection from "./CourseLessonsSection";
+import CoursePurchase from "./CoursePurchase"; // ✅ Added
 import "./CourseDetails.css";
 
 export default function CourseDetails() {
@@ -78,92 +79,108 @@ export default function CourseDetails() {
 
   if (!course) return <Typography>Course not found.</Typography>;
 
-  // 👇 This is the return that should exist INSIDE the function
   return (
-    <div className="course-details-container">
-      <Card className="course-details-card">
-        <CardContent className="course-header">
-          <Typography variant="h4" className="course-title">
-            {course.topic}
-          </Typography>
+    <Box
+      className="course-details-container"
+      sx={{
+        display: "flex",
+        flexDirection: { xs: "column", md: "row" },
+        gap: 3,
+        alignItems: "flex-start",
+        justifyContent: "space-between",
+      }}
+    >
+      {/* LEFT SIDE: Course Details */}
+      <Box sx={{ flex: 1 }}>
+        <Card className="course-details-card">
+          <CardContent className="course-header">
+            <Typography variant="h4" className="course-title">
+              {course.topic}
+            </Typography>
 
-          <Typography variant="subtitle1" className="course-instructor">
-            Instructor: {course.instructor}
-          </Typography>
+            <Typography variant="subtitle1" className="course-instructor">
+              Instructor: {course.instructor}
+            </Typography>
 
-          <Typography variant="body1" className="course-description">
-            {course.description}
-          </Typography>
+            <Typography variant="body1" className="course-description">
+              {course.description}
+            </Typography>
 
-          <Typography variant="body2" className="course-difficulty">
-            Difficulty Level: {course.difficultyLevel}
-          </Typography>
+            <Typography variant="body2" className="course-difficulty">
+              Difficulty Level: {course.difficultyLevel}
+            </Typography>
 
-          <Box className="course-actions">
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEnroll}
-              disabled={userEnrollments.includes(course.courseId)}
-            >
-              {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
-            </Button>
+            <Box className="course-actions">
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={handleEnroll}
+                disabled={userEnrollments.includes(course.courseId)}
+              >
+                {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
+              </Button>
 
-            <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
-              <TextField
-                label="Lessons Completed"
-                value={completedLessons}
-                onChange={(e) => setCompletedLessons(e.target.value)}
-                size="small"
+              <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
+                <TextField
+                  label="Lessons Completed"
+                  value={completedLessons}
+                  onChange={(e) => setCompletedLessons(e.target.value)}
+                  size="small"
+                  variant="outlined"
+                  inputProps={{ style: { width: "70px", textAlign: "center" } }}
+                />
+                <Tooltip title="Update Progress">
+                  <IconButton color="secondary" onClick={handleLessonsCount}>
+                    <UpdateIcon />
+                  </IconButton>
+                </Tooltip>
+              </Box>
+
+              <Button
                 variant="outlined"
-                inputProps={{ style: { width: "70px", textAlign: "center" } }}
-              />
-              <Tooltip title="Update Progress">
-                <IconButton color="secondary" onClick={handleLessonsCount}>
-                  <UpdateIcon />
-                </IconButton>
-              </Tooltip>
+                color="secondary"
+                onClick={handleMarkCompleted}
+              >
+                Mark as Completed
+              </Button>
             </Box>
+          </CardContent>
 
-            <Button
-              variant="outlined"
-              color="secondary"
-              onClick={handleMarkCompleted}
-            >
-              Mark as Completed
+          <Box sx={{ height: "1px", backgroundColor: "#ddd", margin: "16px 0" }} />
+
+          <CardContent className="lessons-section">
+            <Typography variant="h5" className="lessons-title">
+              Course Lessons
+            </Typography>
+            <CourseLessonsSection courseId={id} />
+          </CardContent>
+        </Card>
+
+        <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
+          <DialogTitle sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+            🎉 Enrollment Successful!
+          </DialogTitle>
+          <DialogContent>
+            <DialogContentText sx={{ mb: 2 }}>
+              You’ve successfully enrolled in this course. Would you like to start
+              learning now or explore more courses?
+            </DialogContentText>
+          </DialogContent>
+          <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+            <Button variant="contained" color="primary" onClick={() => setDialogOpen(false)}>
+              Stay on Page
             </Button>
-          </Box>
-        </CardContent>
+            <Button variant="outlined" color="secondary" onClick={() => navigate("/courses")}>
+              Explore Courses
+            </Button>
+          </DialogActions>
+        </Dialog>
+      </Box>
 
-        <Box sx={{ height: "1px", backgroundColor: "#ddd", margin: "16px 0" }} />
-
-        <CardContent className="lessons-section">
-          <Typography variant="h5" className="lessons-title">
-            Course Lessons
-          </Typography>
-          <CourseLessonsSection courseId={id} />
-        </CardContent>
-      </Card>
-
-      <Dialog open={dialogOpen} onClose={() => setDialogOpen(false)}>
-        <DialogTitle sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
-          🎉 Enrollment Successful!
-        </DialogTitle>
-        <DialogContent>
-          <DialogContentText sx={{ mb: 2 }}>
-            You’ve successfully enrolled in this course. Would you like to start
-            learning now or explore more courses?
-          </DialogContentText>
-        </DialogContent>
-        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
-          <Button variant="contained" color="primary" onClick={() => setDialogOpen(false)}>
-            Stay on Page
-          </Button>
-          <Button variant="outlined" color="secondary" onClick={() => navigate("/courses")}>
-            Explore Courses
-          </Button>
-        </DialogActions>
-      </Dialog>
-    </div>
+      {/* RIGHT SIDE: Billing Summary (only for paid courses) */}
+      {course.courseType && course.courseType.toLowerCase() === "paid" && (
+        <CoursePurchase course={course} />
+      )}
+    </Box>
   );
 }
