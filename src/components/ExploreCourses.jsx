@@ -21,6 +21,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  CardMedia
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -239,6 +240,7 @@ const ExploreCourses = () => {
                   }}
                   onDoubleClick={() => navigate(`/course/${course.courseId}`)}
                 >
+                  
                   {/* Background Image */}
                   <Box
                     sx={{
@@ -248,7 +250,12 @@ const ExploreCourses = () => {
                       backgroundPosition: "center",
                     }}
                   />
-
+                   <CardMedia
+                    component="img"
+                    height="160"
+                    image={course.imageUrl != null ? course.imageUrl : "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"}
+                    alt="Course Image"
+                  />
                   {/* Content Overlay */}
                   <CardContent sx={{ bgcolor: "rgba(255, 255, 255, 0.9)" }}>
                     <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
