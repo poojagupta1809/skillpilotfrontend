@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axios from "axios";
+import { Box, Typography, CircularProgress, Card, CardContent, Button, TextField, Tooltip, IconButton } from "@mui/material";
+import UpdateIcon from "@mui/icons-material/Update";
 import {
   Box,
   Typography,
@@ -28,9 +30,10 @@ export default function CourseDetails() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userEnrollments, setUserEnrollments] = useState([]);
-  const [dialogOpen, setDialogOpen] = useState(false);
+  const userId = sessionStorage.getItem("userId");
 
   useEffect(() => {
+   
     setLoading(true);
 
     const headers = token ? { Authorization: `Bearer ${token}` } : {};
@@ -52,21 +55,21 @@ export default function CourseDetails() {
   }, [id, token, userId]);
 
   const handleEnroll = () => {
-    axios
-      .post(`http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`)
-      .then(() => {
-        setUserEnrollments((prev) => [...prev, course.courseId]);
-        setDialogOpen(true);
-      })
-      .catch((err) => {
-        console.error("Error enrolling:", err);
-        alert(err.response?.data || "Enrollment failed");
-      });
-  };
-
-  const handleMarkCompleted = () => {
-    alert("Course marked as completed!");
-  };
+  axios
+    .post(
+      `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
+    )
+    .then((res) => {
+      alert("You have successfully enrolled in this course!");
+      setEnrolled(true);
+    })
+    .catch((err) => {
+      console.error("Error enrolling:", err);
+      if (err.response && err.response.data) {
+        alert(`Enrollment failed: ${err.response.data}`);
+      } 
+    });
+};
 
   if (loading)
     return (
@@ -99,36 +102,22 @@ export default function CourseDetails() {
             </Typography>
           </div>
 
-          <div
-            className="enroll-button-container"
-            style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}
-          >
-            {/* Enroll Button */}
+          <div className="enroll-button-container">
             <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEnroll}
-              disabled={userEnrollments.includes(course.courseId)}
-            >
-              {userEnrollments.includes(course.courseId) ? "Enrolled" : "Enroll"}
-            </Button>
-
-            {/* Explore Courses Button */}
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={() => navigate("/explore-courses")}
-            >
-              Explore Courses
-            </Button>
-
-            {/* Completed Button */}
-            <Button variant="contained" color="primary" onClick={handleMarkCompleted}>
-              Completed
-            </Button>
+                  variant="contained"
+                  color="primary"
+                  sx={{ mt: 2 }}
+                  onClick={(e) => handleEnroll(e, course.courseId)}
+                  disabled={userEnrollments.includes(course.courseId)}
+                >
+                  {userEnrollments.includes(course.courseId)
+                    ? "Enrolled"
+                    : "Enroll"}
+                </Button>
           </div>
         </CardContent>
       </Card>
+
 
       <CourseLessonsSection courseId={id} />
 

@@ -53,6 +53,7 @@ const ExploreCourses = () => {
     setNoResults(false);
     try {
       const res = await axios.get("http://localhost:8088/api/courses/view");
+      console.log("Fetched courses:", res.data); 
       setCourses(res.data);
       setFilteredCourses(res.data);
       setShowFilters(true);
@@ -86,8 +87,6 @@ const ExploreCourses = () => {
     try {
       await axios.post(`http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`);
       setEnrolledCourseIds((prev) => [...prev, courseId]);
-
-
 
       // Open custom dialog
       setSelectedCourseId(courseId);
@@ -233,13 +232,27 @@ const ExploreCourses = () => {
                     borderRadius: 3,
                     boxShadow: 3,
                     cursor: "pointer",
+                    overflow: "hidden",
+                    transition: "transform 0.3s, box-shadow 0.3s",
                     "&:hover": { transform: "translateY(-5px)", boxShadow: 6 },
+                    position: "relative",
                   }}
                   onDoubleClick={() => navigate(`/course/${course.courseId}`)}
                 >
-                  <CardContent>
+                  {/* Background Image */}
+                  <Box
+                    sx={{
+                      height: 150,
+                      backgroundImage: `url(${course.image_url || "https://via.placeholder.com/300x150?text=No+Image"})`,
+                      backgroundSize: "cover",
+                      backgroundPosition: "center",
+                    }}
+                  />
+
+                  {/* Content Overlay */}
+                  <CardContent sx={{ bgcolor: "rgba(255, 255, 255, 0.9)" }}>
                     <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
-                      {course.title || "Untitled Course"}
+                      {course.topic || "Untitled Course"}
                     </Typography>
                     <Typography sx={{ mb: 1 }}>
                       {course.description || "No description available"}
@@ -250,6 +263,7 @@ const ExploreCourses = () => {
                     <Typography sx={{ fontWeight: "bold", mb: 2 }}>
                       {course.difficultyLevel || "N/A"}
                     </Typography>
+
                     <Button
                       fullWidth
                       variant={isEnrolled ? "contained" : "outlined"}

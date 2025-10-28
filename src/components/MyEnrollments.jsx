@@ -10,7 +10,12 @@ import {
   Stack,
   CircularProgress,
   Alert,
+  Tooltip,
+  LinearProgress,
 } from "@mui/material";
+import PlayCircleFilledWhiteRoundedIcon from "@mui/icons-material/PlayCircleFilledWhiteRounded";
+import SchoolRoundedIcon from "@mui/icons-material/SchoolRounded";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 
 const MyEnrollments = () => {
   const navigate = useNavigate();
@@ -49,7 +54,14 @@ const MyEnrollments = () => {
         axios.get(`http://localhost:8088/api/courses/${e.courseId}`)
       );
       const courseResponses = await Promise.all(coursePromises);
-      setCourses(courseResponses.map((res) => res.data));
+
+      // Combine course data with enrollment progress
+      const combinedData = courseResponses.map((res, index) => ({
+        ...res.data,
+        progress: response.data[index].progress || 0, // <-- assumes progress field exists in enrollment
+      }));
+
+      setCourses(combinedData);
     } catch (error) {
       console.error("Error fetching enrollments:", error);
       setErrorMsg("Failed to fetch your enrolled courses.");
@@ -74,14 +86,14 @@ const MyEnrollments = () => {
   };
 
   return (
-    <Box sx={{ py: 4, px: 2, bgcolor: "#F0F4FF", minHeight: "100vh" }}>
+    <Box sx={{ py: 4, px: 2, bgcolor: "#F8FAFC", minHeight: "100vh" }}>
       {/* Hero Bar */}
       <Box
         sx={{
           textAlign: "center",
           py: 3,
           mb: 4,
-          background: "linear-gradient(120deg, #e0f2ff 0%, #ffffff 100%)",
+          background: "linear-gradient(120deg, #E0F2FE 0%, #ffffff 100%)",
           borderRadius: 2,
           boxShadow: "0 4px 10px rgba(0,0,0,0.05)",
         }}
@@ -90,14 +102,14 @@ const MyEnrollments = () => {
           variant="h4"
           sx={{
             fontFamily: "Pacifico",
-            color: "#1E3A8A",
+            color: "#2563EB",
             mb: 1,
           }}
         >
-          My Enrolled Courses
+          My Learning
         </Typography>
         <Typography color="text.secondary" sx={{ fontSize: "1.1rem" }}>
-          Continue your learning journey 🚀
+          Continue your learning journey 🌤️
         </Typography>
       </Box>
 
@@ -105,12 +117,14 @@ const MyEnrollments = () => {
       <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: "center" }}>
         <Button
           onClick={() => navigate("/")}
+          startIcon={<SchoolRoundedIcon />}
           sx={{
-            bgcolor: "#3B82F6",
-            color: "white",
+            bgcolor: "#93C5FD",
+            color: "#1E3A8A",
             fontWeight: "bold",
             textTransform: "none",
-            "&:hover": { bgcolor: "#1E3A8A" },
+            borderRadius: "20px",
+            "&:hover": { bgcolor: "#BFDBFE" },
             px: 3,
           }}
           variant="contained"
@@ -120,11 +134,12 @@ const MyEnrollments = () => {
         <Button
           onClick={() => navigate("/courses")}
           sx={{
-            bgcolor: "#3B82F6",
-            color: "white",
+            bgcolor: "#93C5FD",
+            color: "#1E3A8A",
             fontWeight: "bold",
             textTransform: "none",
-            "&:hover": { bgcolor: "#1E3A8A" },
+            borderRadius: "20px",
+            "&:hover": { bgcolor: "#BFDBFE" },
             px: 3,
           }}
           variant="contained"
@@ -163,44 +178,122 @@ const MyEnrollments = () => {
             sx={{
               width: 320,
               borderRadius: 4,
-              boxShadow: 3,
+              boxShadow: "0 4px 15px rgba(0,0,0,0.05)",
               display: "flex",
               flexDirection: "column",
-              "&:hover": { transform: "translateY(-6px)", boxShadow: 6 },
+              transition: "all 0.3s ease",
+              "&:hover": {
+                transform: "translateY(-5px)",
+                boxShadow: "0 6px 15px rgba(0,0,0,0.1)",
+              },
+              background: "linear-gradient(180deg, #ffffff 0%, #F9FAFB 100%)",
             }}
           >
             <CardContent>
-              <Typography variant="h5" sx={{ fontWeight: "bold", color: "#1E3A8A", mb: 1 }}>
+              <Typography
+                variant="h5"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#1E3A8A",
+                  mb: 1,
+                  fontFamily: "Poppins",
+                }}
+              >
                 {course.title}
               </Typography>
-              <Typography variant="body1" sx={{ mb: 1.5 }}>
+              <Typography variant="body1" sx={{ mb: 1.5, color: "#4B5563" }}>
                 {course.description}
               </Typography>
-              <Typography variant="body2" sx={{ mb: 1 }}>
+              <Typography variant="body2" sx={{ mb: 1, color: "#6B7280" }}>
                 Instructor: {course.instructor || "Unknown"}
               </Typography>
-              <Typography variant="subtitle2" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+              <Typography
+                variant="subtitle2"
+                sx={{
+                  fontWeight: "bold",
+                  color: "#2563EB",
+                  letterSpacing: "0.5px",
+                  mb: 1,
+                }}
+              >
                 {course.difficultyLevel}
               </Typography>
+
+              {/* Progress Bar */}
+              <Box sx={{ mt: 2 }}>
+                <Typography
+                  variant="body2"
+                  color="text.secondary"
+                  sx={{ mb: 0.5, fontWeight: "medium" }}
+                >
+                  Progress: {Math.round(course.progress || 0)}%
+                </Typography>
+                <LinearProgress
+                  variant="determinate"
+                  value={course.progress || 0}
+                  sx={{
+                    height: 8,
+                    borderRadius: 5,
+                    bgcolor: "#E5E7EB",
+                    "& .MuiLinearProgress-bar": {
+                      bgcolor: "#3B82F6",
+                    },
+                  }}
+                />
+              </Box>
             </CardContent>
-            <Box sx={{ p: 2 }}>
-              <Stack spacing={1}>
+
+            {/* Buttons Section */}
+            <Box sx={{ p: 2, pt: 0 }}>
+              <Stack direction="row" spacing={1.5}>
                 <Button
                   fullWidth
                   variant="contained"
-                  sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
+                  startIcon={<PlayCircleFilledWhiteRoundedIcon />}
                   onClick={() => navigate(`/course/${course.courseId}`)}
+                  sx={{
+                    background: "#93C5FD",
+                    color: "#1E3A8A",
+                    fontWeight: "bold",
+                    textTransform: "none",
+                    borderRadius: "25px",
+                    py: 1,
+                    fontSize: "0.95rem",
+                    boxShadow: "0 3px 6px rgba(147,197,253,0.4)",
+                    transition: "all 0.3s ease",
+                    "&:hover": {
+                      background: "#BFDBFE",
+                      transform: "translateY(-2px)",
+                      boxShadow: "0 5px 10px rgba(147,197,253,0.5)",
+                    },
+                  }}
                 >
-                  Continue Learning
+                  Continue
                 </Button>
-                <Button
-                  fullWidth
-                  variant="outlined"
-                  color="error"
-                  onClick={() => handleUnenroll(course.courseId)}
-                >
-                  Unenroll
-                </Button>
+
+                <Tooltip title="Unenroll" arrow>
+                  <Button
+                    variant="outlined"
+                    color="error"
+                    onClick={() => handleUnenroll(course.courseId)}
+                    sx={{
+                      minWidth: "48px",
+                      borderRadius: "50%",
+                      borderColor: "#FCA5A5",
+                      color: "#B91C1C",
+                      borderWidth: "2px",
+                      transition: "all 0.3s ease",
+                      "&:hover": {
+                        bgcolor: "#FEF2F2",
+                        borderColor: "#DC2626",
+                        transform: "translateY(-2px)",
+                        boxShadow: "0 4px 10px rgba(239,68,68,0.15)",
+                      },
+                    }}
+                  >
+                    <DeleteOutlineRoundedIcon />
+                  </Button>
+                </Tooltip>
               </Stack>
             </Box>
           </Card>
