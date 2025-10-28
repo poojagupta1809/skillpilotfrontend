@@ -5,10 +5,12 @@ export default function Protected({role,children}) {
     
         const userRole=sessionStorage.getItem('role')  
         if(role===userRole){
+           console.log(userRole,"role in session")
             return  children;
         }
         else{
-            console.log(userRole,"can not access")
+            console.log(userRole,"cannot access");
+            console.log(role,"role checking")
             return navigate('/');
            
         }

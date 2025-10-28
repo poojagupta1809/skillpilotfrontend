@@ -35,6 +35,13 @@ const userRole = sessionStorage.getItem("role");
       .then(() => setLessons((prev) => prev.filter((l) => l.lessonId !== lessonId)))
       .catch(() => console.error("Failed to delete lesson"));
   };
+  const handleLessonUpdated = (updatedLesson) => {
+
+    setLessons((prev) =>
+      prev.map((l) => (l.lessonId === updatedLesson.lessonId ? updatedLesson : l))
+    );
+    setEditLesson(null);
+  };
 
   return (
     <Box sx={{ maxWidth: 1100, mx: "auto", p: 3 }}>
@@ -73,6 +80,7 @@ const userRole = sessionStorage.getItem("role");
       <LessonList
         lessons={lessons}
         onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
+        onEditLesson={userRole === "ADMIN" ? handleEditLesson : null}
       />
     </Box>
   );

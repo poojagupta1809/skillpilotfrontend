@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, MenuItem } from "@mui/material";
+import { Box, TextField, Button, Typography, MenuItem,Snackbar, 
+  Alert  } from "@mui/material";
 import axios from "axios";
 
 export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
@@ -13,7 +14,8 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
     content: "",
     videoUrl: "",
   });
-  const [message, setMessage] = useState("");
+   const [errors, setErrors] = useState([]);
+  const [successMessage, setSuccessMessage] = useState("");
   const [loading, setLoading] = useState(false);
 
   
@@ -44,13 +46,22 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
         lessonData
       )
       .then((res) => {
-        setMessage("✅ Lesson updated successfully!");
+        setSuccessMessage("✅ Lesson updated successfully!");
         if (onLessonUpdated) onLessonUpdated(res.data);
-        if (onClose) onClose();
+       
       })
-      .catch((err) => {
+          .catch((err) => {
         console.error(err);
-        setMessage("❌ Failed to update lesson.");
+        if (err.response && err.response.data) {
+          const backendErrors = [];
+          const data = err.response.data;
+          for (const key in data) {
+            backendErrors.push(`${key}: ${data[key]}`);
+          }
+          setErrors(backendErrors);
+        } else {
+          setErrors(["Server error. Please try again later."]);
+        }
       })
       .finally(() => setLoading(false));
   };
@@ -66,7 +77,7 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
         borderRadius: 2,
       }}
     >
-      <Typography variant="h5" gutterBottom>
+      <Typography variant="h4" gutterBottom>
         ✏️ Update Lesson
       </Typography>
 
@@ -77,8 +88,9 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="title"
           value={lessonData.title}
           onChange={handleChange}
-          required
-          sx={{ mb: 2 }}
+          sx={{ mb: 2 ,
+            "& .MuiInputBase-input": { fontSize: "1.2rem" },
+            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
         />
 
         <TextField
@@ -89,8 +101,9 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="description"
           value={lessonData.description}
           onChange={handleChange}
-          required
-          sx={{ mb: 2 }}
+          sx={{ mb: 2 ,
+            "& .MuiInputBase-input": { fontSize: "1.2rem" },
+            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
         />
 
         <TextField
@@ -100,25 +113,28 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
           name="contentType"
           value={lessonData.contentType}
           onChange={handleChange}
-          required
-          sx={{ mb: 2 }}
+         
+          sx={{ mb: 2,
+            "& .MuiInputBase-input": { fontSize: "1.2rem" },
+            "& .MuiInputLabel-root": { fontSize: "1.1rem" }, }}
         >
           <MenuItem value="TEXT">Text</MenuItem>
           <MenuItem value="VIDEO">Video</MenuItem>
-          <MenuItem value="QUIZ">Quiz</MenuItem>
         </TextField>
 
         {lessonData.contentType === "TEXT" && (
           <TextField
             fullWidth
             multiline
-            rows={4}
+            rows={15}
             label="Text Content"
             name="content"
             value={lessonData.content}
             onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
+  
+            sx={{ mb: 2 ,
+            "& .MuiInputBase-input": { fontSize: "1.2rem" },
+            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
           />
         )}
 
@@ -129,36 +145,52 @@ export default function UpdateLesson({ lesson, onLessonUpdated, onClose }) {
             name="videoUrl"
             value={lessonData.videoUrl}
             onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
+            sx={{ mb: 2 ,
+            "& .MuiInputBase-input": { fontSize: "1.2rem" },
+            "& .MuiInputLabel-root": { fontSize: "1.1rem" },}}
           />
         )}
 
-        {lessonData.contentType === "QUIZ" && (
-          <TextField
-            fullWidth
-            label="Quiz Content"
-            name="content"
-            value={lessonData.content}
-            onChange={handleChange}
-            required
-            sx={{ mb: 2 }}
-          />
-        )}
 
         <Box sx={{ display: "flex", justifyContent: "space-between", mt: 1 }}>
           <Button variant="contained" color="primary" type="submit" disabled={loading}>
             {loading ? "Updating..." : "Update Lesson"}
           </Button>
           <Button variant="outlined" color="secondary" onClick={onClose} disabled={loading}>
-            Close
+            Cancel
           </Button>
         </Box>
       </form>
 
-      {message && (
-        <Typography sx={{ mt: 2, textAlign: "center" }}>{message}</Typography>
-      )}
+      <Snackbar
+        open={errors.length > 0}
+        autoHideDuration={6000}
+        onClose={() => setErrors([])}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="error" onClose={() => setErrors([])} sx={{ whiteSpace: "normal" }}>
+          <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+            {errors.map((errMsg, idx) => (
+              <li key={idx}>{errMsg}</li>
+            ))}
+          </ul>
+        </Alert>
+      </Snackbar>
+
+      {/* Success Snackbar */}
+      <Snackbar
+        open={!!successMessage}
+        autoHideDuration={4000}
+        onClose={() => {
+          setSuccessMessage("");
+          if (onClose) onClose();
+        }}
+        anchorOrigin={{ vertical: "top", horizontal: "center" }}
+      >
+        <Alert severity="success" onClose={() => setSuccessMessage("")}>
+          {successMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
