@@ -63,16 +63,9 @@ export default function CourseItem() {
                             </Typography>
                         </div>
 
-                        <div
-                            className="enroll-button-container"
-                            style={{ display: "flex", flexDirection: "column", gap: "10px", marginTop: "16px" }}
-                        >
-                            <Button fullWidth variant="contained" onClick={handleViewLesson}>View Lessons here</Button>
-                            {showComponent && <CourseLessonsSection courseId={courseId} />}
-                            <Stack spacing={2} direction="row" sx={{ alignItems: 'center' }}>
-                                <Button variant="outlined" onClick={() => navigate("/admin")}>Back</Button>
-                            </Stack>
-
+                        <div>
+                            
+<CourseLessonsSection courseId={courseId} />
                         </div>
                     </CardContent>
                 </Card>
