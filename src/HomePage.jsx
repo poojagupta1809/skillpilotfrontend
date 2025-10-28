@@ -41,8 +41,6 @@ function HomePage() {
           <Route path="/courses/:courseId" element={<CourseLessonsSection />} />
           <Route path="/courses/lesson/:lessonId" element={<LessonPage />} />
           <Route path="/courses/myenrollments" element={<MyEnrollments />} />
-          <Route path='/admin/course-details/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course-details/:courseId" Component={CourseItem} ></Protected>} />
-          <Route path='/admin/course/edit/:courseId' element={<Protected Role={'ADMIN'} to="/admin/course/edit/:courseId" Component={CourseEdit} ></Protected>} />
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments/>} />
            <Route path="/courses/:courseId/add-lesson" element={<AddLesson />} />
            <Route path="/courses/lessons/:lessonId/edit" element={<UpdateLesson />} />
