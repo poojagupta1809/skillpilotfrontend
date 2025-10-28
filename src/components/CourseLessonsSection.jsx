@@ -1,15 +1,16 @@
 import React, { useState, useEffect } from "react";
 import { Box, Button } from "@mui/material";
 import axios from "axios";
-import { useNavigate } from "react-router-dom";
+import { useNavigate ,useParams} from "react-router-dom";
 import { Pagination, Stack } from "@mui/material";
 
 import LessonList from "./LessonList";
 
-export default function CourseLessonsSection({ courseId }) {
+export default function CourseLessonsSection({courseId:props}) {
   const authorization = "Bearer " + sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = authorization;
-
+  const {courseId:paramcourseId} = useParams();
+const courseId  = props|| paramcourseId;
   const [lessons, setLessons] = useState([]);
   const navigate = useNavigate();
   const userRole = sessionStorage.getItem("role");
@@ -43,7 +44,7 @@ const paginatedLessons = lessons.slice(startIndex, endIndex);
     <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
       <Button
         variant="contained"
-        onClick={() => navigate(`/courses/${courseId}/add-lesson`)}
+        onClick={() => navigate(`/course/${courseId}/add-lesson`)}
       >
         + Add Lesson
       </Button>
@@ -66,8 +67,9 @@ const paginatedLessons = lessons.slice(startIndex, endIndex);
     mb: 4, 
   }}
 >
-  <LessonList
-    lessons={paginatedLessons}
+  <LessonList courseId={courseId}
+    Alllessons={lessons} 
+  lessons={paginatedLessons} 
     onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
   />
 
