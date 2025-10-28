@@ -127,7 +127,6 @@ export default function CourseForm() {
         label="Image Url"
         value={course.imageUrl}
         onChange={handleChange}
-        required
       />
 
       <TextField
