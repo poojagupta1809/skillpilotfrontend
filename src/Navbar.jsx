@@ -88,7 +88,11 @@ function NavBar() {
               component={Link}
               to={link.path}
               color="inherit"
-              sx={{ textTransform: "none" }}
+               sx={{
+                  textTransform: "none",
+                  fontSize: "1.1rem", // increase text size here
+                  mx: 1,              // optional spacing between buttons
+                }}
             >
               {link.label}
             </Button>
