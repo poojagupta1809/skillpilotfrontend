@@ -64,7 +64,7 @@ export default function AddLesson() {
   return (
     <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
       <Typography variant="h4" gutterBottom>
-       Create New Lesson
+       New Lesson
       </Typography>
 
       <form onSubmit={handleSubmit}>
@@ -137,9 +137,16 @@ export default function AddLesson() {
           />
         )}
 
-        <Box sx={{ display: "flex", justifyContent: "flex-start", mt: 1 }}>
+<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
           <Button variant="contained" color="primary" type="submit">
             Add Lesson
+          </Button>
+           <Button
+            variant="outlined"
+            color="primary"
+            onClick={() => navigate(`/course/${courseId}`)}
+          >
+            Cancel
           </Button>
         </Box>
       </form>
