@@ -17,16 +17,16 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
+export default function LessonList({ courseId, Alllessons,lessons, onDeleteLesson, onEditLesson }) {
   const [selectedLessonId, setSelectedLessonId] = useState(null);
   const navigate = useNavigate();
   const authorization = "Bearer " + sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = authorization;
 
-  const handleOpenLesson = (lesson) => {
-    setSelectedLessonId(lesson.lessonId);
-    navigate(`/courses/lesson/${lesson.lessonId}`, { state: { lesson } });
-  };
+const handleOpenLesson = (lesson) => {
+ navigate(`/course/${courseId}/lesson/${lesson.lessonId}`, { state: { lesson, lessons: Alllessons } });
+
+};
 
   return (
     <List sx={{ width: "100%", bgcolor: "background.paper" }}>
@@ -109,7 +109,7 @@ export default function LessonList({ lessons, onDeleteLesson, onEditLesson }) {
       color="primary"
       onClick={(e) => {
         e.stopPropagation();
-        navigate(`/courses/lessons/${lesson.lessonId}/edit`);
+        navigate(`/course/lessons/${lesson.lessonId}/edit`);
       }}
       sx={{ mr: 1 }}
     >
