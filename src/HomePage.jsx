@@ -23,6 +23,7 @@ import AdminEnrollments from './components/AdminEnrollments';
 import CourseEdit from './components/CourseEdit';
 import CoursePurchase from './components/CoursePurchase';
 import CourseComplete from './components/CourseComplete';
+import Footer from './components/Footer';
 
 
 
@@ -55,6 +56,7 @@ function HomePage() {
 
         </Routes>
       </Container>
+      <Footer/>
 
 
     </Router>
