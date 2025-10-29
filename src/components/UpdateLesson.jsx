@@ -68,7 +68,7 @@ export default function UpdateLesson() {
       .put(`http://localhost:8088/api/courses/lessons/${lessonId}`, lessonData)
       .then((res) => {
         setSuccessMessage("✅ Lesson updated successfully!");
-        navigate(`/course/${courseId}`); 
+          navigate(`/admin/course-details/${courseId}`); 
       })
       .catch((err) => {
         console.error(err);
@@ -155,7 +155,7 @@ export default function UpdateLesson() {
           <Button variant="contained" color="primary" type="submit">
             Update Lesson
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => navigate(`/courses/${courseId}`)}>
+          <Button variant="outlined" color="secondary" onClick={() =>  navigate(`/admin/course-details/${courseId}`)}>
             Cancel
           </Button>
         </Box>
