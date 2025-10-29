@@ -1,10 +1,19 @@
 import React, { useState } from "react";
-import { Box, TextField, Button, Typography, MenuItem, Snackbar, Alert } from "@mui/material";
+import {
+  Container,
+  Box,
+  TextField,
+  Button,
+  Typography,
+  MenuItem,
+  Snackbar,
+  Alert,
+} from "@mui/material";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
 export default function AddLesson() {
-  const { courseId } = useParams(); 
+  const { courseId } = useParams();
   const navigate = useNavigate();
 
   let authorization = "Bearer " + sessionStorage.getItem("token");
@@ -33,7 +42,7 @@ export default function AddLesson() {
 
     axios
       .post(`http://localhost:8088/api/courses/${courseId}/lessons`, lessonData)
-      .then((res) => {
+      .then(() => {
         setSuccessMessage("✅ Lesson added successfully!");
         setLessonData({
           title: "",
@@ -42,13 +51,11 @@ export default function AddLesson() {
           content: "",
           videoUrl: "",
         });
-      
         navigate(`/admin/course-details/${courseId}`);
       })
       .catch((err) => {
         console.error(err);
         if (err.response && err.response.data) {
-         
           const backendErrors = [];
           const data = err.response.data;
           for (const key in data) {
@@ -62,121 +69,121 @@ export default function AddLesson() {
   };
 
   return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
-      <Typography variant="h4" gutterBottom>
-       New Lesson
-      </Typography>
+    <Container maxWidth="sm" sx={{ py: 5 }}>
+      <Box
+        sx={{
+          bgcolor: "#fff",
+          p: 4,
+          borderRadius: 2,
+          boxShadow: 3,
+          display: "flex",
+          flexDirection: "column",
+        }}
+      >
+        <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 500 }}>
+          Add New Lesson
+        </Typography>
 
-      <form onSubmit={handleSubmit}>
-        <TextField
-          fullWidth
-          label="Lesson Title"
-          name="title"
-          value={lessonData.title}
-          onChange={handleChange}
-          sx={{ mb: 2,
-      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
-      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   
-    }}
-          
-        />
+        <form onSubmit={handleSubmit}>
+          <TextField
+            fullWidth
+            label="Lesson Title"
+            name="title"
+            value={lessonData.title}
+            onChange={handleChange}
+            sx={{ mb: 2 }}
+          />
 
-        <TextField
-          fullWidth
-          multiline
-          rows={3}
-          label="Description"
-          name="description"
-          value={lessonData.description}
-          onChange={handleChange}
-          sx={{ mb: 2,
-      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
-      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   }}
-        />
-
-        <TextField
-          select
-          fullWidth
-          label="Content Type"
-          name="contentType"
-          value={lessonData.contentType}
-          onChange={handleChange}
-          sx={{ mb: 2 ,
-      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
-      "& .MuiInputLabel-root": { fontSize: "1.1rem" }   }}
-        >
-          <MenuItem value="TEXT">Text</MenuItem>
-          <MenuItem value="VIDEO">Video</MenuItem>
-        </TextField>
-
-        {lessonData.contentType === "TEXT" && (
           <TextField
             fullWidth
             multiline
-            rows={15}
-            label="Text Content"
-            name="content"
-            value={lessonData.content}
+            rows={3}
+            label="Description"
+            name="description"
+            value={lessonData.description}
             onChange={handleChange}
-            sx={{ mb: 2 ,
-      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
-      "& .MuiInputLabel-root": { fontSize: "1.2rem" }  }}
+            sx={{ mb: 2 }}
           />
-        )}
 
-        {lessonData.contentType === "VIDEO" && (
           <TextField
+            select
             fullWidth
-            label="YouTube Video URL"
-            name="videoUrl"
-            value={lessonData.videoUrl}
+            label="Content Type"
+            name="contentType"
+            value={lessonData.contentType}
             onChange={handleChange}
-            sx={{ mb: 2 ,
-      "& .MuiInputBase-input": { fontSize: "1.2rem" },  
-      "& .MuiInputLabel-root": { fontSize: "1.1rem" }  }}
-          />
-        )}
-
-<Box sx={{ display: "flex", gap: 2, mt: 3 }}>
-          <Button variant="contained" color="primary" type="submit">
-            Add Lesson
-          </Button>
-           <Button
-            variant="outlined"
-            color="primary"
-            onClick={() =>   navigate(`/admin/course-details/${courseId}`)}
+            sx={{ mb: 2 }}
           >
-            Cancel
-          </Button>
-        </Box>
-      </form>
+            <MenuItem value="TEXT">Text</MenuItem>
+            <MenuItem value="VIDEO">Video</MenuItem>
+          </TextField>
 
-      <Snackbar
-        open={errors.length > 0}
-        autoHideDuration={6000}
-        onClose={() => setErrors([])}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" onClose={() => setErrors([])} sx={{ whiteSpace: "normal" }}>
-          <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
-            {errors.map((errMsg, idx) => (
-              <li key={idx}>{errMsg}</li>
-            ))}
-          </ul>
-        </Alert>
-      </Snackbar>
+          {lessonData.contentType === "TEXT" && (
+            <TextField
+              fullWidth
+              multiline
+              rows={6}
+              label="Text Content"
+              name="content"
+              value={lessonData.content}
+              onChange={handleChange}
+              sx={{ mb: 2 }}
+            />
+          )}
 
+          {lessonData.contentType === "VIDEO" && (
+            <TextField
+              fullWidth
+              label="YouTube Video URL"
+              name="videoUrl"
+              value={lessonData.videoUrl}
+              onChange={handleChange}
+              sx={{ mb: 2 }}
+            />
+          )}
 
-      <Snackbar
-        open={!!successMessage}
-        autoHideDuration={4000}
-        onClose={() => setSuccessMessage("")}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="success" onClose={() => setSuccessMessage("")}>
-          {successMessage}
-        </Alert>
-      </Snackbar>
-    </Box>
+          <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+            <Button variant="contained" color="primary" type="submit">
+              Add Lesson
+            </Button>
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => navigate(`/admin/course-details/${courseId}`)}
+            >
+              Cancel
+            </Button>
+          </Box>
+        </form>
+
+        {/* Error Snackbar */}
+        <Snackbar
+          open={errors.length > 0}
+          autoHideDuration={6000}
+          onClose={() => setErrors([])}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert severity="error" onClose={() => setErrors([])} sx={{ whiteSpace: "normal" }}>
+            <ul style={{ margin: 0, paddingLeft: "1.2rem" }}>
+              {errors.map((errMsg, idx) => (
+                <li key={idx}>{errMsg}</li>
+              ))}
+            </ul>
+          </Alert>
+        </Snackbar>
+
+        {/* Success Snackbar */}
+        <Snackbar
+          open={!!successMessage}
+          autoHideDuration={4000}
+          onClose={() => setSuccessMessage("")}
+          anchorOrigin={{ vertical: "top", horizontal: "center" }}
+        >
+          <Alert severity="success" onClose={() => setSuccessMessage("")}>
+            {successMessage}
+          </Alert>
+        </Snackbar>
+      </Box>
+    </Container>
   );
 }

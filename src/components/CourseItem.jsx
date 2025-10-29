@@ -91,9 +91,7 @@ export default function CourseItem() {
                     <Box sx={{ height: "1px", backgroundColor: "#ddd", my: 2 }} />
 
                     <CardContent>
-                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
-                            Course Lessons
-                        </Typography>
+                      
                         <CourseLessonsSection courseId={course.courseId} />
                     </CardContent>
                     <Button type="text" variant="outlined" onClick={handleCancel}>

@@ -9,6 +9,7 @@ export default function LessonPage() {
   const lessons = location.state?.lessons || [];
   const lesson = location.state?.lesson;
   const { courseId, lessonId } = useParams();
+  const userRole = sessionStorage.getItem("role");
 
   if (!lesson) {
     return (
@@ -18,7 +19,8 @@ export default function LessonPage() {
         </Typography>
         <Button
           variant="contained"
-          onClick={() => navigate(`/course/${location.state?.courseId || ""}`)}
+          onClick={() => 
+            userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${location.state?.courseId || ""}`)}
           sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
         >
           Course
@@ -90,7 +92,8 @@ export default function LessonPage() {
         <Box sx={{ flexGrow: 1 }}>
           <Button
             variant="outlined"
-            onClick={() => navigate(`/course/${courseId || ""}`)}
+            onClick={() => userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${location.state?.courseId || ""}`)}
+ 
             sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
           >
             ← Back to Course
