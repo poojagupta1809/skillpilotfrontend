@@ -1,7 +1,8 @@
 import React from "react";
 import { useLocation, useNavigate, useParams } from "react-router-dom";
 import { Box, Typography, Button, Paper, Divider } from "@mui/material";
-
+import { IconButton, Tooltip } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 export default function LessonPage() {
   const navigate = useNavigate();
   const location = useLocation();
@@ -90,14 +91,17 @@ export default function LessonPage() {
       >
         {/* Main Content */}
         <Box sx={{ flexGrow: 1 }}>
-          <Button
+          <Tooltip title="Back" placement="right">
+
+         <IconButton
             variant="outlined"
             onClick={() => userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${location.state?.courseId || ""}`)}
  
             sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
           >
-            ← Back to Course
-          </Button>
+      <ArrowBackIcon />
+          </IconButton>
+</Tooltip>
 
           <Typography variant="h4" fontWeight="bold" gutterBottom>
             {lesson.title}
