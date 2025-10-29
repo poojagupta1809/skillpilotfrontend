@@ -72,7 +72,32 @@ navigate(`/course/${course.courseId}/purchase`);
   };
 
   const handleMarkCompleted = () => alert("Course marked as completed!");
-  const handleLessonsCount = () => alert("Updating Progress at backend");
+  
+   const handleLessonsCount = () => {
+
+    const parsed = parseInt(completedLessons, 10);
+
+    if (Number.isNaN(parsed) || parsed < 0) {
+      alert("Please enter a valid non-negative number for completed lessons.");
+      return;
+    }
+
+
+    axios.put(
+      `http://localhost:8088/api/enrollments/courses/${course.courseId}/user/${userId}/updateProgress`,
+      null,
+      {
+        params: { completedLessons },
+      }
+    ).then(res => {
+      console.log("Progress percentage:", res.data.progressPercentage);
+    }).
+      catch((err) => {
+      console.error("Error updating progress");
+      alert(err.response?.data || "Update enrollment completedLesson failed");
+    });
+  };
+
 
   if (loading)
     return (
