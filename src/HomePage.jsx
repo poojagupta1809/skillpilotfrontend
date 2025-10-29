@@ -21,7 +21,7 @@ import CourseItem from './components/CourseItem';
 import MyEnrollments from './components/MyEnrollments';
 import AdminEnrollments from './components/AdminEnrollments';
 import CourseEdit from './components/CourseEdit';
-
+import CoursePurchase from './components/CoursePurchase';
 
 
 function HomePage() {
@@ -42,12 +42,14 @@ function HomePage() {
           <Route path="/courses/myenrollments" element={<MyEnrollments />} />
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments/>} />
            <Route path="/course/:courseId/add-lesson" element={<AddLesson />} />
-<Route path="/course/:courseId/lesson/:lessonId/edit" element={<UpdateLesson />} />
+           <Route path="/course/:courseId/lesson/:lessonId/edit" element={<UpdateLesson />} />
           <Route path="/admin" element={<Protected role="ADMIN"> < AdminDefaultPage /> </Protected>} />
           <Route path="/course/add" element={<Protected role="ADMIN" ><CourseForm /></Protected>} ></Route>
           <Route path="/admin/course-details/:courseId" element={<Protected role="ADMIN">< CourseItem /></Protected>} />
           <Route path="/admin/course/edit/:courseId" element={<Protected role="ADMIN"> <CourseEdit /> </Protected>} />
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments />} />
+          <Route path="/course/:id/purchase" element={<CoursePurchase />} />
+
         </Routes>
       </Container>
 
