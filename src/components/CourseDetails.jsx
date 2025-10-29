@@ -49,7 +49,10 @@ export default function CourseDetails() {
 
     if (userId) {
       axios
-        .get(`http://localhost:8088/api/enrollments/users/${userId}/enrollments`, { headers })
+        .get(
+          `http://localhost:8088/api/enrollments/users/${userId}/enrollments`,
+          { headers }
+        )
         .then((res) => setUserEnrollments(res.data.map((e) => e.courseId)))
         .catch((err) => console.error("Error fetching enrollments:", err));
     }
@@ -62,7 +65,9 @@ export default function CourseDetails() {
     }
 
     axios
-      .post(`http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`)
+      .post(
+        `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
+      )
       .then(() => {
         setUserEnrollments((prev) => [...prev, course.courseId]);
         setDialogOpen(true);
@@ -76,7 +81,6 @@ export default function CourseDetails() {
   const handleMarkCompleted = () => alert("Course marked as completed!");
 
   const handleLessonsCount = () => {
-
     const parsed = parseInt(completedLessons, 10);
 
     if (Number.isNaN(parsed) || parsed < 0) {
@@ -101,12 +105,18 @@ export default function CourseDetails() {
       });
   };
 
-
   if (loading)
     return (
-      <div className="loading-container">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <CircularProgress />
-      </div>
+      </Box>
     );
 
   if (!course) return <Typography>Course not found.</Typography>;
@@ -120,35 +130,53 @@ export default function CourseDetails() {
 
   return (
     <Box
-      className="course-details-container"
       sx={{
         display: "flex",
-        flexDirection: "column",
-        gap: 3,
-        alignItems: "flex-start",
-        justifyContent: "space-between",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        p: 3,
       }}
     >
-
-      <Card className="course-details-card">
-        <CardContent className="course-header">
-          <Typography variant="h4" className="course-title">
+      <Card
+        sx={{
+          maxWidth: 800,
+          width: "100%",
+          borderRadius: 4,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          backgroundColor: "#fff",
+          p: 3,
+        }}
+      >
+        <CardContent>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 600, mb: 1, color: "#1E3A8A" }}
+          >
             {course.topic}
           </Typography>
 
-          <Typography variant="subtitle1" className="course-instructor">
-            Instructor: {course.instructor}
+          <Typography variant="subtitle1" sx={{ mb: 2 }}>
+            Instructor: <strong>{course.instructor}</strong>
           </Typography>
 
-          <Typography variant="body1" className="course-description">
+          <Typography variant="body1" sx={{ mb: 2 }}>
             {course.description}
           </Typography>
 
-          <Typography variant="body2" className="course-difficulty">
-            Difficulty Level: {course.difficultyLevel}
+          <Typography variant="body2" sx={{ mb: 3 }}>
+            Difficulty Level: <strong>{course.difficultyLevel}</strong>
           </Typography>
 
-          <Box className="course-actions">
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -158,7 +186,6 @@ export default function CourseDetails() {
               {enrollButtonText}
             </Button>
 
-            {/* Lessons Completed TextField + Update Icon */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TextField
                 label="Lessons Completed"
@@ -169,10 +196,9 @@ export default function CourseDetails() {
                   maxLength: 2,
                   style: { textAlign: "center", width: "50px" },
                 }}
-                size="medium"
+                size="small"
                 variant="outlined"
               />
-
               <Tooltip title="Update Progress">
                 <IconButton color="secondary" onClick={handleLessonsCount}>
                   <UpdateIcon />
@@ -216,10 +242,10 @@ export default function CourseDetails() {
           </Box>
         </CardContent>
 
-        <Box sx={{ height: "1px", backgroundColor: "#ddd", margin: "16px 0" }} />
+        <Box sx={{ height: "1px", backgroundColor: "#ddd", my: 2 }} />
 
-        <CardContent className="lessons-section">
-          <Typography variant="h5" className="lessons-title">
+        <CardContent>
+          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
             Course Lessons
           </Typography>
           <CourseLessonsSection courseId={id} />
@@ -237,10 +263,18 @@ export default function CourseDetails() {
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
-          <Button variant="contained" color="primary" onClick={() => setDialogOpen(false)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setDialogOpen(false)}
+          >
             Stay on Page
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => navigate("/courses")}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate("/courses")}
+          >
             Explore Courses
           </Button>
         </DialogActions>
