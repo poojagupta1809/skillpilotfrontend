@@ -26,8 +26,18 @@ export default function UpdateLesson() {
   // Fetch lesson data
   useEffect(() => {
     axios
-      .get(`http://localhost:8088/api/courses/lessons/${lessonId}`)
+      .get(`http://localhost:8088/api/courses/lesson/${lessonId}`)
       .then((res) => {
+           const data = res.data;
+
+     
+      const safeVideoUrl =
+        typeof data.videoUrl === "string" &&
+        data.videoUrl.trim().length > 0 &&
+        data.videoUrl !== "null" &&
+        data.videoUrl !== "undefined"
+          ? data.videoUrl.trim()
+          : "";
         setLessonData({
           title: res.data.title || "",
           description: res.data.description || "",
@@ -58,7 +68,7 @@ export default function UpdateLesson() {
       .put(`http://localhost:8088/api/courses/lessons/${lessonId}`, lessonData)
       .then((res) => {
         setSuccessMessage("✅ Lesson updated successfully!");
-        navigate(`/courses/${courseId}`); // Redirect after update
+        navigate(`/course/${courseId}`); 
       })
       .catch((err) => {
         console.error(err);
