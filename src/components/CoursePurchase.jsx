@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Card,
   CardContent,
@@ -10,166 +10,216 @@ import {
   Radio,
   TextField,
   Slider,
-  Alert,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogContentText,
+  DialogActions,
+  Button,
+  CircularProgress,
 } from "@mui/material";
+import { useNavigate, useParams } from "react-router-dom";
+import axios from "axios";
 
-const CoursePurchase = ({ course }) => {
+const CoursePurchase = () => {
+  const { id } = useParams();
+  const [course, setCourse] = useState(null);
+  const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [paymentDetails, setPaymentDetails] = useState({});
   const [sliderValue, setSliderValue] = useState(0);
-  const [paymentComplete, setPaymentComplete] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
 
-  if (!course) return null;
+  const navigate = useNavigate();
+  const token = sessionStorage.getItem("token");
+  const userId = sessionStorage.getItem("userId");
+  const headers = token ? { Authorization: `Bearer ${token}` } : {};
+
+  useEffect(() => {
+    axios
+      .get(`http://localhost:8088/api/courses/${id}`, { headers })
+      .then((res) => setCourse(res.data))
+      .catch((err) => console.error("Error fetching course details:", err))
+      .finally(() => setLoading(false));
+  }, [id]);
 
   const handlePaymentInputChange = (field, value) => {
     setPaymentDetails((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSlide = (event, newValue) => {
+  const handleSlide = async (event, newValue) => {
     setSliderValue(newValue);
-    if (newValue === 100 && !paymentComplete) {
-      setTimeout(() => {
-        setPaymentComplete(true);
-      }, 500);
+    if (newValue === 100) {
+      try {
+        await axios.post(
+          `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`,
+          {},
+          { headers }
+        );
+        setTimeout(() => setDialogOpen(true), 500);
+      } catch (err) {
+        console.error("Enrollment after payment failed:", err);
+        alert("Enrollment failed after payment!");
+      }
     }
   };
 
+  if (loading)
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", mt: 10 }}>
+        <CircularProgress />
+      </Box>
+    );
+
+  if (!course)
+    return (
+      <Typography sx={{ textAlign: "center", mt: 5 }}>
+        Course not found.
+      </Typography>
+    );
+
   return (
-    <Card
-      sx={{
-        flex: "0 0 360px",
-        borderRadius: "12px",
-        boxShadow: 3,
-        p: 2,
-        height: "fit-content",
-        backgroundColor: "#ffffff",
-      }}
-    >
-      <CardContent>
-        <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
-          Billing Summary
-        </Typography>
-
-        {/* Billing Summary */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Course
+    <>
+      <Card
+        sx={{
+          flex: "0 0 360px",
+          borderRadius: "12px",
+          boxShadow: 3,
+          p: 2,
+          height: "fit-content",
+          backgroundColor: "#ffffff",
+          margin: "0 auto",
+        }}
+      >
+        <CardContent>
+          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+            Billing Summary
           </Typography>
-          <Typography variant="body2">{course.topic}</Typography>
-        </Box>
 
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-          <Typography variant="body2" color="text.secondary">
-            Instructor
+          {/* Billing Summary */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Course
+            </Typography>
+            <Typography variant="body2">{course.topic}</Typography>
+          </Box>
+
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+            <Typography variant="body2" color="text.secondary">
+              Instructor
+            </Typography>
+            <Typography variant="body2">{course.instructor}</Typography>
+          </Box>
+
+          <Divider sx={{ my: 2 }} />
+
+          {/* Payment Options */}
+          <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
+            Choose Payment Method
           </Typography>
-          <Typography variant="body2">{course.instructor}</Typography>
-        </Box>
+          <RadioGroup
+            value={paymentMethod}
+            onChange={(e) => setPaymentMethod(e.target.value)}
+          >
+            <FormControlLabel value="upi" control={<Radio />} label="UPI" />
+            <FormControlLabel value="card" control={<Radio />} label="Card" />
+            <FormControlLabel value="wallet" control={<Radio />} label="Wallet" />
+          </RadioGroup>
 
-        <Divider sx={{ my: 2 }} />
-
-        {/* Payment Options */}
-        <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
-          Choose Payment Method
-        </Typography>
-        <RadioGroup
-          value={paymentMethod}
-          onChange={(e) => setPaymentMethod(e.target.value)}
-        >
-          <FormControlLabel value="upi" control={<Radio />} label="UPI" />
-          <FormControlLabel value="card" control={<Radio />} label="Credit/Debit Card" />
-          <FormControlLabel
-            value="wallet"
-            control={<Radio />}
-            label="Wallet (Paytm / PhonePe / Others)"
-          />
-        </RadioGroup>
-
-        {/* Dynamic Input Fields */}
-        <Box sx={{ mt: 2, mb: 2 }}>
-          {paymentMethod === "upi" && (
-            <TextField
-              fullWidth
-              label="Enter UPI ID"
-              placeholder="example@upi"
-              variant="outlined"
-              size="small"
-              value={paymentDetails.upi || ""}
-              onChange={(e) => handlePaymentInputChange("upi", e.target.value)}
-            />
-          )}
-
-          {paymentMethod === "card" && (
-            <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+          <Box sx={{ mt: 2, mb: 2 }}>
+            {paymentMethod === "upi" && (
               <TextField
-                label="Card Number"
-                placeholder="XXXX XXXX XXXX XXXX"
+                fullWidth
+                label="Enter UPI ID"
+                placeholder="example@upi"
                 variant="outlined"
                 size="small"
-                value={paymentDetails.cardNumber || ""}
+                value={paymentDetails.upi || ""}
                 onChange={(e) =>
-                  handlePaymentInputChange("cardNumber", e.target.value)
+                  handlePaymentInputChange("upi", e.target.value)
                 }
               />
-              <Box sx={{ display: "flex", gap: 1 }}>
+            )}
+
+            {paymentMethod === "card" && (
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
                 <TextField
-                  label="Expiry (MM/YY)"
-                  placeholder="MM/YY"
+                  label="Card Number"
+                  placeholder="XXXX XXXX XXXX XXXX"
                   variant="outlined"
                   size="small"
-                  value={paymentDetails.expiry || ""}
-                  onChange={(e) => handlePaymentInputChange("expiry", e.target.value)}
+                  value={paymentDetails.cardNumber || ""}
+                  onChange={(e) =>
+                    handlePaymentInputChange("cardNumber", e.target.value)
+                  }
                 />
+                <Box sx={{ display: "flex", gap: 1 }}>
+                  <TextField
+                    label="Expiry (MM/YY)"
+                    placeholder="MM/YY"
+                    variant="outlined"
+                    size="small"
+                    value={paymentDetails.expiry || ""}
+                    onChange={(e) =>
+                      handlePaymentInputChange("expiry", e.target.value)
+                    }
+                  />
+                  <TextField
+                    label="CVV"
+                    placeholder="***"
+                    variant="outlined"
+                    size="small"
+                    type="password"
+                    value={paymentDetails.cvv || ""}
+                    onChange={(e) =>
+                      handlePaymentInputChange("cvv", e.target.value)
+                    }
+                  />
+                </Box>
                 <TextField
-                  label="CVV"
-                  placeholder="***"
+                  label="Name on Card"
+                  placeholder="Full Name"
                   variant="outlined"
                   size="small"
-                  type="password"
-                  value={paymentDetails.cvv || ""}
-                  onChange={(e) => handlePaymentInputChange("cvv", e.target.value)}
+                  value={paymentDetails.cardName || ""}
+                  onChange={(e) =>
+                    handlePaymentInputChange("cardName", e.target.value)
+                  }
                 />
               </Box>
+            )}
+
+            {paymentMethod === "wallet" && (
               <TextField
-                label="Name on Card"
-                placeholder="Full Name"
+                fullWidth
+                label="Wallet ID / Phone Number"
+                placeholder="Enter wallet ID or mobile number"
                 variant="outlined"
                 size="small"
-                value={paymentDetails.cardName || ""}
-                onChange={(e) => handlePaymentInputChange("cardName", e.target.value)}
+                value={paymentDetails.wallet || ""}
+                onChange={(e) =>
+                  handlePaymentInputChange("wallet", e.target.value)
+                }
               />
-            </Box>
-          )}
+            )}
+          </Box>
 
-          {paymentMethod === "wallet" && (
-            <TextField
-              fullWidth
-              label="Wallet ID / Phone Number"
-              placeholder="Enter wallet ID or mobile number"
-              variant="outlined"
-              size="small"
-              value={paymentDetails.wallet || ""}
-              onChange={(e) => handlePaymentInputChange("wallet", e.target.value)}
-            />
-          )}
-        </Box>
+          <Divider sx={{ my: 2 }} />
 
-        <Divider sx={{ my: 2 }} />
+          {/* Total Amount */}
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
+              Total Payable
+            </Typography>
+            <Typography
+              variant="subtitle1"
+              sx={{ fontWeight: 600, color: "#2e7d32" }}
+            >
+              ₹{course.price}
+            </Typography>
+          </Box>
 
-        {/* Total Amount */}
-        <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-          <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-            Total Payable
-          </Typography>
-          <Typography
-            variant="subtitle1"
-            sx={{ fontWeight: 600, color: "#2e7d32" }}
-          >
-            ₹{course.price}
-          </Typography>
-        </Box>
-
-        {/* Slide to Pay */}
-        {!paymentComplete ? (
+          {/* Slide to Pay */}
           <Box sx={{ mt: 3 }}>
             <Typography
               variant="body2"
@@ -198,16 +248,51 @@ const CoursePurchase = ({ course }) => {
               }}
             />
           </Box>
-        ) : (
-          <Alert
-            severity="success"
-            sx={{ mt: 3, borderRadius: 2, fontWeight: 500 }}
+        </CardContent>
+      </Card>
+
+      <Dialog
+        open={dialogOpen}
+        onClose={() => setDialogOpen(false)}
+        PaperProps={{
+          sx: { borderRadius: 3, p: 1 },
+        }}
+      >
+        <DialogTitle sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+          🎉 Enrollment Successful!
+        </DialogTitle>
+
+        <DialogContent>
+          <DialogContentText sx={{ mb: 2 }}>
+            You’ve successfully enrolled in this course. Would you like to start
+            learning now or explore more courses?
+          </DialogContentText>
+        </DialogContent>
+
+        <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => {
+              setDialogOpen(false);
+              navigate(`/course/${course.courseId}`);
+            }}
           >
-            🎉 Payment of ₹{course.price} completed successfully!
-          </Alert>
-        )}
-      </CardContent>
-    </Card>
+            Start Learning Now
+          </Button>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => {
+              setDialogOpen(false);
+              navigate("/courses");
+            }}
+          >
+            Explore More
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
   );
 };
 
