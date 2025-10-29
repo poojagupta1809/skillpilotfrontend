@@ -8,8 +8,7 @@ export default function LessonPage() {
 
   const lessons = location.state?.lessons || [];
   const lesson = location.state?.lesson;
- // const courseId = location.state?.courseId;
-const { courseId, lessonId } = useParams();
+  const { courseId, lessonId } = useParams();
 
   if (!lesson) {
     return (
@@ -19,9 +18,8 @@ const { courseId, lessonId } = useParams();
         </Typography>
         <Button
           variant="contained"
-        
-       onClick={() => navigate(`/course/${location.state?.courseId || ""}`)}
-  sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
+          onClick={() => navigate(`/course/${location.state?.courseId || ""}`)}
+          sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
         >
           Course
         </Button>
@@ -29,17 +27,47 @@ const { courseId, lessonId } = useParams();
     );
   }
 
- 
-  const currentIndex = lessons.findIndex(l => l.lessonId === lesson.lessonId);
+  const currentIndex = lessons.findIndex((l) => l.lessonId === lesson.lessonId);
   const prevLesson = currentIndex > 0 ? lessons[currentIndex - 1] : null;
-  const nextLesson = currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
+  const nextLesson =
+    currentIndex < lessons.length - 1 ? lessons[currentIndex + 1] : null;
 
   const getYouTubeEmbedUrl = (url) => {
     if (!url) return null;
     const match = url.match(
       /^.*(?:youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=)([^#\&\?]*).*/
     );
-    return match && match[1] ? `https://www.youtube.com/embed/${match[1]}` : null;
+    return match && match[1]
+      ? `https://www.youtube.com/embed/${match[1]}`
+      : null;
+  };
+
+  const htmlStyles = {
+    fontSize: "1.1rem",
+    lineHeight: 1.8,
+    "& h1, & h2, & h3": { fontWeight: "bold", mt: 3 },
+    "& p": { my: 1.5 },
+    "& ul, & ol": { pl: 4, my: 2 },
+    "& img": { maxWidth: "100%", borderRadius: "8px", my: 2 },
+    "& pre": {
+      background: "#f5f5f5",
+      p: 2,
+      borderRadius: "6px",
+      overflowX: "auto",
+    },
+    "& code": {
+      fontFamily: "monospace",
+      backgroundColor: "#f5f5f5",
+      borderRadius: "4px",
+      px: 0.5,
+    },
+    "& blockquote": {
+      borderLeft: "4px solid #1976d2",
+      pl: 2,
+      color: "text.secondary",
+      fontStyle: "italic",
+      my: 2,
+    },
   };
 
   return (
@@ -55,37 +83,42 @@ const { courseId, lessonId } = useParams();
           boxShadow: "0 4px 20px rgba(0,0,0,0.1)",
           display: "flex",
           flexDirection: "column",
-          minHeight: "70vh", 
-        }} >
+          minHeight: "70vh",
+        }}
+      >
         {/* Main Content */}
         <Box sx={{ flexGrow: 1 }}>
           <Button
-  variant="outlined"
-  onClick={() => navigate(`/course/${courseId || ""}`)}
-  sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
->
-  ← Back to Course
-</Button>
+            variant="outlined"
+            onClick={() => navigate(`/course/${courseId || ""}`)}
+            sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
+          >
+            ← Back to Course
+          </Button>
 
-          <Typography variant="h3" fontWeight="bold" gutterBottom>
+          <Typography variant="h4" fontWeight="bold" gutterBottom>
             {lesson.title}
           </Typography>
 
-          <Typography variant="h6" color="text.secondary" gutterBottom>
+          <Typography variant="h7" sx={{ color: "#1565c0" }} gutterBottom>
             {lesson.description}
           </Typography>
 
           <Divider sx={{ my: 3 }} />
 
-          {lesson.contentType === "TEXT" && (
-            <Typography
-              variant="body1"
-              sx={{ whiteSpace: "pre-wrap", fontSize: "1.2rem", lineHeight: 1.8 }}
-            >
-              {lesson.content}
-            </Typography>
+          {/* HTML or Text lesson */}
+          {(lesson.contentType === "TEXT" || !lesson.contentType) && (
+            <Box
+              sx={htmlStyles}
+              dangerouslySetInnerHTML={{
+                __html: lesson.content
+                  ? lesson.content.replace(/\n/g, "<br />") // preserve line breaks for old plain text
+                  : "",
+              }}
+            />
           )}
 
+          {/* VIDEO LESSON */}
           {lesson.contentType === "VIDEO" && lesson.videoUrl && (
             <Box sx={{ mt: 3, display: "flex", justifyContent: "center" }}>
               <iframe
@@ -100,6 +133,7 @@ const { courseId, lessonId } = useParams();
             </Box>
           )}
 
+          {/* QUIZ LESSON */}
           {lesson.contentType === "QUIZ" && (
             <Box
               sx={{
@@ -131,14 +165,16 @@ const { courseId, lessonId } = useParams();
               color="primary"
               sx={{ px: 4, py: 1.5, borderRadius: 2 }}
               onClick={() =>
-            
-navigate(`/course/${courseId}/lesson/${prevLesson.lessonId}`, { state: { lesson: prevLesson, lessons } })
-
+                navigate(`/course/${courseId}/lesson/${prevLesson.lessonId}`, {
+                  state: { lesson: prevLesson, lessons },
+                })
               }
             >
-              ← Previous 
+              ← Previous
             </Button>
-          ) : <Box />}
+          ) : (
+            <Box />
+          )}
 
           {nextLesson ? (
             <Button
@@ -146,12 +182,16 @@ navigate(`/course/${courseId}/lesson/${prevLesson.lessonId}`, { state: { lesson:
               color="primary"
               sx={{ px: 4, py: 1.5, borderRadius: 2 }}
               onClick={() =>
-navigate(`/course/${courseId}/lesson/${nextLesson.lessonId}`, { state: { lesson: nextLesson, lessons } })
+                navigate(`/course/${courseId}/lesson/${nextLesson.lessonId}`, {
+                  state: { lesson: nextLesson, lessons },
+                })
               }
             >
               Next →
             </Button>
-          ) : <Box />}
+          ) : (
+            <Box />
+          )}
         </Box>
       </Paper>
     </Box>
