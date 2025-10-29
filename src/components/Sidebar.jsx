@@ -32,6 +32,9 @@ const Sidebar = ({mode,setMode}) => {
   const handleEnrollment=()=>{
     navigate('/courses/admin-enrollments')
   }
+   const handleCert=()=>{
+    navigate('/courses/certificate')
+  }
   return (
     // <Grid xs={6} > 
     <Box  p={4} sx={{ display: { xs: "none", sm: "block" }}} height={'100%'} >
@@ -63,7 +66,7 @@ const Sidebar = ({mode,setMode}) => {
             </ListItemButton>
           </ListItem>
             <ListItem disablePadding>
-            <ListItemButton  onClick={handleEnrollment} href="/courses/admin-enrollments">
+            <ListItemButton  onClick={handleCert} href="/courses/certicate">
               <ListItemIcon>
                  <AnalyticsIcon/>
               </ListItemIcon>
