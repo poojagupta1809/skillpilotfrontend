@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { TextField, Button, Box, Typography, Container, RadioGroup, FormControl, FormControlLabel, FormLabel, Radio, Snackbar, Alert } from '@mui/material';
+import { TextField, Button, Box, Typography, Container, Snackbar, Alert, Grid, Paper } from '@mui/material';
 import axios from 'axios';
-import { useNavigate } from "react-router-dom";
+import {Link, useNavigate } from "react-router-dom";
+import { Link as RouterLink } from 'react-router-dom';
+import SignIn from './SignIn';
 
 
 function Signup() {
@@ -142,93 +144,126 @@ function Signup() {
   };
 
   return (
-    <Container component="main" maxWidth="xs">
-      <Box
+
+   <Container maxWidth={false} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+     
+      <Grid container component="main" sx={{ height: '100vh'}} >
+
+        <Grid item xs={12}  sm={4} md={6} sx={{
+          p: { xs: 3,md:14 }
+        }}> 
+          <Box
+            component="img"
+            src="./public/signup.png" // Replace with your image URL
+            alt="Descriptive alt text for your image"
+            sx={{
+              width: '100%',
+              height: 'auto',
+              maxHeight: '300px', // Optional: limit image height
+              objectFit: 'contain',
+            }}
+          />
+        </Grid>
+
+        {/* Sign-up Form Section */}
+           <Grid
+        item
+        xs={12}
+        md={6}
         sx={{
-          marginTop: 8,
           display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
+          justifyContent: 'flex-end', // ✅ push form to extreme right
+          p: { xs: 3, md: 6 },
         }}
       >
-        <Typography component="h1" variant="h5">
-          Sign Up
-        </Typography>
-        <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1 }}>
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="username"
-            label="Username"
-            name="username"
-            autoComplete="username"
-            autoFocus
-            onChange={handleInput}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            id="email"
-            label="Email Address"
-            name="email"
-            autoComplete="email"
-            onChange={handleInput}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="password"
-            label="Password"
-            type="password"
-            id="password"
-            autoComplete="new-password"
-            onChange={handleInput}
-          />
-          <TextField
-            margin="normal"
-            required
-            fullWidth
-            name="confirmPassword"
-            label="Confirm Password"
-            type="password"
-            id="confirmPassword"
-            autoComplete="new-password"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-          />
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 380, // ✅ keeps form narrow
+            mr: { md: 6, xs: 0 }, // ✅ adds right spacing from edge
+            textAlign: 'center',
+          }}
+        >     
+            <Typography component="h1" variant="h5" fontWeight={600} sx={{ mb: 2 }}>
+              Sign Up
+            </Typography>
+
+            <Box component="form" onSubmit={handleSubmit} noValidate sx={{ mt: 1, width: '100%' }}>
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="username"
+                label="Username"
+                name="username"
+                autoComplete="username"
+                autoFocus
+                onChange={handleInput}
+                value={user.username}
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                id="email"
+                label="Email Address"
+                name="email"
+                autoComplete="email"
+                onChange={handleInput}
+                value={user.email}
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="password"
+                label="Password"
+                type="password"
+                id="password"
+                autoComplete="new-password"
+                onChange={handleInput}
+                value={user.password}
+              />
+
+              <TextField
+                margin="normal"
+                required
+                fullWidth
+                name="confirmPassword"
+                label="Confirm Password"
+                type="password"
+                id="confirmPassword"
+                autoComplete="new-password"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+              />
+
+              <Button type="submit" fullWidth variant="contained" sx={{ mt: 3, mb: 2 }}>
+                Sign Up
+              </Button>
+
+        <Box>
+             <Link component={RouterLink} to="/signin">
+                {"Already have an account? Sign In"}
+              </Link>
+              </Box>
+
+            </Box>
+          </Box>
+        </Grid>
+        <Snackbar open={errors.length > 0} autoHideDuration={6000} onClose={handleSnackClose} anchorOrigin={{ vertical: 'top', horizontal: 'center' }}>
+          <Alert severity="error" onClose={handleSnackClose} sx={{ whiteSpace: 'normal' }}>
+            <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>{errors.map((errMsg, idx) => (<li key={idx}>{errMsg}</li>))}</ul>
+          </Alert>
+        </Snackbar>
+
+      </Grid>
+      </Container>
+  
 
 
-          <Button
-            type="submit"
-            fullWidth
-            variant="contained"
-            sx={{ mt: 3, mb: 2 }}
-          >
-            Sign Up
-          </Button>
-
-
-        </Box>
-      </Box>
-
-      <Snackbar
-        open={errors.length > 0}
-        autoHideDuration={6000}
-        onClose={handleSnackClose}
-        anchorOrigin={{ vertical: "top", horizontal: "center" }}
-      >
-        <Alert severity="error" onClose={handleSnackClose} sx={{ whiteSpace: 'normal' }}>
-          <ul style={{ margin: 0, paddingLeft: '1.2rem' }}>
-            {errors.map((errMsg, idx) => (
-              <li key={idx}>{errMsg}</li>
-            ))}
-          </ul>
-        </Alert>
-      </Snackbar>
-    </Container>
   );
 }
 

@@ -133,15 +133,44 @@ export default function SignIn() {
 
   return (
 
-    <Container component="main" maxWidth="xs">
-      <Box
+   <Container maxWidth={false} style={{ height: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+     
+      <Grid container component="main" sx={{ height: '100vh'}} >
+
+        <Grid item xs={12}  sm={4} md={6} sx={{
+          p: { xs: 3,md:14 }
+        }}> 
+          <Box
+            component="img"
+            src="./public/signin.png" // Replace with your image URL
+            alt="Descriptive alt text for your image"
+            sx={{
+              width: '100%',
+              height: 'auto',
+              maxHeight: '300px', // Optional: limit image height
+              objectFit: 'contain',
+            }}
+          />
+        </Grid>
+
+        <Grid
+        item
+        xs={12}
+        md={6}
         sx={{
-          marginTop: 8,
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
+          display: 'flex',
+          justifyContent: 'flex-end', // ✅ push form to extreme right
+          p: { xs: 3, md: 10 },
         }}
       >
+        <Box
+          sx={{
+            width: '100%',
+            maxWidth: 380, // ✅ keeps form narrow
+            mr: { md: 6, xs: 0 }, // ✅ adds right spacing from edge
+            textAlign: 'center',
+          }}
+        >     
         <Typography component="h1" variant="h5">
           Sign in
         </Typography>
@@ -207,7 +236,8 @@ export default function SignIn() {
           </ul>
         </Alert>
       </Snackbar>
-
+        </Grid>
+        </Grid>
     </Container>
   );
 }

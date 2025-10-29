@@ -146,7 +146,7 @@ const AdminEnrollments = () => {
                           <TableBody>
                             {course.enrolledUsers.map((user) => (
                               <TableRow key={user.enrollmentId}>
-                                <TableCell sx={{ pl: 4 }}>{user.userId}</TableCell>
+                                <TableCell sx={{ pl: 4 }}>{user.userName}</TableCell>
                                 <TableCell>
                                   <Tooltip title="Remove Enrollment">
                                     <Button
