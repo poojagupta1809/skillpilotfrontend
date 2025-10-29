@@ -17,14 +17,14 @@ import EditIcon from "@mui/icons-material/Edit";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 
-export default function LessonList({ courseId, Alllessons,lessons, onDeleteLesson, onEditLesson }) {
+export default function LessonList({ courseId, Alllessons,lessons,visible, onDeleteLesson, onEditLesson }) {
   const [selectedLessonId, setSelectedLessonId] = useState(null);
   const navigate = useNavigate();
   const authorization = "Bearer " + sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = authorization;
 
 const handleOpenLesson = (lesson) => {
- navigate(`/course/${courseId}/lesson/${lesson.lessonId}`, { state: { lesson, lessons: Alllessons } });
+ navigate(`/course/${courseId}/lesson/${lesson.lessonId}`, { state: { lesson, lessons: visible } });
 
 };
 

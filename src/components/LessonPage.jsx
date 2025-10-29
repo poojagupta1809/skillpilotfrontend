@@ -21,7 +21,7 @@ export default function LessonPage() {
         <Button
           variant="contained"
           onClick={() => 
-            userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${location.state?.courseId || ""}`)}
+            userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${courseId}`)}
           sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
         >
           Course
@@ -95,7 +95,7 @@ export default function LessonPage() {
 
          <IconButton
             variant="outlined"
-            onClick={() => userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${location.state?.courseId || ""}`)}
+            onClick={() => userRole =="ADMIN"? navigate(`/admin/course-details/${courseId}`):navigate(`/course/${courseId}`)}
  
             sx={{ mb: 3, fontSize: "1rem", px: 3, py: 1, borderRadius: 2 }}
           >
