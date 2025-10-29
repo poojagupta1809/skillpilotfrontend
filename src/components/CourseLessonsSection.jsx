@@ -101,6 +101,7 @@ export default function CourseLessonsSection({ courseId: props }) {
           courseId={courseId}
           Alllessons={lessons}
           lessons={paginatedLessons}
+          visible={visibleLessons}
           onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
           onEditLesson={userRole === "ADMIN" ? handleEditLesson : null}
         />
