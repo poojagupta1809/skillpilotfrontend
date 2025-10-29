@@ -25,6 +25,8 @@ import CoursePurchase from './components/CoursePurchase';
 import DashboardContainer from "./components/DashboardContainer";
 import CourseComplete from './components/CourseComplete';
 import Footer from './components/Footer';
+import CourseCompletionDashboard from "./components/Dashboard/CourseCompletionDashboard";
+import CourseEnrollmentAnalytics from "./components/Dashboard/CourseEnrollmentAnalytics";
 
 
 
@@ -55,6 +57,8 @@ function HomePage() {
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments />} />
           <Route path="/course/:id/purchase" element={<CoursePurchase />} />
           <Route path="/admin/dashboard" element={<DashboardContainer />} />
+          <Route path="/admin/dashboard/completion" element={<CourseCompletionDashboard />} />
+      <Route path="/admin/dashboard/enrollments" element={<CourseEnrollmentAnalytics />} />
 
         </Routes>
       </Container>

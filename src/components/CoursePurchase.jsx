@@ -79,14 +79,23 @@ const CoursePurchase = () => {
     );
 
   return (
-    <>
+    <Box
+      sx={{
+        display: "flex",
+        justifyContent: "center", // center horizontally
+        alignItems: "flex-start", // pull to top
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        pt: 6, // top padding
+        pb: 6,
+      }}
+    >
       <Card
         sx={{
           flex: "0 0 360px",
-          borderRadius: "12px",
-          boxShadow: 3,
+          borderRadius: "16px",
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
           p: 2,
-          height: "fit-content",
           backgroundColor: "#ffffff",
           margin: "0 auto",
         }}
@@ -96,7 +105,7 @@ const CoursePurchase = () => {
             Billing Summary
           </Typography>
 
-          {/* Billing Summary */}
+          {/* Billing Info */}
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
             <Typography variant="body2" color="text.secondary">
               Course
@@ -113,7 +122,7 @@ const CoursePurchase = () => {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* Payment Options */}
+          {/* Payment Method */}
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
             Choose Payment Method
           </Typography>
@@ -206,7 +215,7 @@ const CoursePurchase = () => {
 
           <Divider sx={{ my: 2 }} />
 
-          {/* Total Amount */}
+          {/* Total */}
           <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               Total Payable
@@ -251,6 +260,7 @@ const CoursePurchase = () => {
         </CardContent>
       </Card>
 
+      {/* Success Dialog */}
       <Dialog
         open={dialogOpen}
         onClose={() => setDialogOpen(false)}
@@ -292,7 +302,7 @@ const CoursePurchase = () => {
           </Button>
         </DialogActions>
       </Dialog>
-    </>
+    </Box>
   );
 };
 

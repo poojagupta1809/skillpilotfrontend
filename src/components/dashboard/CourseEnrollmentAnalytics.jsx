@@ -5,47 +5,41 @@ import {
   Bar,
   XAxis,
   YAxis,
-  CartesianGrid,
   Tooltip,
   Legend,
+  CartesianGrid,
   ResponsiveContainer,
 } from "recharts";
 
-const CourseCompletionDashboard = () => {
-  const [completionStats, setCompletionStats] = useState([]);
+const CourseEnrollmentAnalytics = () => {
+  const [courseStats, setCourseStats] = useState([]);
 
-  // ✅ Update with your backend API base URL
   const BASE_URL = "http://localhost:8088/api/enrollments";
 
   useEffect(() => {
-    fetchCompletionStats();
+    fetchCoursePopularity();
   }, []);
 
-  const fetchCompletionStats = async () => {
+  const fetchCoursePopularity = async () => {
     try {
-      const response = await axios.get(`${BASE_URL}/enrollments`);
-      const enrollments = response.data;
+      const enrollmentsRes = await axios.get(`${BASE_URL}/enrollments`);
+      const enrollments = enrollmentsRes.data;
 
-      // Group by course name
+      // Group enrollments by course name
       const stats = {};
       enrollments.forEach((e) => {
         const courseName = e.courseTopic || "Unknown";
-        if (!stats[courseName]) stats[courseName] = { completed: 0, inProgress: 0 };
-
-        if (e.status === "COMPLETED") stats[courseName].completed++;
-        else stats[courseName].inProgress++;
+        stats[courseName] = (stats[courseName] || 0) + 1;
       });
 
-      // Convert object → array for chart
-      const formattedData = Object.keys(stats).map((name) => ({
+      const formatted = Object.keys(stats).map((name) => ({
         name,
-        completed: stats[name].completed,
-        inProgress: stats[name].inProgress,
+        enrollments: stats[name],
       }));
 
-      setCompletionStats(formattedData);
+      setCourseStats(formatted);
     } catch (err) {
-      console.error("Error fetching completion stats", err);
+      console.error("Error fetching course enrollments", err);
     }
   };
 
@@ -59,7 +53,8 @@ const CourseCompletionDashboard = () => {
         marginTop: "40px",
       }}
     >
-      <h2>📘 Course Completion Statistics</h2>
+      <h2>📊 Course Enrollment Analytics</h2>
+
       <div
         style={{
           width: "80%",
@@ -71,14 +66,13 @@ const CourseCompletionDashboard = () => {
         }}
       >
         <ResponsiveContainer width="100%" height="100%">
-          <BarChart data={completionStats}>
+          <BarChart data={courseStats}>
             <CartesianGrid strokeDasharray="3 3" />
             <XAxis dataKey="name" />
             <YAxis allowDecimals={false} />
             <Tooltip />
             <Legend />
-            <Bar dataKey="completed" fill="#4caf50" />
-            <Bar dataKey="inProgress" fill="#ff9800" />
+            <Bar dataKey="enrollments" fill="#8884d8" />
           </BarChart>
         </ResponsiveContainer>
       </div>
@@ -86,4 +80,4 @@ const CourseCompletionDashboard = () => {
   );
 };
 
-export default CourseCompletionDashboard;
+export default CourseEnrollmentAnalytics;

@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  LinearProgress,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import CourseLessonsSection from "./CourseLessonsSection";
@@ -34,6 +35,7 @@ export default function CourseDetails() {
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completedLessons, setCompletedLessons] = useState("0");
+  const [progressPercentage, setProgressPercentage] = useState("0");
 
   useEffect(() => {
     setLoading(true);
@@ -47,7 +49,10 @@ export default function CourseDetails() {
 
     if (userId) {
       axios
-        .get(`http://localhost:8088/api/enrollments/users/${userId}/enrollments`, { headers })
+        .get(
+          `http://localhost:8088/api/enrollments/users/${userId}/enrollments`,
+          { headers }
+        )
         .then((res) => setUserEnrollments(res.data.map((e) => e.courseId)))
         .catch((err) => console.error("Error fetching enrollments:", err));
     }
@@ -55,12 +60,14 @@ export default function CourseDetails() {
 
   const handleEnroll = () => {
     if (course.courseType?.toLowerCase() === "paid") {
-navigate(`/course/${course.courseId}/purchase`);
+      navigate(`/course/${course.courseId}/purchase`);
       return;
     }
 
     axios
-      .post(`http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`)
+      .post(
+        `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`
+      )
       .then(() => {
         setUserEnrollments((prev) => [...prev, course.courseId]);
         setDialogOpen(true);
@@ -72,13 +79,44 @@ navigate(`/course/${course.courseId}/purchase`);
   };
 
   const handleMarkCompleted = () => alert("Course marked as completed!");
-  const handleLessonsCount = () => alert("Updating Progress at backend");
+
+  const handleLessonsCount = () => {
+    const parsed = parseInt(completedLessons, 10);
+
+    if (Number.isNaN(parsed) || parsed < 0) {
+      alert("Please enter a valid non-negative number for completed lessons.");
+      return;
+    }
+
+
+    axios.put(
+      `http://localhost:8088/api/enrollments/courses/${course.courseId}/user/${userId}/updateProgress`,
+      null,
+      {
+        params: { completedLessons },
+      }
+    ).then(res => {
+      setProgressPercentage(res.data.progressPercentage)
+      console.log("Progress percentage:", res.data.progressPercentage);
+    }).
+      catch((err) => {
+        console.error("Error updating progress");
+        alert(err.response?.data || "Update enrollment completedLesson failed");
+      });
+  };
 
   if (loading)
     return (
-      <div className="loading-container">
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh",
+        }}
+      >
         <CircularProgress />
-      </div>
+      </Box>
     );
 
   if (!course) return <Typography>Course not found.</Typography>;
@@ -87,40 +125,58 @@ navigate(`/course/${course.courseId}/purchase`);
   const enrollButtonText = userEnrollments.includes(course.courseId)
     ? "Enrolled"
     : isPaidCourse
-    ? `Enroll for ₹${course.price || "499"}`
-    : "Enroll";
+      ? `Enroll for ₹${course.price || "499"}`
+      : "Enroll";
 
   return (
     <Box
-      className="course-details-container"
       sx={{
         display: "flex",
-        flexDirection: "column",
-        gap: 3,
-        alignItems: "flex-start",
-        justifyContent: "space-between",
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100vh",
+        backgroundColor: "#f9fafb",
+        p: 3,
       }}
     >
-
-      <Card className="course-details-card">
-        <CardContent className="course-header">
-          <Typography variant="h4" className="course-title">
+      <Card
+        sx={{
+          maxWidth: 800,
+          width: "100%",
+          borderRadius: 4,
+          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+          backgroundColor: "#fff",
+          p: 3,
+        }}
+      >
+        <CardContent>
+          <Typography
+            variant="h4"
+            sx={{ fontWeight: 600, mb: 1, color: "#1E3A8A" }}
+          >
             {course.topic}
           </Typography>
 
-          <Typography variant="subtitle1" className="course-instructor">
-            Instructor: {course.instructor}
+          <Typography variant="subtitle1" sx={{ mb: 2 }}>
+            Instructor: <strong>{course.instructor}</strong>
           </Typography>
 
-          <Typography variant="body1" className="course-description">
+          <Typography variant="body1" sx={{ mb: 2 }}>
             {course.description}
           </Typography>
 
-          <Typography variant="body2" className="course-difficulty">
-            Difficulty Level: {course.difficultyLevel}
+          <Typography variant="body2" sx={{ mb: 3 }}>
+            Difficulty Level: <strong>{course.difficultyLevel}</strong>
           </Typography>
 
-          <Box className="course-actions">
+          <Box
+            sx={{
+              display: "flex",
+              flexWrap: "wrap",
+              alignItems: "center",
+              gap: 2,
+            }}
+          >
             <Button
               variant="contained"
               color="primary"
@@ -133,11 +189,15 @@ navigate(`/course/${course.courseId}/purchase`);
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TextField
                 label="Lessons Completed"
+                placeholder="0"
                 value={completedLessons}
                 onChange={(e) => setCompletedLessons(e.target.value)}
+                inputProps={{
+                  maxLength: 2,
+                  style: { textAlign: "center", width: "50px" },
+                }}
                 size="small"
                 variant="outlined"
-                inputProps={{ style: { width: "70px", textAlign: "center" } }}
               />
               <Tooltip title="Update Progress">
                 <IconButton color="secondary" onClick={handleLessonsCount}>
@@ -146,6 +206,7 @@ navigate(`/course/${course.courseId}/purchase`);
               </Tooltip>
             </Box>
 
+          
             <Button
               variant="outlined"
               color="secondary"
@@ -153,13 +214,38 @@ navigate(`/course/${course.courseId}/purchase`);
             >
               Mark as Completed
             </Button>
+
+              <Box sx={{ width: "100%", mt: 0.5 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.2 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Progress
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {progressPercentage}%
+                </Typography>
+              </Box>
+
+              <LinearProgress
+                variant="determinate"
+                value={progressPercentage}
+                sx={{
+                  height: 6, // thinner bar
+                  borderRadius: 3,
+                  backgroundColor: (theme) => theme.palette.grey[300],
+                  "& .MuiLinearProgress-bar": {
+                    borderRadius: 3,
+                    transition: "width 0.4s ease",
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </CardContent>
 
-        <Box sx={{ height: "1px", backgroundColor: "#ddd", margin: "16px 0" }} />
+        <Box sx={{ height: "1px", backgroundColor: "#ddd", my: 2 }} />
 
-        <CardContent className="lessons-section">
-          <Typography variant="h5" className="lessons-title">
+        <CardContent>
+          <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
             Course Lessons
           </Typography>
           <CourseLessonsSection courseId={id} />
@@ -177,10 +263,18 @@ navigate(`/course/${course.courseId}/purchase`);
           </DialogContentText>
         </DialogContent>
         <DialogActions sx={{ justifyContent: "center", pb: 2 }}>
-          <Button variant="contained" color="primary" onClick={() => setDialogOpen(false)}>
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => setDialogOpen(false)}
+          >
             Stay on Page
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() => navigate("/courses")}>
+          <Button
+            variant="outlined"
+            color="secondary"
+            onClick={() => navigate("/courses")}
+          >
             Explore Courses
           </Button>
         </DialogActions>

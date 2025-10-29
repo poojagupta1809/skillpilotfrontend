@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Layout from '../Layout'
 import { useState } from 'react';
-import { Grid } from '@mui/material';
+import { Grid ,Typography} from '@mui/material';
 import CourseCard from './CourseCard';
 import axios from 'axios';
 
@@ -62,7 +62,12 @@ export default function AdminDefaultPage() {
     return (
         <div>{loading ?
             <Layout>
+                <Typography variant="h6" color="text.secondary" paragraph  sx={{  justifyContent: 'flex-start', alignItems: "flex-start" }}>
+            Welcome {sessionStorage.getItem('username')}!!
+          
+          </Typography>
                 <Grid container spacing={8} sx={{ padding: 3, justifyContent: 'flex-start', alignItems: "flex-start" }} >
+                        
                     {courses.map((course) =>
 
                         <Grid item="true" xs={12} sm={6} >

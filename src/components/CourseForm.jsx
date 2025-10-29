@@ -113,14 +113,18 @@ export default function CourseForm() {
       />
 
       <TextField
+      select
         fullWidth
         name="difficultyLevel"
         label="Difficulty Level"
         value={course.difficultyLevel}
         onChange={handleChange}
         required
-      />
-
+      >
+        <MenuItem value="Beginner">Beginner</MenuItem>
+        <MenuItem value="Intermediate">Intermediate</MenuItem>
+        <MenuItem value="Advanced">Advanced</MenuItem>
+      </TextField>
       <TextField
         fullWidth
         name="imageUrl"
