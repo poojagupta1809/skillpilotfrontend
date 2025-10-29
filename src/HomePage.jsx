@@ -23,6 +23,9 @@ import AdminEnrollments from './components/AdminEnrollments';
 import CourseEdit from './components/CourseEdit';
 import CoursePurchase from './components/CoursePurchase';
 import DashboardContainer from "./components/DashboardContainer";
+import CourseComplete from './components/CourseComplete';
+import Footer from './components/Footer';
+
 
 
 function HomePage() {
@@ -36,6 +39,7 @@ function HomePage() {
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/About" element={<AboutContent />} />
           <Route path="/courses" element={<ExploreCourses />} />
+           <Route path="/courses/certificate" element={<CourseComplete/>} />
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/lessonlist" element={<LessonList />} /> 
       
@@ -54,6 +58,7 @@ function HomePage() {
 
         </Routes>
       </Container>
+      <Footer/>
 
 
     </Router>

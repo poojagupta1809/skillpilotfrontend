@@ -36,6 +36,9 @@ const Sidebar = ({mode,setMode}) => {
     navigate("/admin/dashboard");
   };
 
+   const handleCert=()=>{
+    navigate('/courses/certificate')
+  }
   return (
     // <Grid xs={6} > 
     <Box  p={4} sx={{ display: { xs: "none", sm: "block" }}} height={'100%'} >
