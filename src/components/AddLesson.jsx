@@ -133,12 +133,12 @@ export default function AddLesson() {
             <TextField
               fullWidth
               multiline
-              rows={6}
+              rows={10}
               label="Text Content"
               name="content"
               value={lessonData.content}
               onChange={handleChange}
-              sx={{ mb: 8 }}
+              sx={{ mb: 4 }}
               required
             />
           )}
@@ -154,7 +154,7 @@ export default function AddLesson() {
             />
           )}
 
-          <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
+<Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
             <Button variant="contained" color="primary" type="submit">
               Add Lesson
             </Button>

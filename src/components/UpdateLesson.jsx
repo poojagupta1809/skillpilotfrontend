@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { Box, TextField, Button, Typography, MenuItem, Snackbar, Alert } from "@mui/material";
+import {Container, Box, TextField, Button, Typography, MenuItem, Snackbar, Alert } from "@mui/material";
 import axios from "axios";
 import { useParams, useNavigate } from "react-router-dom";
 
@@ -87,9 +87,25 @@ export default function UpdateLesson() {
 
   if (loading) return <Typography>Loading lesson...</Typography>;
 
-  return (
-    <Box sx={{ maxWidth: 600, mx: "auto", p: 3, bgcolor: "#fff", borderRadius: 2 }}>
-      <Typography variant="h4" gutterBottom>
+  return (    <Container
+      maxWidth={false}
+      sx={{
+        py: 5,
+        width: { xs: "90%", sm: "700px", md: "900px" }, 
+        mx: "auto",
+      }}
+    >
+      <Box
+        sx={{
+          bgcolor: "#fff",
+          p: 5,
+          borderRadius: 3,
+          boxShadow: 4,
+          display: "flex",
+          flexDirection: "column",
+          minHeight: "650px",
+        }}
+      >   <Typography variant="h4" gutterBottom>
         Edit Lesson
       </Typography>
 
@@ -131,12 +147,12 @@ export default function UpdateLesson() {
           <TextField
             fullWidth
             multiline
-            rows={15}
+            rows={10}
             label="Text Content"
             name="content"
             value={lessonData.content}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 4}}
           />
         )}
 
@@ -151,11 +167,11 @@ export default function UpdateLesson() {
           />
         )}
 
-        <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+<Box sx={{ display: "flex", justifyContent: "space-between", mt: 3 }}>
           <Button variant="contained" color="primary" type="submit">
             Update Lesson
           </Button>
-          <Button variant="outlined" color="secondary" onClick={() =>  navigate(`/admin/course-details/${courseId}`)}>
+          <Button variant="outlined"  onClick={() =>  navigate(`/admin/course-details/${courseId}`)}>
             Cancel
           </Button>
         </Box>
@@ -187,5 +203,6 @@ export default function UpdateLesson() {
         </Alert>
       </Snackbar>
     </Box>
+    </Container>
   );
 }
