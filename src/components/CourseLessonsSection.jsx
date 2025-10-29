@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography, Pagination, Stack } from "@mui/material";
 import axios from "axios";
 import { useNavigate, useParams } from "react-router-dom";
-import { Pagination, Stack,Typography } from "@mui/material";
 
 import LessonList from "./LessonList";
 
@@ -28,7 +27,7 @@ export default function CourseLessonsSection({ courseId: props }) {
       .then((res) => setLessons(res.data))
       .catch((err) => console.error("Failed to fetch lessons:", err));
 
-    // if user enrolled
+    
     const userId = sessionStorage.getItem("userId");
     if (userId) {
       axios
@@ -41,7 +40,7 @@ export default function CourseLessonsSection({ courseId: props }) {
     }
   }, [courseId]);
 
-  // 2 lessons for non-enrolled users
+ 
   const visibleLessons =
     !isEnrolled && userRole !== "ADMIN" ? lessons.slice(0, 2) : lessons;
 
@@ -64,9 +63,15 @@ export default function CourseLessonsSection({ courseId: props }) {
   };
 
   return (
-    <Box sx={{ maxWidth: 1100, mx: "auto", px: { xs: 2, sm: 3 }, py: { xs: 2, sm: 3 } }}>
-
-      {/* Admin Add Lesson Button */}
+    <Box
+      sx={{
+        maxWidth: 1100,
+        mx: "auto",
+        px: { xs: 2, sm: 3 },
+        py: { xs: 2, sm: 3 },
+      }}
+    >
+     
       {userRole === "ADMIN" && (
         <Box sx={{ display: "flex", justifyContent: "flex-end", mb: 3 }}>
           <Button
@@ -78,7 +83,7 @@ export default function CourseLessonsSection({ courseId: props }) {
         </Box>
       )}
 
-      {/* Lesson List Container */}
+     
       <Box
         sx={{
           border: "1px solid #ccc",
@@ -91,6 +96,7 @@ export default function CourseLessonsSection({ courseId: props }) {
           mb: 4,
         }}
       >
+        {/* Lesson List */}
         <LessonList
           courseId={courseId}
           Alllessons={lessons}
@@ -98,36 +104,45 @@ export default function CourseLessonsSection({ courseId: props }) {
           onDeleteLesson={userRole === "ADMIN" ? handleDeleteLesson : null}
           onEditLesson={userRole === "ADMIN" ? handleEditLesson : null}
         />
-     <Box
-  sx={{
-    mt: 2,
-    p: 2,
-    bgcolor: "#fff3cd",
-    color: "#856404",
-    borderRadius: 1,
-    textAlign: "center",
-  }}
->
-  <Typography 
-    variant="h6"   
-    component="span"
-    sx={{ fontWeight: 'bold', mr: 1 }}
-  >
-    🔒 Enroll in this course to access all lessons!
-  </Typography>
 
-</Box>
-
-
-        
+       
+        {!isEnrolled && userRole !== "ADMIN" && lessons.length > 2 && (
+          <Box
+            sx={{
+              mt: 3,
+              p: 3,
+              bgcolor: "#fff3cd",
+              color: "#856404",
+              borderRadius: 2,
+              textAlign: "center",
+              border: "1px solid #ffeeba",
+              boxShadow: "0 2px 5px rgba(0,0,0,0.1)",
+            }}
+          >
+            <Typography
+              variant="h5"
+              sx={{
+                fontWeight: "bold",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                gap: 1,
+                fontFamily: "Poppins",
+              }}
+            >
+              🔒 Enroll in this course to access all lessons!
+            </Typography>
+            
+          </Box>
+        )}
 
         {paginatedLessons.length < itemsPerPage &&
-          Array.from({ length: itemsPerPage - paginatedLessons.length }).map((_, i) => (
-            <Box key={i} sx={{ flex: "0 0 90px" }} />
-          ))}
+          Array.from({ length: itemsPerPage - paginatedLessons.length }).map(
+            (_, i) => <Box key={i} sx={{ flex: "0 0 90px" }} />
+          )}
       </Box>
 
-      {/* Pagination */}
+    
       <Stack spacing={2} alignItems="center" sx={{ mt: 0, pb: 2 }}>
         <Pagination
           count={Math.ceil(visibleLessons.length / itemsPerPage)}
