@@ -107,7 +107,7 @@ export default function LessonPage() {
             {lesson.title}
           </Typography>
 
-          <Typography variant="h7" sx={{ color: "#1565c0" }} gutterBottom>
+          <Typography variant="h7" sx={{ color: "#555a5cff" }} gutterBottom>
             {lesson.description}
           </Typography>
 
