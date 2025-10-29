@@ -5,15 +5,14 @@ import { useNavigate, useParams } from "react-router-dom";
 
 import LessonList from "./LessonList";
 
-export default function CourseLessonsSection({ courseId: props }) {
+export default function CourseLessonsSection({ courseId: props, isEnrolled: propIsEnrolled}) {
   const authorization = "Bearer " + sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = authorization;
 
   const { courseId: paramcourseId } = useParams();
   const courseId = props || paramcourseId;
-
+  const [isEnrolled, setIsEnrolled] = useState(propIsEnrolled || false);
   const [lessons, setLessons] = useState([]);
-  const [isEnrolled, setIsEnrolled] = useState(false);
   const [page, setPage] = useState(1);
   const itemsPerPage = 4;
 
@@ -39,11 +38,15 @@ export default function CourseLessonsSection({ courseId: props }) {
         .catch(() => setIsEnrolled(false));
     }
   }, [courseId]);
+useEffect(() => {
+    setIsEnrolled(propIsEnrolled);
+  }, [propIsEnrolled]);
 
  
   const visibleLessons =
-    !isEnrolled && userRole !== "ADMIN" ? lessons.slice(0, 2) : lessons;
-
+    !isEnrolled && sessionStorage.getItem("role") !== "ADMIN"
+      ? lessons.slice(0, 2)
+      : lessons;
   
   const startIndex = (page - 1) * itemsPerPage;
   const endIndex = startIndex + itemsPerPage;

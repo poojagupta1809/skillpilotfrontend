@@ -1,4 +1,4 @@
-import { Box, Typography, Link, Grid } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import FlightTakeoffIcon from "@mui/icons-material/FlightTakeoff";
 
 export default function Footer() {
@@ -6,43 +6,19 @@ export default function Footer() {
     <Box
       component="footer"
       sx={{
+        width: "100%",
         bgcolor: "primary.main",
         color: "white",
-        py: 4,
-        px: 2,
-        mt: "auto",
+        p: 1,
+        textAlign: "center",
       }}
     >
-      <Grid container spacing={2} justifyContent="center">
-        <Grid item xs={12} md={4} textAlign="center">
-          <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 1 }}>
-            <FlightTakeoffIcon />
-            <Typography variant="h6" fontWeight={600}>
-              Skill Pilot
-            </Typography>
-          </Box>
-          <Typography variant="body2" sx={{ mt: 1 }}>
-            Guiding your learning journey, one course at a time.
-          </Typography>
-        </Grid>
-
-        <Grid item xs={12} md={4} textAlign="center">
-          <Typography variant="subtitle2" sx={{ mb: 1 }}>
-            Quick Links
-          </Typography>
-          <Box>
-            <Link href="/about" underline="hover" color="inherit" sx={{ mx: 1 }}>
-              About
-            </Link>
-        
-          </Box>
-        </Grid>
-      </Grid>
-
-      <Typography
-        variant="caption"
-        sx={{ display: "block", textAlign: "center", mt: 3, opacity: 0.8 }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", gap: 0.5 }}>
+        <FlightTakeoffIcon fontSize="small" />
+        <Typography variant="subtitle2" fontWeight={600}>Skill Pilot</Typography>
+      </Box>
+      <Typography variant="body2" sx={{ opacity: 0.9 }}>Guiding your learning journey, one course at a time.</Typography>
+      <Typography variant="caption" sx={{ display: "block", opacity: 0.8 }}>
         © {new Date().getFullYear()} Skill Pilot — Learn. Grow. Take Off 🚀
       </Typography>
     </Box>

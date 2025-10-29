@@ -149,15 +149,7 @@ export default function CourseDetails() {
           mb: 3,
         }}
       >
-        <Stack direction="row" spacing={2}>
-          <Button
-            variant="contained"
-            sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
-            onClick={() => navigate("/courses")}
-          >
-            Courses
-          </Button>
-        </Stack>
+       
       </Box>
 
       {/* ✅ Main Course Details Card */}
@@ -281,7 +273,7 @@ export default function CourseDetails() {
 
           <CardContent>
             
-            <CourseLessonsSection courseId={id} />
+            <CourseLessonsSection courseId={id} isEnrolled={userEnrollments.includes(course.courseId)}/>
           </CardContent>
         </Card>
       </Box>

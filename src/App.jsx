@@ -14,8 +14,11 @@ function App() {
     <Box
       sx={{
         width: "100vw",
-        height: "100vh",  
-        overflow: "auto", 
+        minHeight: "100vh",
+        overflowX: "hidden",
+        overflowY: "auto",
+        p: 0,
+        m: 0,
       }}
     >
       <HomePage />

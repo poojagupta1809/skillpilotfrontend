@@ -145,16 +145,7 @@ const ExploreCourses = () => {
         <Typography variant="h4" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
           Explore Courses
         </Typography>
-        <Stack direction="row" spacing={2}>
-         
-          <Button
-            variant="contained"
-            sx={{ bgcolor: "#3B82F6", "&:hover": { bgcolor: "#1E3A8A" } }}
-            onClick={() => navigate("/courses/myenrollments")}
-          >
-            My Learnings
-          </Button>
-        </Stack>
+       
       </Box>
 
       <Autocomplete
