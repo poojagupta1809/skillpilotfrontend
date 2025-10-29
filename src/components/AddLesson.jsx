@@ -16,7 +16,7 @@ export default function AddLesson() {
   const { courseId } = useParams();
   const navigate = useNavigate();
 
-  let authorization = "Bearer " + sessionStorage.getItem("token");
+  const authorization = "Bearer " + sessionStorage.getItem("token");
   axios.defaults.headers.common["Authorization"] = authorization;
 
   const [lessonData, setLessonData] = useState({
@@ -69,19 +69,27 @@ export default function AddLesson() {
   };
 
   return (
-    <Container maxWidth="sm" sx={{ py: 5 }}>
+    <Container
+      maxWidth={false}
+      sx={{
+        py: 5,
+        width: { xs: "90%", sm: "700px", md: "900px" }, 
+        mx: "auto",
+      }}
+    >
       <Box
         sx={{
           bgcolor: "#fff",
-          p: 4,
-          borderRadius: 2,
-          boxShadow: 3,
+          p: 5,
+          borderRadius: 3,
+          boxShadow: 4,
           display: "flex",
           flexDirection: "column",
+          minHeight: "650px",
         }}
       >
-        <Typography variant="h4" gutterBottom sx={{ mb: 3, fontWeight: 500 }}>
-          Add New Lesson
+      <Typography variant="h4" align="center" gutterBottom sx={{ color: "primary.main", fontWeight: 400 }}>
+          Create New Lesson
         </Typography>
 
         <form onSubmit={handleSubmit}>
@@ -91,7 +99,8 @@ export default function AddLesson() {
             name="title"
             value={lessonData.title}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 3 }}
+            required
           />
 
           <TextField
@@ -102,7 +111,8 @@ export default function AddLesson() {
             name="description"
             value={lessonData.description}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 3 }}
+            required
           />
 
           <TextField
@@ -112,7 +122,8 @@ export default function AddLesson() {
             name="contentType"
             value={lessonData.contentType}
             onChange={handleChange}
-            sx={{ mb: 2 }}
+            sx={{ mb: 3 }}
+            required
           >
             <MenuItem value="TEXT">Text</MenuItem>
             <MenuItem value="VIDEO">Video</MenuItem>
@@ -127,7 +138,8 @@ export default function AddLesson() {
               name="content"
               value={lessonData.content}
               onChange={handleChange}
-              sx={{ mb: 2 }}
+              sx={{ mb: 8 }}
+              required
             />
           )}
 
@@ -138,17 +150,16 @@ export default function AddLesson() {
               name="videoUrl"
               value={lessonData.videoUrl}
               onChange={handleChange}
-              sx={{ mb: 2 }}
+              sx={{ mb: 3 }}
             />
           )}
 
-          <Box sx={{ display: "flex", gap: 2, mt: 3 }}>
+          <Box sx={{ display: "flex", gap: 2, mt: 4 }}>
             <Button variant="contained" color="primary" type="submit">
               Add Lesson
             </Button>
             <Button
               variant="outlined"
-              color="secondary"
               onClick={() => navigate(`/admin/course-details/${courseId}`)}
             >
               Cancel
@@ -156,7 +167,6 @@ export default function AddLesson() {
           </Box>
         </form>
 
-        {/* Error Snackbar */}
         <Snackbar
           open={errors.length > 0}
           autoHideDuration={6000}
@@ -172,7 +182,6 @@ export default function AddLesson() {
           </Alert>
         </Snackbar>
 
-        {/* Success Snackbar */}
         <Snackbar
           open={!!successMessage}
           autoHideDuration={4000}
