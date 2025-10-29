@@ -39,37 +39,70 @@ export default function CourseItem() {
     const handleViewLesson = () => {
         setShowComponent(true);
     }
+    const handleCancel = () => {
+        navigate('/admin');
+    };
 
     return (
         <>
-            <div className="course-details-container">
-                <Card className="course-card">
-                    <CardContent className="course-card-content">
-                        <div className="course-main-content">
-                            <Typography variant="h4" className="course-title">
-                                {course.topic}
-                            </Typography>
+             
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    minHeight: "100vh",
+                    backgroundColor: "#f9fafb",
+                    p: 3,
+                }}
+            >
+                <Card
+                    sx={{
+                        maxWidth: 800,
+                        width: "100%",
+                        borderRadius: 4,
+                        boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
+                        backgroundColor: "#fff",
+                        p: 3,
+                    }}
+                >
+                    <CardContent>
+                        <Typography
+                            variant="h4"
+                            sx={{ fontWeight: 600, mb: 1, color: "#1E3A8A" }}
+                        >
+                            {course.topic}
+                        </Typography>
 
-                            <Typography variant="h6" className="course-instructor">
-                                Instructor: {course.instructor}
-                            </Typography>
+                        <Typography variant="subtitle1" sx={{ mb: 2 }}>
+                            Instructor: <strong>{course.instructor}</strong>
+                        </Typography>
 
-                            <Typography variant="body1" className="course-description">
-                                {course.description}
-                            </Typography>
+                        <Typography variant="body1" sx={{ mb: 2 }}>
+                            {course.description}
+                        </Typography>
 
-                            <Typography variant="body2" className="course-difficulty">
-                                Difficulty Level: {course.difficultyLevel}
-                            </Typography>
-                        </div>
+                        <Typography variant="body2" sx={{ mb: 3 }}>
+                            Difficulty Level: <strong>{course.difficultyLevel}</strong>
+                        </Typography>
 
-                        <div>
-                            
-<CourseLessonsSection courseId={courseId} />
-                        </div>
                     </CardContent>
+
+                    <Box sx={{ height: "1px", backgroundColor: "#ddd", my: 2 }} />
+
+                    <CardContent>
+                        <Typography variant="h5" sx={{ fontWeight: 600, mb: 2 }}>
+                            Course Lessons
+                        </Typography>
+                        <CourseLessonsSection courseId={course.courseId} />
+                    </CardContent>
+                    <Button type="text" variant="outlined" onClick={handleCancel}>
+                        Back
+                    </Button>
+
                 </Card>
-            </div>
+
+            </Box>
         </>
     );
 }
