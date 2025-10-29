@@ -16,6 +16,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  LinearProgress,
 } from "@mui/material";
 import UpdateIcon from "@mui/icons-material/Update";
 import CourseLessonsSection from "./CourseLessonsSection";
@@ -34,6 +35,7 @@ export default function CourseDetails() {
   const [userEnrollments, setUserEnrollments] = useState([]);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completedLessons, setCompletedLessons] = useState("0");
+  const [progressPercentage, setProgressPercentage] = useState("0");
 
   useEffect(() => {
     setLoading(true);
@@ -55,7 +57,7 @@ export default function CourseDetails() {
 
   const handleEnroll = () => {
     if (course.courseType?.toLowerCase() === "paid") {
-navigate(`/course/${course.courseId}/purchase`);
+      navigate(`/course/${course.courseId}/purchase`);
       return;
     }
 
@@ -72,8 +74,8 @@ navigate(`/course/${course.courseId}/purchase`);
   };
 
   const handleMarkCompleted = () => alert("Course marked as completed!");
-  
-   const handleLessonsCount = () => {
+
+  const handleLessonsCount = () => {
 
     const parsed = parseInt(completedLessons, 10);
 
@@ -90,12 +92,13 @@ navigate(`/course/${course.courseId}/purchase`);
         params: { completedLessons },
       }
     ).then(res => {
+      setProgressPercentage(res.data.progressPercentage)
       console.log("Progress percentage:", res.data.progressPercentage);
     }).
       catch((err) => {
-      console.error("Error updating progress");
-      alert(err.response?.data || "Update enrollment completedLesson failed");
-    });
+        console.error("Error updating progress");
+        alert(err.response?.data || "Update enrollment completedLesson failed");
+      });
   };
 
 
@@ -112,8 +115,8 @@ navigate(`/course/${course.courseId}/purchase`);
   const enrollButtonText = userEnrollments.includes(course.courseId)
     ? "Enrolled"
     : isPaidCourse
-    ? `Enroll for ₹${course.price || "499"}`
-    : "Enroll";
+      ? `Enroll for ₹${course.price || "499"}`
+      : "Enroll";
 
   return (
     <Box
@@ -177,6 +180,7 @@ navigate(`/course/${course.courseId}/purchase`);
               </Tooltip>
             </Box>
 
+          
             <Button
               variant="outlined"
               color="secondary"
@@ -184,6 +188,31 @@ navigate(`/course/${course.courseId}/purchase`);
             >
               Mark as Completed
             </Button>
+
+              <Box sx={{ width: "100%", mt: 0.5 }}>
+              <Box sx={{ display: "flex", justifyContent: "space-between", mb: 0.2 }}>
+                <Typography variant="caption" color="text.secondary">
+                  Progress
+                </Typography>
+                <Typography variant="caption" color="text.secondary">
+                  {progressPercentage}%
+                </Typography>
+              </Box>
+
+              <LinearProgress
+                variant="determinate"
+                value={progressPercentage}
+                sx={{
+                  height: 6, // thinner bar
+                  borderRadius: 3,
+                  backgroundColor: (theme) => theme.palette.grey[300],
+                  "& .MuiLinearProgress-bar": {
+                    borderRadius: 3,
+                    transition: "width 0.4s ease",
+                  },
+                }}
+              />
+            </Box>
           </Box>
         </CardContent>
 
