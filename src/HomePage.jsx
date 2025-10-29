@@ -62,8 +62,7 @@ function HomePage() {
 
         </Routes>
       </Container>
-      <Footer/>
-
+    
 
     </Router>
 

@@ -3,6 +3,8 @@ import { Typography, Box, Grid, Avatar } from '@mui/material';
 import Slider from "react-slick";
 import "slick-carousel/slick/slick.css"; 
 import "slick-carousel/slick/slick-theme.css";
+import Footer from './Footer';
+
 
 // TestimonialCard
 const TestimonialCard = ({ name, feedback, avatarSrc }) => (
@@ -21,6 +23,7 @@ const TestimonialCard = ({ name, feedback, avatarSrc }) => (
 );
 
 function HomeContent() {
+
   const heroImage = "https://www.shutterstock.com/image-photo/elearning-education-online-exam-concept-260nw-2422421261.jpg"
   const images = [
     "https://media.istockphoto.com/id/1500285927/photo/young-woman-a-university-student-studying-online.jpg?s=612x612&w=0&k=20&c=yvFDnYMNEJ6WEDYrAaOOLXv-Jhtv6ViBRXSzJhL9S_k=",
@@ -248,7 +251,10 @@ function HomeContent() {
     </Grid>
   ))}
 </Grid>
+  <Footer/>
+
     </Box>
+    
   );
 }
 
