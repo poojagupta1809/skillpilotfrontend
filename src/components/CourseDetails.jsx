@@ -72,7 +72,7 @@ navigate(`/course/${course.courseId}/purchase`);
   };
 
   const handleMarkCompleted = () => alert("Course marked as completed!");
-
+  
    const handleLessonsCount = () => {
 
     const parsed = parseInt(completedLessons, 10);
@@ -155,7 +155,7 @@ navigate(`/course/${course.courseId}/purchase`);
               {enrollButtonText}
             </Button>
 
-             {/* Lessons Completed TextField + Update Icon */}
+            {/* Lessons Completed TextField + Update Icon */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TextField
                 label="Lessons Completed"
