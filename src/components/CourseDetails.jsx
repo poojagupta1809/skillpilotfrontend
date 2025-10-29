@@ -155,15 +155,21 @@ navigate(`/course/${course.courseId}/purchase`);
               {enrollButtonText}
             </Button>
 
+            {/* Lessons Completed TextField + Update Icon */}
             <Box sx={{ display: "flex", alignItems: "center", gap: 1 }}>
               <TextField
                 label="Lessons Completed"
+                placeholder="0"
                 value={completedLessons}
                 onChange={(e) => setCompletedLessons(e.target.value)}
-                size="small"
+                inputProps={{
+                  maxLength: 2,
+                  style: { textAlign: "center", width: "50px" },
+                }}
+                size="medium"
                 variant="outlined"
-                inputProps={{ style: { width: "70px", textAlign: "center" } }}
               />
+
               <Tooltip title="Update Progress">
                 <IconButton color="secondary" onClick={handleLessonsCount}>
                   <UpdateIcon />
