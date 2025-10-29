@@ -1,5 +1,6 @@
 import React from 'react';
 import { Typography, Box, Grid, Avatar } from '@mui/material';
+import Footer from './Footer';
 
 
 // TestimonialCard
