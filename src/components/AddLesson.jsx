@@ -43,7 +43,7 @@ export default function AddLesson() {
           videoUrl: "",
         });
       
-        navigate(`/courses/${courseId}`);
+        navigate(`/admin/course-details/${courseId}`);
       })
       .catch((err) => {
         console.error(err);
@@ -144,7 +144,7 @@ export default function AddLesson() {
            <Button
             variant="outlined"
             color="primary"
-            onClick={() => navigate(`/course/${courseId}`)}
+            onClick={() =>   navigate(`/admin/course-details/${courseId}`)}
           >
             Cancel
           </Button>
