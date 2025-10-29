@@ -22,6 +22,7 @@ import MyEnrollments from './components/MyEnrollments';
 import AdminEnrollments from './components/AdminEnrollments';
 import CourseEdit from './components/CourseEdit';
 import CoursePurchase from './components/CoursePurchase';
+import DashboardContainer from "./components/DashboardContainer";
 
 
 function HomePage() {
@@ -49,6 +50,7 @@ function HomePage() {
           <Route path="/admin/course/edit/:courseId" element={<Protected role="ADMIN"> <CourseEdit /> </Protected>} />
           <Route path="/courses/admin-enrollments" element={<AdminEnrollments />} />
           <Route path="/course/:id/purchase" element={<CoursePurchase />} />
+          <Route path="/admin/dashboard" element={<DashboardContainer />} />
 
         </Routes>
       </Container>

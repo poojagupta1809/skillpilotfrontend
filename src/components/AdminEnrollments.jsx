@@ -3,59 +3,65 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import {
   Box,
-  Grid,
-  Card,
-  CardContent,
-  CardActions,
   Typography,
+  Table,
+  TableHead,
+  TableRow,
+  TableCell,
+  TableBody,
+  TableContainer,
+  Paper,
   Button,
-  Chip,
-  CardMedia,
+  Alert,
+  Tooltip,
+  LinearProgress,
   IconButton,
+  Collapse,
 } from "@mui/material";
-import DeleteIcon from "@mui/icons-material/Delete";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import KeyboardArrowDownIcon from "@mui/icons-material/KeyboardArrowDown";
+import KeyboardArrowUpIcon from "@mui/icons-material/KeyboardArrowUp";
 
-function AdminEnrollments() {
-  const [enrollments, setEnrollments] = useState([]);
-  const [courses, setCourses] = useState({});
+const AdminEnrollments = () => {
   const navigate = useNavigate();
+  const [courses, setCourses] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMsg, setErrorMsg] = useState("");
+  const [openRows, setOpenRows] = useState({});
 
-  // Get token from session (for admin authentication)
   useEffect(() => {
     const token = sessionStorage.getItem("token");
-
     if (!token) {
       navigate("/login");
       return;
     }
-
     axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+    fetchEnrollments();
   }, [navigate]);
 
-  // Fetch all enrollments
-  useEffect(() => {
-    fetchEnrollments();
-  }, []);
-
   const fetchEnrollments = async () => {
+    setLoading(true);
     try {
-      // Fetch all enrollments
-      const response = await axios.get("http://localhost:8088/api/enrollments");
-      setEnrollments(response.data);
+      const enrollmentRes = await axios.get("http://localhost:8088/api/enrollments");
 
-      // Fetch course details for each enrollment
-      const coursePromises = response.data.map((e) =>
+      const coursePromises = enrollmentRes.data.map((e) =>
         axios.get(`http://localhost:8088/api/courses/${e.courseId}`)
       );
       const courseResponses = await Promise.all(coursePromises);
 
-      const courseMap = {};
-      courseResponses.forEach((res) => {
-        courseMap[res.data.courseId] = res.data;
-      });
-      setCourses(courseMap);
+      const combined = courseResponses.map((res) => ({
+        ...res.data,
+        enrolledUsers: enrollmentRes.data.filter(
+          (e) => e.courseId === res.data.courseId
+        ),
+      }));
+
+      setCourses(combined);
     } catch (error) {
-      console.error("Error fetching enrollments or courses:", error);
+      console.error("Error fetching enrollments:", error);
+      setErrorMsg("Failed to fetch enrollments.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -64,169 +70,118 @@ function AdminEnrollments() {
       await axios.delete(
         `http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`
       );
-      setEnrollments((prev) =>
-        prev.filter((e) => e.courseId !== courseId || e.userId !== userId)
-      );
+      fetchEnrollments();
     } catch (error) {
       console.error("Error deleting enrollment:", error);
+      setErrorMsg("Failed to remove enrollment.");
     }
   };
 
-  // Map difficulty to color
-  const difficultyColor = (level) => {
-    switch (level?.toLowerCase()) {
-      case "beginner":
-        return "success";
-      case "intermediate":
-        return "warning";
-      case "advanced":
-        return "error";
-      default:
-        return "default";
-    }
+  const toggleRow = (courseId) => {
+    setOpenRows((prev) => ({ ...prev, [courseId]: !prev[courseId] }));
   };
-
-  // Group enrollments by courseId
-  const groupedEnrollments = enrollments.reduce((acc, enrollment) => {
-    if (!acc[enrollment.courseId]) {
-      acc[enrollment.courseId] = [];
-    }
-    acc[enrollment.courseId].push(enrollment);
-    return acc;
-  }, {});
 
   return (
-    <Box sx={{ minHeight: "100vh", backgroundColor: "#f0f2f5" }}>
-      {/* Header */}
-      <Box
-        sx={{
-          background:
-            "linear-gradient(90deg, #1E3A8A 0%, #3B82F6 100%)",
-          color: "white",
-          textAlign: "center",
-          py: 5,
-          mb: 5,
-          borderBottomLeftRadius: 40,
-          borderBottomRightRadius: 40,
-          boxShadow: "0px 4px 20px rgba(30, 58, 138, 0.4)",
-        }}
-      >
-        <Typography variant="h3" fontWeight="bold" sx={{ mb: 1 }}>
-          Admin - All Enrollments
-        </Typography>
-        <Typography variant="h6" sx={{ opacity: 0.85 }}>
-          Manage enrollments across courses 🚀
-        </Typography>
-      </Box>
+    <Box sx={{ py: 4, px: 2, bgcolor: "#F8FAFC", minHeight: "100vh" }}>
+      <Typography variant="h4" sx={{ mb: 3, textAlign: "center", color: "#1E3A8A" }}>
+        Admin - Manage Enrollments
+      </Typography>
 
-      <Grid container spacing={4} sx={{ px: 4 }}>
-        {Object.keys(groupedEnrollments).length === 0 ? (
-          <Typography
-            variant="h6"
-            color="text.secondary"
-            sx={{ mx: "auto", mt: 10 }}
-          >
-            No enrollments available.
-          </Typography>
-        ) : (
-          Object.keys(groupedEnrollments).map((courseId) => {
-            const course = courses[courseId];
-            if (!course) return null;
+      {loading && <LinearProgress />}
 
-            return (
-              <Grid item xs={12} sm={6} md={4} key={courseId}>
-                <Card
-                  sx={{
-                    minHeight: "250px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    borderRadius: 3,
-                    boxShadow: 5,
-                    transition: "transform 0.3s",
-                    "&:hover": { transform: "scale(1.03)", boxShadow: 10 },
-                  }}
-                >
-                  {/* Optional course image */}
-                  {course.image && (
-                    <CardMedia
-                      component="img"
-                      height="140"
-                      image={course.image}
-                      alt={course.topic}
-                    />
-                  )}
+      {!loading && courses.length === 0 && (
+        <Alert severity="info">No enrollments available.</Alert>
+      )}
 
-                  <CardContent sx={{ flexGrow: 1 }}>
-                    <Typography variant="h5" gutterBottom>
-                      {course.topic}
-                    </Typography>
-                    <Typography
-                      variant="subtitle2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
-                    >
-                     
-                    </Typography>
-                    <Typography
-                      variant="body2"
-                      color="text.secondary"
-                      sx={{ mb: 1 }}
-                    >
-                     
-                    </Typography>
-                  
-                  </CardContent>
-
-                  <CardActions sx={{ flexDirection: "column", px: 2, pb: 2 }}>
-                    <Button
-                      variant="contained"
-                      sx={{
-                        background:
-                          "linear-gradient(90deg, #1E3A8A 0%, #3B82F6 100%)",
-                        color: "white",
-                        "&:hover": {
-                          background:
-                            "linear-gradient(90deg, #3B82F6 0%, #1E3A8A 100%)",
-                        },
-                      }}
-                      
-                    >
-                     Enrollments
-                    </Button>
-
-                    {/* Display all users enrolled in this course */}
-                    {groupedEnrollments[courseId].map((enrollment) => (
-                      <Box
-                        key={enrollment.enrollmentId}
-                        sx={{ display: "flex", alignItems: "center", mt: 2 }}
+      {courses.length > 0 && (
+        <TableContainer component={Paper} sx={{ mt: 2 }}>
+          <Table>
+            <TableHead>
+              <TableRow>
+                <TableCell />
+                <TableCell sx={{ fontWeight: "bold" }}>Course Topic</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Description</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Instructor</TableCell>
+                <TableCell sx={{ fontWeight: "bold" }}>Total Enrolled</TableCell>
+              </TableRow>
+            </TableHead>
+            <TableBody>
+              {courses.map((course) => (
+                <React.Fragment key={course.courseId}>
+                  {/* Course row */}
+                  <TableRow sx={{ bgcolor: "#E8F0FE" }}>
+                    <TableCell>
+                      <IconButton
+                        size="small"
+                        onClick={() => toggleRow(course.courseId)}
                       >
-                        <Typography
-                          variant="body2"
-                          color="text.secondary"
-                          sx={{ mr: 2 }}
-                        >
-                          User ID: {enrollment.userId}
-                        </Typography>
-                        <IconButton
-                          color="error"
-                          onClick={() =>
-                            handleDeleteEnrollment(courseId, enrollment.userId)
-                          }
-                        >
-                          <DeleteIcon />
-                        </IconButton>
-                      </Box>
-                    ))}
-                  </CardActions>
-                </Card>
-              </Grid>
-            );
-          })
-        )}
-      </Grid>
+                        {openRows[course.courseId] ? (
+                          <KeyboardArrowUpIcon />
+                        ) : (
+                          <KeyboardArrowDownIcon />
+                        )}
+                      </IconButton>
+                    </TableCell>
+                    <TableCell>{course.topic}</TableCell>
+                    <TableCell>{course.description}</TableCell>
+                    <TableCell>{course.instructor || "Unknown"}</TableCell>
+                    <TableCell>{course.enrolledUsers.length}</TableCell>
+                  </TableRow>
+
+                  {/* Collapsible row for users */}
+                  <TableRow>
+                    <TableCell colSpan={5} sx={{ p: 0, borderBottom: 0 }}>
+                      <Collapse
+                        in={openRows[course.courseId]}
+                        timeout="auto"
+                        unmountOnExit
+                      >
+                        <Table size="small" sx={{ m: 2 }}>
+                          <TableHead>
+                            <TableRow>
+                              <TableCell sx={{ pl: 4, fontWeight: "bold" }}>User ID</TableCell>
+                              <TableCell sx={{ fontWeight: "bold" }}>Actions</TableCell>
+                            </TableRow>
+                          </TableHead>
+                          <TableBody>
+                            {course.enrolledUsers.map((user) => (
+                              <TableRow key={user.enrollmentId}>
+                                <TableCell sx={{ pl: 4 }}>{user.userId}</TableCell>
+                                <TableCell>
+                                  <Tooltip title="Remove Enrollment">
+                                    <Button
+                                      variant="outlined"
+                                      color="error"
+                                      onClick={() =>
+                                        handleDeleteEnrollment(course.courseId, user.userId)
+                                      }
+                                      sx={{ minWidth: "36px", p: 0, borderRadius: "50%" }}
+                                    >
+                                      <DeleteOutlineRoundedIcon fontSize="small" />
+                                    </Button>
+                                  </Tooltip>
+                                </TableCell>
+                              </TableRow>
+                            ))}
+                          </TableBody>
+                        </Table>
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      )}
+
+      {errorMsg && (
+        <Alert severity="error" sx={{ mt: 3 }}>
+          {errorMsg}
+        </Alert>
+      )}
     </Box>
   );
-}
+};
 
 export default AdminEnrollments;

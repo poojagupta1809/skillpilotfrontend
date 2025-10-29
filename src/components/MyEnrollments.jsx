@@ -115,22 +115,7 @@ const MyEnrollments = () => {
 
       {/* Navigation Buttons */}
       <Stack direction="row" spacing={2} sx={{ mb: 3, justifyContent: "center" }}>
-        <Button
-          onClick={() => navigate("/")}
-          startIcon={<SchoolRoundedIcon />}
-          sx={{
-            bgcolor: "#93C5FD",
-            color: "#1E3A8A",
-            fontWeight: "bold",
-            textTransform: "none",
-            borderRadius: "20px",
-            "&:hover": { bgcolor: "#BFDBFE" },
-            px: 3,
-          }}
-          variant="contained"
-        >
-          Home
-        </Button>
+        
         <Button
           onClick={() => navigate("/courses")}
           sx={{
