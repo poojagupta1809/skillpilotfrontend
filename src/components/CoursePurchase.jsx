@@ -9,7 +9,6 @@ import {
   FormControlLabel,
   Radio,
   TextField,
-  Slider,
   Dialog,
   DialogTitle,
   DialogContent,
@@ -18,6 +17,7 @@ import {
   Button,
   CircularProgress,
 } from "@mui/material";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
 
@@ -27,8 +27,8 @@ const CoursePurchase = () => {
   const [loading, setLoading] = useState(true);
   const [paymentMethod, setPaymentMethod] = useState("upi");
   const [paymentDetails, setPaymentDetails] = useState({});
-  const [sliderValue, setSliderValue] = useState(0);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [processing, setProcessing] = useState(false);
 
   const navigate = useNavigate();
   const token = sessionStorage.getItem("token");
@@ -47,20 +47,22 @@ const CoursePurchase = () => {
     setPaymentDetails((prev) => ({ ...prev, [field]: value }));
   };
 
-  const handleSlide = async (event, newValue) => {
-    setSliderValue(newValue);
-    if (newValue === 100) {
-      try {
-        await axios.post(
-          `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`,
-          {},
-          { headers }
-        );
-        setTimeout(() => setDialogOpen(true), 500);
-      } catch (err) {
-        console.error("Enrollment after payment failed:", err);
-        alert("Enrollment failed after payment!");
-      }
+  const handlePayment = async () => {
+    setProcessing(true);
+    try {
+      await axios.post(
+        `http://localhost:8088/api/enrollments/courses/${id}/enrollments/${userId}`,
+        {},
+        { headers }
+      );
+      setTimeout(() => {
+        setProcessing(false);
+        setDialogOpen(true);
+      }, 800);
+    } catch (err) {
+      console.error("Enrollment after payment failed:", err);
+      setProcessing(false);
+      alert("Enrollment failed after payment!");
     }
   };
 
@@ -82,45 +84,67 @@ const CoursePurchase = () => {
     <Box
       sx={{
         display: "flex",
-        justifyContent: "center", // center horizontally
-        alignItems: "flex-start", // pull to top
+        flexDirection: "column",
+        alignItems: "center",
         minHeight: "100vh",
         backgroundColor: "#f9fafb",
-        pt: 6, // top padding
-        pb: 6,
+        pt: 8,
+        pb: 8,
       }}
     >
+      {/* Go Back Button */}
+      <Box sx={{ width: "100%", maxWidth: 620, mb: 2, px: 2 }}>
+        <Button
+          startIcon={<ArrowBackIcon />}
+          onClick={() => navigate(-1)}
+          sx={{
+            textTransform: "none",
+            color: "#1E3A8A",
+            fontWeight: 600,
+            fontSize: "0.95rem",
+            mb: 1,
+          }}
+        >
+          Go Back
+        </Button>
+      </Box>
+
+      {/* Main Card */}
       <Card
         sx={{
-          flex: "0 0 360px",
-          borderRadius: "16px",
-          boxShadow: "0 8px 24px rgba(0,0,0,0.1)",
-          p: 2,
+          width: "90%",
+          maxWidth: 620,
+          borderRadius: "20px",
+          boxShadow: "0 10px 32px rgba(0,0,0,0.15)",
+          p: 4,
           backgroundColor: "#ffffff",
-          margin: "0 auto",
         }}
       >
         <CardContent>
-          <Typography variant="h6" sx={{ fontWeight: 600, mb: 2 }}>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 700,
+              mb: 3,
+              textAlign: "center",
+              color: "#1E3A8A",
+            }}
+          >
             Billing Summary
           </Typography>
 
           {/* Billing Info */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              Course
-            </Typography>
-            <Typography variant="body2">{course.topic}</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+            <Typography color="text.secondary">Course</Typography>
+            <Typography>{course.topic}</Typography>
           </Box>
 
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
-            <Typography variant="body2" color="text.secondary">
-              Instructor
-            </Typography>
-            <Typography variant="body2">{course.instructor}</Typography>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1.5 }}>
+            <Typography color="text.secondary">Instructor</Typography>
+            <Typography>{course.instructor}</Typography>
           </Box>
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 3 }} />
 
           {/* Payment Method */}
           <Typography variant="subtitle1" sx={{ fontWeight: 600, mb: 1 }}>
@@ -135,14 +159,14 @@ const CoursePurchase = () => {
             <FormControlLabel value="wallet" control={<Radio />} label="Wallet" />
           </RadioGroup>
 
-          <Box sx={{ mt: 2, mb: 2 }}>
+          <Box sx={{ mt: 3, mb: 3 }}>
             {paymentMethod === "upi" && (
               <TextField
                 fullWidth
                 label="Enter UPI ID"
                 placeholder="example@upi"
                 variant="outlined"
-                size="small"
+                size="medium"
                 value={paymentDetails.upi || ""}
                 onChange={(e) =>
                   handlePaymentInputChange("upi", e.target.value)
@@ -151,23 +175,23 @@ const CoursePurchase = () => {
             )}
 
             {paymentMethod === "card" && (
-              <Box sx={{ display: "flex", flexDirection: "column", gap: 1.5 }}>
+              <Box sx={{ display: "flex", flexDirection: "column", gap: 2 }}>
                 <TextField
                   label="Card Number"
                   placeholder="XXXX XXXX XXXX XXXX"
                   variant="outlined"
-                  size="small"
+                  size="medium"
                   value={paymentDetails.cardNumber || ""}
                   onChange={(e) =>
                     handlePaymentInputChange("cardNumber", e.target.value)
                   }
                 />
-                <Box sx={{ display: "flex", gap: 1 }}>
+                <Box sx={{ display: "flex", gap: 2 }}>
                   <TextField
                     label="Expiry (MM/YY)"
                     placeholder="MM/YY"
                     variant="outlined"
-                    size="small"
+                    size="medium"
                     value={paymentDetails.expiry || ""}
                     onChange={(e) =>
                       handlePaymentInputChange("expiry", e.target.value)
@@ -177,7 +201,7 @@ const CoursePurchase = () => {
                     label="CVV"
                     placeholder="***"
                     variant="outlined"
-                    size="small"
+                    size="medium"
                     type="password"
                     value={paymentDetails.cvv || ""}
                     onChange={(e) =>
@@ -189,7 +213,7 @@ const CoursePurchase = () => {
                   label="Name on Card"
                   placeholder="Full Name"
                   variant="outlined"
-                  size="small"
+                  size="medium"
                   value={paymentDetails.cardName || ""}
                   onChange={(e) =>
                     handlePaymentInputChange("cardName", e.target.value)
@@ -204,7 +228,7 @@ const CoursePurchase = () => {
                 label="Wallet ID / Phone Number"
                 placeholder="Enter wallet ID or mobile number"
                 variant="outlined"
-                size="small"
+                size="medium"
                 value={paymentDetails.wallet || ""}
                 onChange={(e) =>
                   handlePaymentInputChange("wallet", e.target.value)
@@ -213,49 +237,42 @@ const CoursePurchase = () => {
             )}
           </Box>
 
-          <Divider sx={{ my: 2 }} />
+          <Divider sx={{ my: 3 }} />
 
           {/* Total */}
-          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 1 }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between", mb: 2 }}>
             <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
               Total Payable
             </Typography>
             <Typography
               variant="subtitle1"
-              sx={{ fontWeight: 600, color: "#2e7d32" }}
+              sx={{ fontWeight: 700, color: "#2e7d32" }}
             >
               ₹{course.price}
             </Typography>
           </Box>
 
-          {/* Slide to Pay */}
-          <Box sx={{ mt: 3 }}>
-            <Typography
-              variant="body2"
-              color="text.secondary"
-              sx={{ mb: 1, textAlign: "center" }}
-            >
-              Slide to Pay
-            </Typography>
-            <Slider
-              value={sliderValue}
-              onChange={handleSlide}
-              step={1}
-              marks={[
-                { value: 0, label: "" },
-                { value: 100, label: "" },
-              ]}
+          {/* Pay Button */}
+          <Box sx={{ mt: 4 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              size="large"
+              fullWidth
               sx={{
-                color: "#1976d2",
-                height: 10,
-                "& .MuiSlider-thumb": {
-                  width: 28,
-                  height: 28,
-                  backgroundColor: "#fff",
-                  border: "2px solid #1976d2",
-                },
+                borderRadius: "10px",
+                py: 1.6,
+                fontWeight: 700,
+                fontSize: "1.05rem",
+                textTransform: "none",
+                backgroundColor: "#1E3A8A",
+                ":hover": { backgroundColor: "#1A237E" },
               }}
-            />
+              onClick={handlePayment}
+              disabled={processing}
+            >
+              {processing ? "Processing..." : "Complete Payment"}
+            </Button>
           </Box>
         </CardContent>
       </Card>
