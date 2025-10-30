@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react'
 import Layout from '../Layout'
 import { useState } from 'react';
-import { Grid ,Typography} from '@mui/material';
+import { Grid ,Typography, Box} from '@mui/material';
 import CourseCard from './CourseCard';
 import axios from 'axios';
 
@@ -66,16 +66,18 @@ export default function AdminDefaultPage() {
             Welcome {sessionStorage.getItem('username')}!!
           
           </Typography>
-                <Grid container spacing={8} sx={{ padding: 3, justifyContent: 'flex-start', alignItems: "flex-start" }} >
+           <Box sx={{ py: 4, px: 2, bgcolor: "#F0F4FF", minHeight: "100vh" }}>
+                <Grid container spacing={6} sx={{ padding: 3, justifyContent: 'flex-start', alignItems: "flex-start" }} >
                         
                     {courses.map((course) =>
 
-                        <Grid item="true" xs={12} sm={6} >
+                        <Grid item="true" xs={12} sm={6} lg={3} >
 
                             <CourseCard course={course} courseDeleteHandler={removeCourseHandler} />
                         </Grid>
                     )}
                 </Grid>
+               </Box>
             </Layout> :
             <div>
                 <h3>loading...</h3>

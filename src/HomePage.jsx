@@ -41,7 +41,7 @@ function HomePage() {
           <Route path="/SignIn" element={<SignIn />} />
           <Route path="/About" element={<AboutContent />} />
           <Route path="/courses" element={<ExploreCourses />} />
-           <Route path="/courses/certificate" element={<CourseComplete/>} />
+           <Route path="course/:courseId/certificate" element={<CourseComplete/>} />
           <Route path="/course/:id" element={<CourseDetails />} />
           <Route path="/lessonlist" element={<LessonList />} /> 
       

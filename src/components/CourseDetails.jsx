@@ -34,9 +34,11 @@ export default function CourseDetails() {
   const [course, setCourse] = useState(null);
   const [loading, setLoading] = useState(true);
   const [userEnrollments, setUserEnrollments] = useState([]);
+  const [userEnrollment,setUserEnrollment] = useState(null);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [completedLessons, setCompletedLessons] = useState("0");
   const [progressPercentage, setProgressPercentage] = useState("0");
+  console.log(userEnrollment, "userEnroll")
 
   useEffect(() => {
     setLoading(true);
@@ -54,7 +56,11 @@ export default function CourseDetails() {
           `http://localhost:8088/api/enrollments/users/${userId}/enrollments`,
           { headers }
         )
-        .then((res) => setUserEnrollments(res.data.map((e) => e.courseId)))
+        .then((res) => {
+          setUserEnrollment(res.data.find((e)=>e.courseId==id))
+          setUserEnrollments(res.data.map((e) => e.courseId))
+    })
+        
         .catch((err) => console.error("Error fetching enrollments:", err));
     }
   }, [id, token, userId]);
@@ -79,7 +85,7 @@ export default function CourseDetails() {
       });
   };
 
-  const handleMarkCompleted = () => alert("Course marked as completed!");
+  const handleMarkCompleted = () => navigate(`/course/${course.courseId}/certificate`);
 
   const handleLessonsCount = () => {
     const parsed = parseInt(completedLessons, 10);
@@ -228,14 +234,22 @@ export default function CourseDetails() {
                 </Tooltip>
               </Box>
 
-              <Button
+             {userEnrollment!=null?  <Button
                 variant="outlined"
                 color="secondary"
                 onClick={handleMarkCompleted}
               >
                 Mark as Completed
-              </Button>
-
+              </Button>:
+              // userEnrollment.status=="COMPLETED"?  <Button
+              //   variant="contained"
+              //   color="secondary"
+              //   onClick={handleMarkCompleted}
+              // >
+              //    Download Certificate
+              // </Button>:
+              <></>
+              }
               <Box sx={{ width: "100%", mt: 0.5 }}>
                 <Box
                   sx={{
