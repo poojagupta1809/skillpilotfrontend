@@ -13,7 +13,6 @@ import {
   Paper,
   Divider,
   Button,
-  Stack,
   Snackbar,
   Alert,
   Dialog,
@@ -21,7 +20,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
-  CardMedia
+  CardMedia,
 } from "@mui/material";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -37,10 +36,14 @@ const ExploreCourses = () => {
   const [selectedDifficulty, setSelectedDifficulty] = useState([]);
   const [noResults, setNoResults] = useState(false);
   const [showFilters, setShowFilters] = useState(false);
-  const [snackbar, setSnackbar] = useState({ open: false, message: "", severity: "success" });
-
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
+  });
   const [dialogOpen, setDialogOpen] = useState(false);
   const [selectedCourseId, setSelectedCourseId] = useState(null);
+  const [learnerName, setLearnerName] = useState("");
 
   const token = sessionStorage.getItem("token");
   const userId = sessionStorage.getItem("userId");
@@ -52,7 +55,6 @@ const ExploreCourses = () => {
     setNoResults(false);
     try {
       const res = await axios.get("http://localhost:8088/api/courses/view");
-      console.log("Fetched courses:", res.data);
       setCourses(res.data);
       setFilteredCourses(res.data);
       setShowFilters(true);
@@ -72,7 +74,9 @@ const ExploreCourses = () => {
   const fetchEnrollments = async () => {
     if (!userId) return;
     try {
-      const res = await axios.get(`http://localhost:8088/api/enrollments/users/${userId}/enrollments`);
+      const res = await axios.get(
+        `http://localhost:8088/api/enrollments/users/${userId}/enrollments`
+      );
       setEnrolledCourseIds(res.data.map((e) => e.courseId));
     } catch (err) {
       console.error("Error fetching enrollments:", err);
@@ -82,20 +86,30 @@ const ExploreCourses = () => {
   const handleEnroll = async (courseId) => {
     if (!userId) return;
     try {
-      await axios.post(`http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`);
+      await axios.post(
+        `http://localhost:8088/api/enrollments/courses/${courseId}/enrollments/${userId}`
+      );
       setEnrolledCourseIds((prev) => [...prev, courseId]);
-
       setSelectedCourseId(courseId);
       setDialogOpen(true);
     } catch (err) {
       console.error("Error enrolling:", err);
       setSnackbar({
         open: true,
-        message: err.response?.data?.message || "Enrollment failed. Please try again.",
+        message:
+          err.response?.data?.message || "Enrollment failed. Please try again.",
         severity: "error",
       });
     }
   };
+
+  useEffect(() => {
+    const storedUsername = sessionStorage.getItem("username");
+    if (storedUsername) setLearnerName(storedUsername);
+
+    fetchCourses();
+    fetchEnrollments();
+  }, []);
 
   useEffect(() => {
     let filtered = courses;
@@ -119,35 +133,36 @@ const ExploreCourses = () => {
     setNoResults(filtered.length === 0);
   }, [searchTerm, selectedDifficulty, courses]);
 
-  useEffect(() => {
-    fetchCourses();
-    fetchEnrollments();
-  }, []);
-
   const handleSearchChange = (event, value) => setSearchTerm(value);
-
   const handleDifficultyChange = (level) => {
     setSelectedDifficulty((prev) =>
-      prev.includes(level) ? prev.filter((v) => v !== level) : [...prev, level]
+      prev.includes(level)
+        ? prev.filter((v) => v !== level)
+        : [...prev, level]
     );
   };
 
   return (
     <Box sx={{ py: 4, px: 2, bgcolor: "#F0F4FF", minHeight: "100vh" }}>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3,
-        }}
-      >
-        <Typography variant="h4" sx={{ fontWeight: "bold", color: "#1E3A8A" }}>
+      {/* --- Centered Welcome Section --- */}
+      <Box sx={{ textAlign: "center", mb: 3 }}>
+        <Typography
+          variant="h5"
+          sx={{ color: "#1E40AF", fontWeight: 500, mb: 0.5 }}
+        >
+          Welcome{learnerName ? `, ${learnerName}` : ""}!
+        </Typography>
+
+        <Typography
+          variant="h4"
+          sx={{ fontWeight: "bold", color: "#1E3A8A" }}
+        >
           Explore Courses
         </Typography>
-       
       </Box>
+      {/* --- End Welcome Section --- */}
 
+      {/* Search Bar */}
       <Autocomplete
         freeSolo
         options={topicSuggestions}
@@ -165,6 +180,7 @@ const ExploreCourses = () => {
 
       <Divider sx={{ mb: 3 }} />
 
+      {/* Course Section */}
       <Box sx={{ display: "flex", gap: 3 }}>
         {showFilters && (
           <Paper sx={{ p: 2, minWidth: 200 }}>
@@ -215,46 +231,57 @@ const ExploreCourses = () => {
                   }}
                   onDoubleClick={() => navigate(`/course/${course.courseId}`)}
                 >
-                   <CardMedia
+                  <CardMedia
                     component="img"
                     height="160"
-                    image={course.imageUrl != null ? course.imageUrl : "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"}
+                    image={
+                      course.imageUrl != null
+                        ? course.imageUrl
+                        : "https://foundr.com/wp-content/uploads/2023/04/How-to-create-an-online-course.jpg.webp"
+                    }
                     alt="Course Image"
                   />
                   <CardContent sx={{ bgcolor: "rgba(255, 255, 255, 0.9)" }}>
-                    <Typography variant="h6" sx={{ fontWeight: "bold", color: "#1E3A8A", mb: 1 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{ fontWeight: "bold", color: "#1E3A8A", mb: 1 }}
+                    >
                       {course.topic}
                     </Typography>
 
-                    {course.instructor ? (
+                    {course.instructor && (
                       <Typography sx={{ mb: 1, color: "#555" }}>
                         {course.instructor}
                       </Typography>
-                    ) : null}
+                    )}
 
-                    {course.difficultyLevel ? (
+                    {course.difficultyLevel && (
                       <Typography sx={{ fontWeight: "bold", mb: 2 }}>
                         {course.difficultyLevel}
                       </Typography>
-                    ) : null}
+                    )}
 
-                    <Typography sx={{ fontWeight: "bold", mb: 2, color: "#1E3A8A" }}>
-                      {course.courseType && course.courseType.toLowerCase() === "paid" && course.price
+                    <Typography
+                      sx={{ fontWeight: "bold", mb: 2, color: "#1E3A8A" }}
+                    >
+                      {course.courseType &&
+                        course.courseType.toLowerCase() === "paid" &&
+                        course.price
                         ? `₹${course.price}`
                         : "Free"}
                     </Typography>
 
                     <Button
                       fullWidth
-                      variant={enrolledCourseIds.includes(course.courseId) ? "contained" : "outlined"}
-                      color={enrolledCourseIds.includes(course.courseId) ? "success" : "primary"}
-                      disabled={enrolledCourseIds.includes(course.courseId)}
+                      variant={isEnrolled ? "contained" : "outlined"}
+                      color={isEnrolled ? "success" : "primary"}
+                      disabled={isEnrolled}
                       onClick={(e) => {
                         e.stopPropagation();
                         handleEnroll(course.courseId);
                       }}
                     >
-                      {enrolledCourseIds.includes(course.courseId) ? "Enrolled" : "Enroll"}
+                      {isEnrolled ? "Enrolled" : "Enroll"}
                     </Button>
                   </CardContent>
                 </Card>
@@ -264,6 +291,7 @@ const ExploreCourses = () => {
         </Box>
       </Box>
 
+      {/* Snackbar + Dialog */}
       <Snackbar
         open={snackbar.open}
         autoHideDuration={3000}
@@ -292,7 +320,8 @@ const ExploreCourses = () => {
 
         <DialogContent>
           <DialogContentText sx={{ mb: 2 }}>
-            You’ve successfully enrolled in this course. Would you like to start learning now or explore more courses?
+            You’ve successfully enrolled in this course. Would you like to start
+            learning now or explore more courses?
           </DialogContentText>
         </DialogContent>
 
